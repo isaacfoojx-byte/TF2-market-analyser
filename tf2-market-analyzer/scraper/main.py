@@ -1,19 +1,22 @@
 from browser import get_driver
 from effect_details import scrape_effect
+from effect_index import get_all_effects
 from csv_utils import save_csv
 from pathlib import Path
+import time
+import random
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 driver = get_driver()
 
-effects = scrape_effect(driver, "Nebula")
+effects = get_all_effects(driver)
 
 master_dataset = []
 
-for effect in effects:
+for i, effect in enumerate(effects, start=1):
 
-    print(f"Scraping {effect['effect_name']}...")
+    print(f"[{i}/{len(effects)}] Scraping {effect['effect_name']}...")
 
     hats = scrape_effect(
         driver,
@@ -22,10 +25,13 @@ for effect in effects:
 
     master_dataset.extend(hats)
 
+    time.sleep(random.uniform(2,4))
+
 save_csv(
-    effects,
-    BASE_DIR / "data" / "Nebula.csv"
+    master_dataset,
+    "data/all_unusuals.csv"
 )
+
 
 print("Done!")
 

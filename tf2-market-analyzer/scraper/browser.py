@@ -8,4 +8,3 @@ def get_driver():
 
     return webdriver.Chrome(options=chrome_options)
 
-driver = get_driver()
