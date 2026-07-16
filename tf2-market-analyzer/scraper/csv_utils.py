@@ -1,5 +1,5 @@
 import csv
-
+from pathlib import Path
 
 def save_csv(data, filename):
 
@@ -8,8 +8,12 @@ def save_csv(data, filename):
 
     fieldnames = data[0].keys()
 
+    filepath = Path(filename)
+
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+
     with open(
-        filename,
+        filepath,
         "w",
         newline="",
         encoding="utf-8"
