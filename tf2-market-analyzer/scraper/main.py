@@ -12,11 +12,21 @@ driver = get_driver()
 
 effects = get_all_effects(driver)
 
+print("Effects:", len(effects))
+print(effects)
+
+print("Number of effects found:", len(effects))
+
+if len(effects) > 0:
+    print("First effect:", effects[0])
+else:
+    print("No effects found!")
+
 master_dataset = []
 
 for i, effect in enumerate(effects, start=1):
 
-    print(f"[{i}/{len(effects)}] Scraping {effect['effect_name']}...")
+    
 
     hats = scrape_effect(
         driver,
@@ -25,12 +35,24 @@ for i, effect in enumerate(effects, start=1):
 
     master_dataset.extend(hats)
 
-    time.sleep(random.uniform(2,4))
+    save_csv(
+        master_dataset,
+        "data/all_unusuals.csv"
+    )
 
-save_csv(
-    master_dataset,
-    "data/all_unusuals.csv"
+    print(
+    f"[{i}/{len(effects)}] "
+    f"{effect['effect_name']} "
+    f"| {len(hats)} hats "
+    f"| Total rows: {len(master_dataset)}"
 )
+
+    time.sleep(1)
+
+
+    
+
+
 
 
 print("Done!")

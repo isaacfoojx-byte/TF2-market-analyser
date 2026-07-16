@@ -12,6 +12,8 @@ def save_csv(data, filename):
 
     filepath.parent.mkdir(parents=True, exist_ok=True)
 
+    print("Saving to:", Path(filename).resolve())
+
     with open(
         filepath,
         "w",
