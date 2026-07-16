@@ -17,8 +17,19 @@ def get_all_effects(driver):
     for effect in effect_boxes:
 
         effects.append({
-            "effect_id": effect["data-effect_id"],
-            "effect_name": effect["data-effect_name"]
+            "effect_id": effect.get("data-effect_id"),
+            "effect_name": effect.get("data-effect_name")
         })
 
-    return effects
+    
+
+    seen = set()
+    unique_effects = []
+
+    for effect in effects:
+
+        if effect["effect_name"] not in seen:
+            unique_effects.append(effect)
+            seen.add(effect["effect_name"])
+
+    return unique_effects
