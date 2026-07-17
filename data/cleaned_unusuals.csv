@@ -9168,37 +9168,37 @@ effect_id,effect_name,item_name,price_ref,exist,slot,summary,defindex,item_type,
 306,Acidic Climate,Splitting Headache,1745.21,118,misc,Level 1-100 Headache,31390,cosmetic,True
 306,Acidic Climate,Brain-Warming Wear,1687.99,0,misc,Level 1-100 Hat,30827,cosmetic,True
 306,Acidic Climate,Dell Dynamic,972.74,122,misc,Level 1-100 Helmet,31394,cosmetic,True
-704,Energy Orb,SMG,,300,secondary,Level 1 SMG,203,cosmetic,False
-704,Energy Orb,Flame Thrower,,1424,primary,Level 1 Flame Thrower,208,cosmetic,False
-704,Energy Orb,Pistol,,200,secondary,Level 1 Pistol,23,cosmetic,False
-704,Energy Orb,Pistol,,100,secondary,Level 1 Pistol,22,cosmetic,False
-704,Energy Orb,Scattergun,,32,primary,Assassin Grade Scattergun,15053,cosmetic,False
-704,Energy Orb,Flame Thrower,,534,primary,Level 1 Flame Thrower,21,cosmetic,False
-704,Energy Orb,Sniper Rifle,,158,primary,Elite Grade Sniper Rifle,15059,cosmetic,False
-704,Energy Orb,Revolver,,78,secondary,Level 1 Revolver,24,cosmetic,False
-704,Energy Orb,SMG,,150,secondary,Mercenary Grade SMG,15001,cosmetic,False
-704,Energy Orb,Scattergun,,96,primary,Level 1 Scattergun,13,cosmetic,False
-704,Energy Orb,Flame Thrower,,356,primary,Mercenary Grade Flame Thrower,15054,cosmetic,False
-704,Energy Orb,Medi Gun,,546,secondary,Level 1 Medi Gun,29,cosmetic,False
-704,Energy Orb,Shotgun,,432,secondary,Level 1 Shotgun,10,cosmetic,False
-704,Energy Orb,Rocket Launcher,,137,primary,Commando Grade Rocket Launcher,15006,cosmetic,False
-704,Energy Orb,Sniper Rifle,,79,primary,Assassin Grade Sniper Rifle,15007,cosmetic,False
-704,Energy Orb,Shotgun,,720,primary,Level 1 Shotgun,9,cosmetic,False
-704,Energy Orb,Rocket Launcher,,137,primary,Mercenary Grade Rocket Launcher,15057,cosmetic,False
-704,Energy Orb,Shotgun,,144,primary,Mercenary Grade Shotgun,15047,cosmetic,False
-704,Energy Orb,Pistol,,50,secondary,Elite Grade Pistol,15013,cosmetic,False
-704,Energy Orb,Shotgun,,144,primary,Mercenary Grade Shotgun,15003,cosmetic,False
-704,Energy Orb,Sniper Rifle,,79,primary,Level 1 Sniper Rifle,14,cosmetic,False
-704,Energy Orb,Rocket Launcher,,822,primary,Level 1 Rocket Launcher,18,cosmetic,False
-704,Energy Orb,Sniper Rifle,,553,primary,Level 1 Sniper Rifle,201,cosmetic,False
-704,Energy Orb,Flame Thrower,,178,primary,Commando Grade Flame Thrower,15049,cosmetic,False
-704,Energy Orb,Stickybomb Launcher,,30,secondary,Commando Grade Stickybomb Launcher,15012,cosmetic,False
-704,Energy Orb,Scattergun,,32,primary,Commando Grade Scattergun,15002,cosmetic,False
-704,Energy Orb,Stickybomb Launcher,,150,secondary,Level 1 Stickybomb Launcher,207,cosmetic,False
-704,Energy Orb,Scattergun,,32,primary,Level 1 Scattergun,200,cosmetic,False
-704,Energy Orb,Minigun,,918,primary,Level 1 Minigun,202,cosmetic,False
-704,Energy Orb,SMG,,150,secondary,Level 1 SMG,16,cosmetic,False
-704,Energy Orb,Stickybomb Launcher,,30,secondary,Level 1 Stickybomb Launcher,20,cosmetic,False
+704,Energy Orb,SMG,,300,secondary,Level 1 SMG,203,weapon,False
+704,Energy Orb,Flame Thrower,,1424,primary,Level 1 Flame Thrower,208,weapon,False
+704,Energy Orb,Pistol,,200,secondary,Level 1 Pistol,23,weapon,False
+704,Energy Orb,Pistol,,100,secondary,Level 1 Pistol,22,weapon,False
+704,Energy Orb,Scattergun,,32,primary,Assassin Grade Scattergun,15053,weapon,False
+704,Energy Orb,Flame Thrower,,534,primary,Level 1 Flame Thrower,21,weapon,False
+704,Energy Orb,Sniper Rifle,,158,primary,Elite Grade Sniper Rifle,15059,weapon,False
+704,Energy Orb,Revolver,,78,secondary,Level 1 Revolver,24,weapon,False
+704,Energy Orb,SMG,,150,secondary,Mercenary Grade SMG,15001,weapon,False
+704,Energy Orb,Scattergun,,96,primary,Level 1 Scattergun,13,weapon,False
+704,Energy Orb,Flame Thrower,,356,primary,Mercenary Grade Flame Thrower,15054,weapon,False
+704,Energy Orb,Medi Gun,,546,secondary,Level 1 Medi Gun,29,weapon,False
+704,Energy Orb,Shotgun,,432,secondary,Level 1 Shotgun,10,weapon,False
+704,Energy Orb,Rocket Launcher,,137,primary,Commando Grade Rocket Launcher,15006,weapon,False
+704,Energy Orb,Sniper Rifle,,79,primary,Assassin Grade Sniper Rifle,15007,weapon,False
+704,Energy Orb,Shotgun,,720,primary,Level 1 Shotgun,9,weapon,False
+704,Energy Orb,Rocket Launcher,,137,primary,Mercenary Grade Rocket Launcher,15057,weapon,False
+704,Energy Orb,Shotgun,,144,primary,Mercenary Grade Shotgun,15047,weapon,False
+704,Energy Orb,Pistol,,50,secondary,Elite Grade Pistol,15013,weapon,False
+704,Energy Orb,Shotgun,,144,primary,Mercenary Grade Shotgun,15003,weapon,False
+704,Energy Orb,Sniper Rifle,,79,primary,Level 1 Sniper Rifle,14,weapon,False
+704,Energy Orb,Rocket Launcher,,822,primary,Level 1 Rocket Launcher,18,weapon,False
+704,Energy Orb,Sniper Rifle,,553,primary,Level 1 Sniper Rifle,201,weapon,False
+704,Energy Orb,Flame Thrower,,178,primary,Commando Grade Flame Thrower,15049,weapon,False
+704,Energy Orb,Stickybomb Launcher,,30,secondary,Commando Grade Stickybomb Launcher,15012,weapon,False
+704,Energy Orb,Scattergun,,32,primary,Commando Grade Scattergun,15002,weapon,False
+704,Energy Orb,Stickybomb Launcher,,150,secondary,Level 1 Stickybomb Launcher,207,weapon,False
+704,Energy Orb,Scattergun,,32,primary,Level 1 Scattergun,200,weapon,False
+704,Energy Orb,Minigun,,918,primary,Level 1 Minigun,202,weapon,False
+704,Energy Orb,SMG,,150,secondary,Level 1 SMG,16,weapon,False
+704,Energy Orb,Stickybomb Launcher,,30,secondary,Level 1 Stickybomb Launcher,20,weapon,False
 287,Sylicone Succiduous,Gauzed Gaze,62942.0,3,misc,Level 1-100 Hat,30786,cosmetic,True
 287,Sylicone Succiduous,Rotation Sensation,56647.8,3,misc,Level 1-100 Hat,30623,cosmetic,True
 287,Sylicone Succiduous,Patriot Peak,38623.5,7,misc,Level 1-100 Hat,30743,cosmetic,True
@@ -26246,79 +26246,79 @@ effect_id,effect_name,item_name,price_ref,exist,slot,summary,defindex,item_type,
 153,Smoldering Spirits,Crabe de Chapeau,801.08,25,misc,Level 1-100 Hat,31109,cosmetic,True
 153,Smoldering Spirits,Head of Defense,801.08,23,misc,Level 1-100 Hat,31114,cosmetic,True
 153,Smoldering Spirits,Bazaar Bauble,457.76,35,misc,Level 1-100 Hat,31112,cosmetic,True
-702,Isotope,SMG,,1930,secondary,Level 1 SMG,16,cosmetic,False
-702,Isotope,SMG,,4632,secondary,Level 1 SMG,203,cosmetic,False
-702,Isotope,Revolver,,7843,secondary,Level 1 Revolver,24,cosmetic,False
-702,Isotope,SMG,,772,secondary,Level 1 SMG,15153,cosmetic,False
-702,Isotope,SMG,,386,secondary,Mercenary Grade SMG,15058,cosmetic,False
-702,Isotope,Knife,,449,melee,Mercenary Grade Knife,15096,cosmetic,False
-702,Isotope,Pistol,,399,secondary,Level 1 Pistol,15148,cosmetic,False
-702,Isotope,Rocket Launcher,,189173,primary,Level 1 Rocket Launcher,18,cosmetic,False
-702,Isotope,Knife,,12123,melee,Level 1 Knife,194,cosmetic,False
-702,Isotope,Flame Thrower,,16000,primary,Level 1 Flame Thrower,208,cosmetic,False
-702,Isotope,Medi Gun,,85680,secondary,Level 1 Medi Gun,29,cosmetic,False
-702,Isotope,Stickybomb Launcher,,11525,secondary,Level 1 Stickybomb Launcher,207,cosmetic,False
-702,Isotope,Scattergun,,1445,primary,Assassin Grade Scattergun,15053,cosmetic,False
-702,Isotope,SMG,,386,secondary,Mercenary Grade SMG,15110,cosmetic,False
-702,Isotope,Sniper Rifle,,42218,primary,Level 1 Sniper Rifle,201,cosmetic,False
-702,Isotope,Pistol,,1995,secondary,Level 1 Pistol,22,cosmetic,False
-702,Isotope,Shotgun,,100856,secondary,Level 1 Shotgun,10,cosmetic,False
-702,Isotope,Scattergun,,2890,primary,Commando Grade Scattergun,15108,cosmetic,False
-702,Isotope,Scattergun,,92480,primary,Level 1 Scattergun,200,cosmetic,False
-702,Isotope,Revolver,,341,secondary,Level 1 Revolver,15149,cosmetic,False
-702,Isotope,Pistol,,6783,secondary,Level 1 Pistol,23,cosmetic,False
-702,Isotope,Flame Thrower,,800,primary,Mercenary Grade Flame Thrower,15054,cosmetic,False
-702,Isotope,Pistol,,399,secondary,Level 1 Pistol,15101,cosmetic,False
-702,Isotope,Shotgun,,1801,primary,Mercenary Grade Shotgun,15047,cosmetic,False
-702,Isotope,Flame Thrower,,6400,primary,Level 1 Flame Thrower,21,cosmetic,False
-702,Isotope,Knife,,4939,melee,Level 1 Knife,4,cosmetic,False
-702,Isotope,Wrench,,684,melee,Level 1 Wrench,7,cosmetic,False
-702,Isotope,Medi Gun,,1360,secondary,Commando Grade Medi Gun,15010,cosmetic,False
-702,Isotope,Minigun,,12493,primary,Level 1 Minigun,15,cosmetic,False
-702,Isotope,Rocket Launcher,,1873,primary,Assassin Grade Rocket Launcher,15052,cosmetic,False
-702,Isotope,Minigun,,37479,primary,Level 1 Minigun,202,cosmetic,False
-702,Isotope,Pistol,,399,secondary,Level 1 Pistol,15102,cosmetic,False
-702,Isotope,Revolver,,341,secondary,Level 1 Revolver,15103,cosmetic,False
-702,Isotope,Scattergun,,26010,primary,Level 1 Scattergun,13,cosmetic,False
-702,Isotope,Sniper Rifle,,1111,primary,Level 1 Sniper Rifle,15154,cosmetic,False
-702,Isotope,Wrench,,2736,melee,Level 1 Wrench,197,cosmetic,False
-702,Isotope,Medi Gun,,1360,secondary,Mercenary Grade Medi Gun,15008,cosmetic,False
-702,Isotope,Knife,,449,melee,Level 1 Knife,15095,cosmetic,False
-702,Isotope,Grenade Launcher,,6592,primary,Level 1 Grenade Launcher,206,cosmetic,False
-702,Isotope,Medi Gun,,1360,secondary,Level 1 Medi Gun,15097,cosmetic,False
-702,Isotope,Shotgun,,37821,primary,Level 1 Shotgun,9,cosmetic,False
+702,Isotope,SMG,,1930,secondary,Level 1 SMG,16,weapon,False
+702,Isotope,SMG,,4632,secondary,Level 1 SMG,203,weapon,False
+702,Isotope,Revolver,,7843,secondary,Level 1 Revolver,24,weapon,False
+702,Isotope,SMG,,772,secondary,Level 1 SMG,15153,weapon,False
+702,Isotope,SMG,,386,secondary,Mercenary Grade SMG,15058,weapon,False
+702,Isotope,Knife,,449,melee,Mercenary Grade Knife,15096,weapon,False
+702,Isotope,Pistol,,399,secondary,Level 1 Pistol,15148,weapon,False
+702,Isotope,Rocket Launcher,,189173,primary,Level 1 Rocket Launcher,18,weapon,False
+702,Isotope,Knife,,12123,melee,Level 1 Knife,194,weapon,False
+702,Isotope,Flame Thrower,,16000,primary,Level 1 Flame Thrower,208,weapon,False
+702,Isotope,Medi Gun,,85680,secondary,Level 1 Medi Gun,29,weapon,False
+702,Isotope,Stickybomb Launcher,,11525,secondary,Level 1 Stickybomb Launcher,207,weapon,False
+702,Isotope,Scattergun,,1445,primary,Assassin Grade Scattergun,15053,weapon,False
+702,Isotope,SMG,,386,secondary,Mercenary Grade SMG,15110,weapon,False
+702,Isotope,Sniper Rifle,,42218,primary,Level 1 Sniper Rifle,201,weapon,False
+702,Isotope,Pistol,,1995,secondary,Level 1 Pistol,22,weapon,False
+702,Isotope,Shotgun,,100856,secondary,Level 1 Shotgun,10,weapon,False
+702,Isotope,Scattergun,,2890,primary,Commando Grade Scattergun,15108,weapon,False
+702,Isotope,Scattergun,,92480,primary,Level 1 Scattergun,200,weapon,False
+702,Isotope,Revolver,,341,secondary,Level 1 Revolver,15149,weapon,False
+702,Isotope,Pistol,,6783,secondary,Level 1 Pistol,23,weapon,False
+702,Isotope,Flame Thrower,,800,primary,Mercenary Grade Flame Thrower,15054,weapon,False
+702,Isotope,Pistol,,399,secondary,Level 1 Pistol,15101,weapon,False
+702,Isotope,Shotgun,,1801,primary,Mercenary Grade Shotgun,15047,weapon,False
+702,Isotope,Flame Thrower,,6400,primary,Level 1 Flame Thrower,21,weapon,False
+702,Isotope,Knife,,4939,melee,Level 1 Knife,4,weapon,False
+702,Isotope,Wrench,,684,melee,Level 1 Wrench,7,weapon,False
+702,Isotope,Medi Gun,,1360,secondary,Commando Grade Medi Gun,15010,weapon,False
+702,Isotope,Minigun,,12493,primary,Level 1 Minigun,15,weapon,False
+702,Isotope,Rocket Launcher,,1873,primary,Assassin Grade Rocket Launcher,15052,weapon,False
+702,Isotope,Minigun,,37479,primary,Level 1 Minigun,202,weapon,False
+702,Isotope,Pistol,,399,secondary,Level 1 Pistol,15102,weapon,False
+702,Isotope,Revolver,,341,secondary,Level 1 Revolver,15103,weapon,False
+702,Isotope,Scattergun,,26010,primary,Level 1 Scattergun,13,weapon,False
+702,Isotope,Sniper Rifle,,1111,primary,Level 1 Sniper Rifle,15154,weapon,False
+702,Isotope,Wrench,,2736,melee,Level 1 Wrench,197,weapon,False
+702,Isotope,Medi Gun,,1360,secondary,Mercenary Grade Medi Gun,15008,weapon,False
+702,Isotope,Knife,,449,melee,Level 1 Knife,15095,weapon,False
+702,Isotope,Grenade Launcher,,6592,primary,Level 1 Grenade Launcher,206,weapon,False
+702,Isotope,Medi Gun,,1360,secondary,Level 1 Medi Gun,15097,weapon,False
+702,Isotope,Shotgun,,37821,primary,Level 1 Shotgun,9,weapon,False
 702,Isotope,War Paint,,311220,,Level 99 War Paint,9536,war_paint,False
-702,Isotope,Crusader's Crossbow,,8892,primary,Level 15 Crossbow,305,cosmetic,False
-702,Isotope,Iron Bomber,,33108,primary,Level 1-99 Grenade Launcher,1151,cosmetic,False
-702,Isotope,Stickybomb Launcher,,7376,secondary,Level 1 Stickybomb Launcher,20,cosmetic,False
-702,Isotope,Black Box,,1872,primary,Level 5 Rocket Launcher,228,cosmetic,False
-702,Isotope,Disciplinary Action,,3150,melee,Level 10 Riding Crop,447,cosmetic,False
-702,Isotope,Holy Mackerel,,2688,melee,Level 42 Fish,221,cosmetic,False
-702,Isotope,Panic Attack,,7266,primary,Level 1-99 Shotgun,1153,cosmetic,False
-702,Isotope,Brass Beast,,2119,primary,Level 5 Minigun,312,cosmetic,False
-702,Isotope,Tomislav,,6182,primary,Level 5 Minigun,424,cosmetic,False
-702,Isotope,Rescue Ranger,,4572,primary,Level 1-100 Shotgun,997,cosmetic,False
-702,Isotope,Loose Cannon,,4140,primary,Level 10 Grenade Launcher,996,cosmetic,False
-702,Isotope,Air Strike,,1664,primary,Level 1-100 Rocket Launcher,1104,cosmetic,False
-702,Isotope,Detonator,,1628,secondary,Level 10 Flare Gun,351,cosmetic,False
-702,Isotope,Degreaser,,8030,primary,Level 10 Flame Thrower,215,cosmetic,False
-702,Isotope,Powerjack,,5103,melee,Level 5 Sledgehammer,214,cosmetic,False
-702,Isotope,Shahanshah,,616,melee,Level 5 Kukri,401,cosmetic,False
-702,Isotope,Bazaar Bargain,,2300,primary,Level 10 Sniper Rifle,402,cosmetic,False
-702,Isotope,Soda Popper,,2040,primary,Level 10 Scattergun,448,cosmetic,False
-702,Isotope,Sniper Rifle,,19998,primary,Level 1 Sniper Rifle,14,cosmetic,False
-702,Isotope,Scorch Shot,,1397,secondary,Level 10 Flare Gun,740,cosmetic,False
-702,Isotope,Scotsman's Skullcutter,,356,melee,Level 5 Axe,172,cosmetic,False
-702,Isotope,Winger,,100,secondary,Level 15 Pistol,449,cosmetic,False
-702,Isotope,Claidheamh Mòr,,2646,melee,Level 5 Sword,327,cosmetic,False
-702,Isotope,Loch-n-Load,,138,primary,Level 10 Grenade Launcher,308,cosmetic,False
-702,Isotope,Family Business,,320,secondary,Level 10 Shotgun,425,cosmetic,False
-702,Isotope,Jag,,875,melee,Level 15 Wrench,329,cosmetic,False
-702,Isotope,Shortstop,,67,primary,Level 1 Peppergun,220,cosmetic,False
-702,Isotope,Grenade Launcher,,2060,primary,Level 1 Grenade Launcher,19,cosmetic,False
-702,Isotope,Amputator,,66,melee,Level 15 Bonesaw,304,cosmetic,False
-702,Isotope,Back Scratcher,,15,melee,Level 10 Garden Rake,326,cosmetic,False
-702,Isotope,Übersaw,,3009,melee,Level 10 Bonesaw,37,cosmetic,False
+702,Isotope,Crusader's Crossbow,,8892,primary,Level 15 Crossbow,305,weapon,False
+702,Isotope,Iron Bomber,,33108,primary,Level 1-99 Grenade Launcher,1151,weapon,False
+702,Isotope,Stickybomb Launcher,,7376,secondary,Level 1 Stickybomb Launcher,20,weapon,False
+702,Isotope,Black Box,,1872,primary,Level 5 Rocket Launcher,228,weapon,False
+702,Isotope,Disciplinary Action,,3150,melee,Level 10 Riding Crop,447,weapon,False
+702,Isotope,Holy Mackerel,,2688,melee,Level 42 Fish,221,weapon,False
+702,Isotope,Panic Attack,,7266,primary,Level 1-99 Shotgun,1153,weapon,False
+702,Isotope,Brass Beast,,2119,primary,Level 5 Minigun,312,weapon,False
+702,Isotope,Tomislav,,6182,primary,Level 5 Minigun,424,weapon,False
+702,Isotope,Rescue Ranger,,4572,primary,Level 1-100 Shotgun,997,weapon,False
+702,Isotope,Loose Cannon,,4140,primary,Level 10 Grenade Launcher,996,weapon,False
+702,Isotope,Air Strike,,1664,primary,Level 1-100 Rocket Launcher,1104,weapon,False
+702,Isotope,Detonator,,1628,secondary,Level 10 Flare Gun,351,weapon,False
+702,Isotope,Degreaser,,8030,primary,Level 10 Flame Thrower,215,weapon,False
+702,Isotope,Powerjack,,5103,melee,Level 5 Sledgehammer,214,weapon,False
+702,Isotope,Shahanshah,,616,melee,Level 5 Kukri,401,weapon,False
+702,Isotope,Bazaar Bargain,,2300,primary,Level 10 Sniper Rifle,402,weapon,False
+702,Isotope,Soda Popper,,2040,primary,Level 10 Scattergun,448,weapon,False
+702,Isotope,Sniper Rifle,,19998,primary,Level 1 Sniper Rifle,14,weapon,False
+702,Isotope,Scorch Shot,,1397,secondary,Level 10 Flare Gun,740,weapon,False
+702,Isotope,Scotsman's Skullcutter,,356,melee,Level 5 Axe,172,weapon,False
+702,Isotope,Winger,,100,secondary,Level 15 Pistol,449,weapon,False
+702,Isotope,Claidheamh Mòr,,2646,melee,Level 5 Sword,327,weapon,False
+702,Isotope,Loch-n-Load,,138,primary,Level 10 Grenade Launcher,308,weapon,False
+702,Isotope,Family Business,,320,secondary,Level 10 Shotgun,425,weapon,False
+702,Isotope,Jag,,875,melee,Level 15 Wrench,329,weapon,False
+702,Isotope,Shortstop,,67,primary,Level 1 Peppergun,220,weapon,False
+702,Isotope,Grenade Launcher,,2060,primary,Level 1 Grenade Launcher,19,weapon,False
+702,Isotope,Amputator,,66,melee,Level 15 Bonesaw,304,weapon,False
+702,Isotope,Back Scratcher,,15,melee,Level 10 Garden Rake,326,weapon,False
+702,Isotope,Übersaw,,3009,melee,Level 10 Bonesaw,37,weapon,False
 163,Pumpkin Party,Breadcrab,20427.54,1,misc,Level 1-100 Bread,31104,cosmetic,True
 163,Pumpkin Party,All Hallows' Hatte,17509.32,8,misc,Level 1-100 Hat,31152,cosmetic,True
 163,Pumpkin Party,Cat's Pajamas,16307.7,1,misc,Level 1-100 Hood,30937,cosmetic,True
@@ -27089,85 +27089,85 @@ effect_id,effect_name,item_name,price_ref,exist,slot,summary,defindex,item_type,
 321,Festive Falling Star,Giftcrafter,,1,misc,Level 1-100 Hat,31246,cosmetic,False
 321,Festive Falling Star,Yule Hog,,2,misc,Level 1-100 Pork Product,31087,cosmetic,False
 321,Festive Falling Star,Mooshanka,,2,misc,Level 1-100 Hat,31255,cosmetic,False
-701,Hot,SMG,,380,secondary,Level 1 SMG,15153,cosmetic,False
-701,Hot,SMG,,2660,secondary,Level 1 SMG,16,cosmetic,False
-701,Hot,SMG,,3800,secondary,Level 1 SMG,203,cosmetic,False
-701,Hot,Revolver,,5080,secondary,Level 1 Revolver,24,cosmetic,False
-701,Hot,Shotgun,,106262,secondary,Level 1 Shotgun,10,cosmetic,False
-701,Hot,SMG,,380,secondary,Mercenary Grade SMG,15001,cosmetic,False
-701,Hot,Rocket Launcher,,179091,primary,Level 1 Rocket Launcher,18,cosmetic,False
-701,Hot,Pistol,,372,secondary,Commando Grade Pistol,15046,cosmetic,False
-701,Hot,Minigun,,34452,primary,Level 1 Minigun,202,cosmetic,False
-701,Hot,Scattergun,,1172,primary,Commando Grade Scattergun,15002,cosmetic,False
-701,Hot,Flame Thrower,,28525,primary,Level 1 Flame Thrower,208,cosmetic,False
-701,Hot,Medi Gun,,54321,secondary,Level 1 Medi Gun,29,cosmetic,False
-701,Hot,Wrench,,2144,melee,Level 1 Wrench,7,cosmetic,False
-701,Hot,Grenade Launcher,,8262,primary,Level 1 Grenade Launcher,206,cosmetic,False
-701,Hot,Knife,,11400,melee,Level 1 Knife,194,cosmetic,False
-701,Hot,Pistol,,8184,secondary,Level 1 Pistol,23,cosmetic,False
-701,Hot,Scattergun,,3516,primary,Level 1 Scattergun,15106,cosmetic,False
-701,Hot,Shotgun,,3484,primary,Mercenary Grade Shotgun,15109,cosmetic,False
-701,Hot,Rocket Launcher,,1809,primary,Elite Grade Rocket Launcher,15150,cosmetic,False
-701,Hot,Revolver,,254,secondary,Commando Grade Revolver,15051,cosmetic,False
-701,Hot,Minigun,,1044,primary,Level 1 Minigun,15147,cosmetic,False
-701,Hot,Scattergun,,60944,primary,Level 1 Scattergun,200,cosmetic,False
-701,Hot,Scattergun,,18752,primary,Level 1 Scattergun,13,cosmetic,False
-701,Hot,Shotgun,,34840,primary,Level 1 Shotgun,9,cosmetic,False
-701,Hot,Stickybomb Launcher,,7904,secondary,Level 1 Stickybomb Launcher,207,cosmetic,False
-701,Hot,Scattergun,,1172,primary,Elite Grade Scattergun,15151,cosmetic,False
-701,Hot,Minigun,,12528,primary,Level 1 Minigun,15,cosmetic,False
-701,Hot,Stickybomb Launcher,,416,secondary,Commando Grade Stickybomb Launcher,15155,cosmetic,False
-701,Hot,SMG,,380,secondary,Mercenary Grade SMG,15110,cosmetic,False
-701,Hot,Rocket Launcher,,1809,primary,Mercenary Grade Rocket Launcher,15105,cosmetic,False
-701,Hot,Knife,,475,melee,Level 1 Knife,15095,cosmetic,False
-701,Hot,Grenade Launcher,,459,primary,Mercenary Grade Grenade Launcher,15158,cosmetic,False
-701,Hot,Shotgun,,1742,primary,Mercenary Grade Shotgun,15003,cosmetic,False
-701,Hot,Flame Thrower,,1141,primary,Mercenary Grade Flame Thrower,15005,cosmetic,False
-701,Hot,Pistol,,744,secondary,Level 1 Pistol,15148,cosmetic,False
-701,Hot,Sniper Rifle,,1012,primary,Assassin Grade Sniper Rifle,15111,cosmetic,False
-701,Hot,Medi Gun,,953,secondary,Commando Grade Medi Gun,15010,cosmetic,False
-701,Hot,Rocket Launcher,,1809,primary,Assassin Grade Rocket Launcher,15052,cosmetic,False
-701,Hot,Minigun,,1044,primary,Mercenary Grade Minigun,15004,cosmetic,False
-701,Hot,Flame Thrower,,1141,primary,Level 1 Flame Thrower,15089,cosmetic,False
-701,Hot,Back Scratcher,,152,melee,Level 10 Garden Rake,326,cosmetic,False
-701,Hot,Wrench,,4288,melee,Level 1 Wrench,197,cosmetic,False
+701,Hot,SMG,,380,secondary,Level 1 SMG,15153,weapon,False
+701,Hot,SMG,,2660,secondary,Level 1 SMG,16,weapon,False
+701,Hot,SMG,,3800,secondary,Level 1 SMG,203,weapon,False
+701,Hot,Revolver,,5080,secondary,Level 1 Revolver,24,weapon,False
+701,Hot,Shotgun,,106262,secondary,Level 1 Shotgun,10,weapon,False
+701,Hot,SMG,,380,secondary,Mercenary Grade SMG,15001,weapon,False
+701,Hot,Rocket Launcher,,179091,primary,Level 1 Rocket Launcher,18,weapon,False
+701,Hot,Pistol,,372,secondary,Commando Grade Pistol,15046,weapon,False
+701,Hot,Minigun,,34452,primary,Level 1 Minigun,202,weapon,False
+701,Hot,Scattergun,,1172,primary,Commando Grade Scattergun,15002,weapon,False
+701,Hot,Flame Thrower,,28525,primary,Level 1 Flame Thrower,208,weapon,False
+701,Hot,Medi Gun,,54321,secondary,Level 1 Medi Gun,29,weapon,False
+701,Hot,Wrench,,2144,melee,Level 1 Wrench,7,weapon,False
+701,Hot,Grenade Launcher,,8262,primary,Level 1 Grenade Launcher,206,weapon,False
+701,Hot,Knife,,11400,melee,Level 1 Knife,194,weapon,False
+701,Hot,Pistol,,8184,secondary,Level 1 Pistol,23,weapon,False
+701,Hot,Scattergun,,3516,primary,Level 1 Scattergun,15106,weapon,False
+701,Hot,Shotgun,,3484,primary,Mercenary Grade Shotgun,15109,weapon,False
+701,Hot,Rocket Launcher,,1809,primary,Elite Grade Rocket Launcher,15150,weapon,False
+701,Hot,Revolver,,254,secondary,Commando Grade Revolver,15051,weapon,False
+701,Hot,Minigun,,1044,primary,Level 1 Minigun,15147,weapon,False
+701,Hot,Scattergun,,60944,primary,Level 1 Scattergun,200,weapon,False
+701,Hot,Scattergun,,18752,primary,Level 1 Scattergun,13,weapon,False
+701,Hot,Shotgun,,34840,primary,Level 1 Shotgun,9,weapon,False
+701,Hot,Stickybomb Launcher,,7904,secondary,Level 1 Stickybomb Launcher,207,weapon,False
+701,Hot,Scattergun,,1172,primary,Elite Grade Scattergun,15151,weapon,False
+701,Hot,Minigun,,12528,primary,Level 1 Minigun,15,weapon,False
+701,Hot,Stickybomb Launcher,,416,secondary,Commando Grade Stickybomb Launcher,15155,weapon,False
+701,Hot,SMG,,380,secondary,Mercenary Grade SMG,15110,weapon,False
+701,Hot,Rocket Launcher,,1809,primary,Mercenary Grade Rocket Launcher,15105,weapon,False
+701,Hot,Knife,,475,melee,Level 1 Knife,15095,weapon,False
+701,Hot,Grenade Launcher,,459,primary,Mercenary Grade Grenade Launcher,15158,weapon,False
+701,Hot,Shotgun,,1742,primary,Mercenary Grade Shotgun,15003,weapon,False
+701,Hot,Flame Thrower,,1141,primary,Mercenary Grade Flame Thrower,15005,weapon,False
+701,Hot,Pistol,,744,secondary,Level 1 Pistol,15148,weapon,False
+701,Hot,Sniper Rifle,,1012,primary,Assassin Grade Sniper Rifle,15111,weapon,False
+701,Hot,Medi Gun,,953,secondary,Commando Grade Medi Gun,15010,weapon,False
+701,Hot,Rocket Launcher,,1809,primary,Assassin Grade Rocket Launcher,15052,weapon,False
+701,Hot,Minigun,,1044,primary,Mercenary Grade Minigun,15004,weapon,False
+701,Hot,Flame Thrower,,1141,primary,Level 1 Flame Thrower,15089,weapon,False
+701,Hot,Back Scratcher,,152,melee,Level 10 Garden Rake,326,weapon,False
+701,Hot,Wrench,,4288,melee,Level 1 Wrench,197,weapon,False
 701,Hot,War Paint,,311054,,Level 99 War Paint,9536,war_paint,False
-701,Hot,Degreaser,,21240,primary,Level 10 Flame Thrower,215,cosmetic,False
-701,Hot,Sniper Rifle,,15180,primary,Level 1 Sniper Rifle,14,cosmetic,False
-701,Hot,Jag,,1561,melee,Level 15 Wrench,329,cosmetic,False
-701,Hot,Black Box,,2756,primary,Level 5 Rocket Launcher,228,cosmetic,False
-701,Hot,Crusader's Crossbow,,3920,primary,Level 15 Crossbow,305,cosmetic,False
-701,Hot,Sniper Rifle,,39468,primary,Level 1 Sniper Rifle,201,cosmetic,False
-701,Hot,Panic Attack,,2712,primary,Level 1-99 Shotgun,1153,cosmetic,False
-701,Hot,Iron Bomber,,19240,primary,Level 1-99 Grenade Launcher,1151,cosmetic,False
-701,Hot,Scorch Shot,,1980,secondary,Level 10 Flare Gun,740,cosmetic,False
-701,Hot,Grenade Launcher,,4131,primary,Level 1 Grenade Launcher,19,cosmetic,False
-701,Hot,Holy Mackerel,,2040,melee,Level 42 Fish,221,cosmetic,False
-701,Hot,Air Strike,,1661,primary,Level 1-100 Rocket Launcher,1104,cosmetic,False
-701,Hot,Reserve Shooter,,54,secondary,Level 10 Shotgun,415,cosmetic,False
-701,Hot,Disciplinary Action,,2442,melee,Level 10 Riding Crop,447,cosmetic,False
-701,Hot,Tomislav,,8240,primary,Level 5 Minigun,424,cosmetic,False
-701,Hot,Scotsman's Skullcutter,,540,melee,Level 5 Axe,172,cosmetic,False
-701,Hot,Claidheamh Mòr,,2512,melee,Level 5 Sword,327,cosmetic,False
-701,Hot,Bazaar Bargain,,2150,primary,Level 10 Sniper Rifle,402,cosmetic,False
-701,Hot,Pistol,,744,secondary,Level 1 Pistol,22,cosmetic,False
-701,Hot,Rescue Ranger,,2691,primary,Level 1-100 Shotgun,997,cosmetic,False
-701,Hot,Shahanshah,,798,melee,Level 5 Kukri,401,cosmetic,False
-701,Hot,Brass Beast,,3600,primary,Level 5 Minigun,312,cosmetic,False
-701,Hot,Family Business,,122,secondary,Level 10 Shotgun,425,cosmetic,False
-701,Hot,Soda Popper,,745,primary,Level 10 Scattergun,448,cosmetic,False
-701,Hot,Persian Persuader,,322,melee,Level 10 Sword,404,cosmetic,False
-701,Hot,Winger,,36,secondary,Level 15 Pistol,449,cosmetic,False
-701,Hot,Loch-n-Load,,303,primary,Level 10 Grenade Launcher,308,cosmetic,False
-701,Hot,Detonator,,1430,secondary,Level 10 Flare Gun,351,cosmetic,False
-701,Hot,Shortstop,,360,primary,Level 1 Peppergun,220,cosmetic,False
-701,Hot,Stickybomb Launcher,,2912,secondary,Level 1 Stickybomb Launcher,20,cosmetic,False
-701,Hot,Powerjack,,2028,melee,Level 5 Sledgehammer,214,cosmetic,False
-701,Hot,Knife,,1900,melee,Level 1 Knife,4,cosmetic,False
-701,Hot,Loose Cannon,,1168,primary,Level 10 Grenade Launcher,996,cosmetic,False
-701,Hot,Flame Thrower,,9128,primary,Level 1 Flame Thrower,21,cosmetic,False
-701,Hot,Amputator,,34,melee,Level 15 Bonesaw,304,cosmetic,False
-701,Hot,Übersaw,,2715,melee,Level 10 Bonesaw,37,cosmetic,False
+701,Hot,Degreaser,,21240,primary,Level 10 Flame Thrower,215,weapon,False
+701,Hot,Sniper Rifle,,15180,primary,Level 1 Sniper Rifle,14,weapon,False
+701,Hot,Jag,,1561,melee,Level 15 Wrench,329,weapon,False
+701,Hot,Black Box,,2756,primary,Level 5 Rocket Launcher,228,weapon,False
+701,Hot,Crusader's Crossbow,,3920,primary,Level 15 Crossbow,305,weapon,False
+701,Hot,Sniper Rifle,,39468,primary,Level 1 Sniper Rifle,201,weapon,False
+701,Hot,Panic Attack,,2712,primary,Level 1-99 Shotgun,1153,weapon,False
+701,Hot,Iron Bomber,,19240,primary,Level 1-99 Grenade Launcher,1151,weapon,False
+701,Hot,Scorch Shot,,1980,secondary,Level 10 Flare Gun,740,weapon,False
+701,Hot,Grenade Launcher,,4131,primary,Level 1 Grenade Launcher,19,weapon,False
+701,Hot,Holy Mackerel,,2040,melee,Level 42 Fish,221,weapon,False
+701,Hot,Air Strike,,1661,primary,Level 1-100 Rocket Launcher,1104,weapon,False
+701,Hot,Reserve Shooter,,54,secondary,Level 10 Shotgun,415,weapon,False
+701,Hot,Disciplinary Action,,2442,melee,Level 10 Riding Crop,447,weapon,False
+701,Hot,Tomislav,,8240,primary,Level 5 Minigun,424,weapon,False
+701,Hot,Scotsman's Skullcutter,,540,melee,Level 5 Axe,172,weapon,False
+701,Hot,Claidheamh Mòr,,2512,melee,Level 5 Sword,327,weapon,False
+701,Hot,Bazaar Bargain,,2150,primary,Level 10 Sniper Rifle,402,weapon,False
+701,Hot,Pistol,,744,secondary,Level 1 Pistol,22,weapon,False
+701,Hot,Rescue Ranger,,2691,primary,Level 1-100 Shotgun,997,weapon,False
+701,Hot,Shahanshah,,798,melee,Level 5 Kukri,401,weapon,False
+701,Hot,Brass Beast,,3600,primary,Level 5 Minigun,312,weapon,False
+701,Hot,Family Business,,122,secondary,Level 10 Shotgun,425,weapon,False
+701,Hot,Soda Popper,,745,primary,Level 10 Scattergun,448,weapon,False
+701,Hot,Persian Persuader,,322,melee,Level 10 Sword,404,weapon,False
+701,Hot,Winger,,36,secondary,Level 15 Pistol,449,weapon,False
+701,Hot,Loch-n-Load,,303,primary,Level 10 Grenade Launcher,308,weapon,False
+701,Hot,Detonator,,1430,secondary,Level 10 Flare Gun,351,weapon,False
+701,Hot,Shortstop,,360,primary,Level 1 Peppergun,220,weapon,False
+701,Hot,Stickybomb Launcher,,2912,secondary,Level 1 Stickybomb Launcher,20,weapon,False
+701,Hot,Powerjack,,2028,melee,Level 5 Sledgehammer,214,weapon,False
+701,Hot,Knife,,1900,melee,Level 1 Knife,4,weapon,False
+701,Hot,Loose Cannon,,1168,primary,Level 10 Grenade Launcher,996,weapon,False
+701,Hot,Flame Thrower,,9128,primary,Level 1 Flame Thrower,21,weapon,False
+701,Hot,Amputator,,34,melee,Level 15 Bonesaw,304,weapon,False
+701,Hot,Übersaw,,2715,melee,Level 10 Bonesaw,37,weapon,False
 33,Orbiting Fire,Antlers,91552.0,5,misc,Level 1-100 Cosmetic Item,993,cosmetic,True
 33,Orbiting Fire,Virtual Viewfinder,85830.0,6,misc,Level 1-100 Headset,30140,cosmetic,True
 33,Orbiting Fire,Polar Pullover,77247.0,5,misc,Level 1-100 Hat,30329,cosmetic,True
@@ -28001,84 +28001,84 @@ effect_id,effect_name,item_name,price_ref,exist,slot,summary,defindex,item_type,
 291,Fireflies,Spiky Viking,514.98,6,misc,Level 1-100 Helmet,31100,cosmetic,True
 291,Fireflies,Blast Bowl,443.455,190,misc,Level 1-100 Helmet,31371,cosmetic,True
 291,Fireflies,Cleaner's Cap,,51,misc,Level 1-100 Hat,31376,cosmetic,False
-703,Cool,SMG,,4026,secondary,Level 1 SMG,203,cosmetic,False
-703,Cool,SMG,,366,secondary,Level 1 SMG,15153,cosmetic,False
-703,Cool,Knife,,10340,melee,Level 1 Knife,194,cosmetic,False
-703,Cool,Grenade Launcher,,14130,primary,Level 1 Grenade Launcher,206,cosmetic,False
-703,Cool,SMG,,366,secondary,Mercenary Grade SMG,15001,cosmetic,False
-703,Cool,Pistol,,3640,secondary,Level 1 Pistol,22,cosmetic,False
-703,Cool,Pistol,,5460,secondary,Level 1 Pistol,23,cosmetic,False
-703,Cool,Rocket Launcher,,1791,primary,Level 1 Rocket Launcher,15104,cosmetic,False
-703,Cool,Medi Gun,,71919,secondary,Level 1 Medi Gun,29,cosmetic,False
-703,Cool,Stickybomb Launcher,,10270,secondary,Level 1 Stickybomb Launcher,207,cosmetic,False
-703,Cool,Stickybomb Launcher,,790,secondary,Assassin Grade Stickybomb Launcher,15113,cosmetic,False
-703,Cool,Scattergun,,11810,primary,Level 1 Scattergun,13,cosmetic,False
-703,Cool,Minigun,,26514,primary,Level 1 Minigun,202,cosmetic,False
-703,Cool,Rocket Launcher,,161190,primary,Level 1 Rocket Launcher,18,cosmetic,False
-703,Cool,Grenade Launcher,,471,primary,Level 1 Grenade Launcher,15092,cosmetic,False
-703,Cool,Medi Gun,,2358,secondary,Mercenary Grade Medi Gun,15008,cosmetic,False
-703,Cool,Shotgun,,40664,primary,Level 1 Shotgun,9,cosmetic,False
-703,Cool,Pistol,,728,secondary,Level 1 Pistol,15148,cosmetic,False
-703,Cool,Scattergun,,1181,primary,Level 1 Scattergun,15106,cosmetic,False
-703,Cool,Revolver,,4425,secondary,Level 1 Revolver,24,cosmetic,False
-703,Cool,Scattergun,,60231,primary,Level 1 Scattergun,200,cosmetic,False
-703,Cool,Sniper Rifle,,17475,primary,Level 1 Sniper Rifle,14,cosmetic,False
-703,Cool,Flame Thrower,,14773,primary,Level 1 Flame Thrower,208,cosmetic,False
-703,Cool,Rocket Launcher,,3582,primary,Commando Grade Rocket Launcher,15006,cosmetic,False
-703,Cool,Knife,,940,melee,Level 1 Knife,15144,cosmetic,False
-703,Cool,Shotgun,,1768,primary,Assassin Grade Shotgun,15152,cosmetic,False
-703,Cool,Sniper Rifle,,65240,primary,Level 1 Sniper Rifle,201,cosmetic,False
-703,Cool,Knife,,470,melee,Level 1 Knife,15095,cosmetic,False
-703,Cool,Minigun,,17676,primary,Level 1 Minigun,15,cosmetic,False
-703,Cool,Shotgun,,95472,secondary,Level 1 Shotgun,10,cosmetic,False
-703,Cool,Grenade Launcher,,3297,primary,Level 1 Grenade Launcher,19,cosmetic,False
-703,Cool,Scattergun,,2362,primary,Assassin Grade Scattergun,15053,cosmetic,False
-703,Cool,Knife,,470,melee,Level 1 Knife,15143,cosmetic,False
-703,Cool,Wrench,,964,melee,Level 1 Wrench,7,cosmetic,False
-703,Cool,Scattergun,,1181,primary,Level 1 Scattergun,15107,cosmetic,False
-703,Cool,Minigun,,982,primary,Level 1 Minigun,15147,cosmetic,False
-703,Cool,Medi Gun,,1179,secondary,Level 1 Medi Gun,15145,cosmetic,False
-703,Cool,Knife,,470,melee,Level 1 Knife,15094,cosmetic,False
-703,Cool,Pistol,,364,secondary,Commando Grade Pistol,15046,cosmetic,False
-703,Cool,Revolver,,295,secondary,Level 1 Revolver,15149,cosmetic,False
-703,Cool,Revolver,,295,secondary,Assassin Grade Revolver,15011,cosmetic,False
-703,Cool,Medi Gun,,1179,secondary,Level 1 Medi Gun,15146,cosmetic,False
-703,Cool,SMG,,366,secondary,Mercenary Grade SMG,15058,cosmetic,False
-703,Cool,Claidheamh Mòr,,2480,melee,Level 5 Sword,327,cosmetic,False
-703,Cool,Disciplinary Action,,1630,melee,Level 10 Riding Crop,447,cosmetic,False
-703,Cool,Wrench,,4097,melee,Level 1 Wrench,197,cosmetic,False
-703,Cool,Powerjack,,2704,melee,Level 5 Sledgehammer,214,cosmetic,False
+703,Cool,SMG,,4026,secondary,Level 1 SMG,203,weapon,False
+703,Cool,SMG,,366,secondary,Level 1 SMG,15153,weapon,False
+703,Cool,Knife,,10340,melee,Level 1 Knife,194,weapon,False
+703,Cool,Grenade Launcher,,14130,primary,Level 1 Grenade Launcher,206,weapon,False
+703,Cool,SMG,,366,secondary,Mercenary Grade SMG,15001,weapon,False
+703,Cool,Pistol,,3640,secondary,Level 1 Pistol,22,weapon,False
+703,Cool,Pistol,,5460,secondary,Level 1 Pistol,23,weapon,False
+703,Cool,Rocket Launcher,,1791,primary,Level 1 Rocket Launcher,15104,weapon,False
+703,Cool,Medi Gun,,71919,secondary,Level 1 Medi Gun,29,weapon,False
+703,Cool,Stickybomb Launcher,,10270,secondary,Level 1 Stickybomb Launcher,207,weapon,False
+703,Cool,Stickybomb Launcher,,790,secondary,Assassin Grade Stickybomb Launcher,15113,weapon,False
+703,Cool,Scattergun,,11810,primary,Level 1 Scattergun,13,weapon,False
+703,Cool,Minigun,,26514,primary,Level 1 Minigun,202,weapon,False
+703,Cool,Rocket Launcher,,161190,primary,Level 1 Rocket Launcher,18,weapon,False
+703,Cool,Grenade Launcher,,471,primary,Level 1 Grenade Launcher,15092,weapon,False
+703,Cool,Medi Gun,,2358,secondary,Mercenary Grade Medi Gun,15008,weapon,False
+703,Cool,Shotgun,,40664,primary,Level 1 Shotgun,9,weapon,False
+703,Cool,Pistol,,728,secondary,Level 1 Pistol,15148,weapon,False
+703,Cool,Scattergun,,1181,primary,Level 1 Scattergun,15106,weapon,False
+703,Cool,Revolver,,4425,secondary,Level 1 Revolver,24,weapon,False
+703,Cool,Scattergun,,60231,primary,Level 1 Scattergun,200,weapon,False
+703,Cool,Sniper Rifle,,17475,primary,Level 1 Sniper Rifle,14,weapon,False
+703,Cool,Flame Thrower,,14773,primary,Level 1 Flame Thrower,208,weapon,False
+703,Cool,Rocket Launcher,,3582,primary,Commando Grade Rocket Launcher,15006,weapon,False
+703,Cool,Knife,,940,melee,Level 1 Knife,15144,weapon,False
+703,Cool,Shotgun,,1768,primary,Assassin Grade Shotgun,15152,weapon,False
+703,Cool,Sniper Rifle,,65240,primary,Level 1 Sniper Rifle,201,weapon,False
+703,Cool,Knife,,470,melee,Level 1 Knife,15095,weapon,False
+703,Cool,Minigun,,17676,primary,Level 1 Minigun,15,weapon,False
+703,Cool,Shotgun,,95472,secondary,Level 1 Shotgun,10,weapon,False
+703,Cool,Grenade Launcher,,3297,primary,Level 1 Grenade Launcher,19,weapon,False
+703,Cool,Scattergun,,2362,primary,Assassin Grade Scattergun,15053,weapon,False
+703,Cool,Knife,,470,melee,Level 1 Knife,15143,weapon,False
+703,Cool,Wrench,,964,melee,Level 1 Wrench,7,weapon,False
+703,Cool,Scattergun,,1181,primary,Level 1 Scattergun,15107,weapon,False
+703,Cool,Minigun,,982,primary,Level 1 Minigun,15147,weapon,False
+703,Cool,Medi Gun,,1179,secondary,Level 1 Medi Gun,15145,weapon,False
+703,Cool,Knife,,470,melee,Level 1 Knife,15094,weapon,False
+703,Cool,Pistol,,364,secondary,Commando Grade Pistol,15046,weapon,False
+703,Cool,Revolver,,295,secondary,Level 1 Revolver,15149,weapon,False
+703,Cool,Revolver,,295,secondary,Assassin Grade Revolver,15011,weapon,False
+703,Cool,Medi Gun,,1179,secondary,Level 1 Medi Gun,15146,weapon,False
+703,Cool,SMG,,366,secondary,Mercenary Grade SMG,15058,weapon,False
+703,Cool,Claidheamh Mòr,,2480,melee,Level 5 Sword,327,weapon,False
+703,Cool,Disciplinary Action,,1630,melee,Level 10 Riding Crop,447,weapon,False
+703,Cool,Wrench,,4097,melee,Level 1 Wrench,197,weapon,False
+703,Cool,Powerjack,,2704,melee,Level 5 Sledgehammer,214,weapon,False
 703,Cool,War Paint,,305620,,Level 99 War Paint,9536,war_paint,False
-703,Cool,Air Strike,,254,primary,Level 1-100 Rocket Launcher,1104,cosmetic,False
-703,Cool,Panic Attack,,6289,primary,Level 1-99 Shotgun,1153,cosmetic,False
-703,Cool,SMG,,732,secondary,Level 1 SMG,16,cosmetic,False
-703,Cool,Jag,,1544,melee,Level 15 Wrench,329,cosmetic,False
-703,Cool,Rescue Ranger,,1547,primary,Level 1-100 Shotgun,997,cosmetic,False
-703,Cool,Brass Beast,,1440,primary,Level 5 Minigun,312,cosmetic,False
-703,Cool,Iron Bomber,,14157,primary,Level 1-99 Grenade Launcher,1151,cosmetic,False
-703,Cool,Scotsman's Skullcutter,,868,melee,Level 5 Axe,172,cosmetic,False
-703,Cool,Soda Popper,,1170,primary,Level 10 Scattergun,448,cosmetic,False
-703,Cool,Crusader's Crossbow,,9483,primary,Level 15 Crossbow,305,cosmetic,False
-703,Cool,Tomislav,,6650,primary,Level 5 Minigun,424,cosmetic,False
-703,Cool,Family Business,,469,secondary,Level 10 Shotgun,425,cosmetic,False
-703,Cool,Flame Thrower,,10428,primary,Level 1 Flame Thrower,21,cosmetic,False
-703,Cool,Degreaser,,4056,primary,Level 10 Flame Thrower,215,cosmetic,False
-703,Cool,Detonator,,704,secondary,Level 10 Flare Gun,351,cosmetic,False
-703,Cool,Scorch Shot,,428,secondary,Level 10 Flare Gun,740,cosmetic,False
-703,Cool,Loose Cannon,,1640,primary,Level 10 Grenade Launcher,996,cosmetic,False
-703,Cool,Holy Mackerel,,1274,melee,Level 42 Fish,221,cosmetic,False
-703,Cool,Shahanshah,,1190,melee,Level 5 Kukri,401,cosmetic,False
-703,Cool,Amputator,,210,melee,Level 15 Bonesaw,304,cosmetic,False
-703,Cool,Back Scratcher,,210,melee,Level 10 Garden Rake,326,cosmetic,False
-703,Cool,Bazaar Bargain,,2412,primary,Level 10 Sniper Rifle,402,cosmetic,False
-703,Cool,Black Box,,1050,primary,Level 5 Rocket Launcher,228,cosmetic,False
-703,Cool,Loch-n-Load,,249,primary,Level 10 Grenade Launcher,308,cosmetic,False
-703,Cool,Winger,,124,secondary,Level 15 Pistol,449,cosmetic,False
-703,Cool,Shortstop,,295,primary,Level 1 Peppergun,220,cosmetic,False
-703,Cool,Persian Persuader,,135,melee,Level 10 Sword,404,cosmetic,False
-703,Cool,Reserve Shooter,,28,secondary,Level 10 Shotgun,415,cosmetic,False
-703,Cool,Stickybomb Launcher,,1185,secondary,Level 1 Stickybomb Launcher,20,cosmetic,False
-703,Cool,Übersaw,,3834,melee,Level 10 Bonesaw,37,cosmetic,False
+703,Cool,Air Strike,,254,primary,Level 1-100 Rocket Launcher,1104,weapon,False
+703,Cool,Panic Attack,,6289,primary,Level 1-99 Shotgun,1153,weapon,False
+703,Cool,SMG,,732,secondary,Level 1 SMG,16,weapon,False
+703,Cool,Jag,,1544,melee,Level 15 Wrench,329,weapon,False
+703,Cool,Rescue Ranger,,1547,primary,Level 1-100 Shotgun,997,weapon,False
+703,Cool,Brass Beast,,1440,primary,Level 5 Minigun,312,weapon,False
+703,Cool,Iron Bomber,,14157,primary,Level 1-99 Grenade Launcher,1151,weapon,False
+703,Cool,Scotsman's Skullcutter,,868,melee,Level 5 Axe,172,weapon,False
+703,Cool,Soda Popper,,1170,primary,Level 10 Scattergun,448,weapon,False
+703,Cool,Crusader's Crossbow,,9483,primary,Level 15 Crossbow,305,weapon,False
+703,Cool,Tomislav,,6650,primary,Level 5 Minigun,424,weapon,False
+703,Cool,Family Business,,469,secondary,Level 10 Shotgun,425,weapon,False
+703,Cool,Flame Thrower,,10428,primary,Level 1 Flame Thrower,21,weapon,False
+703,Cool,Degreaser,,4056,primary,Level 10 Flame Thrower,215,weapon,False
+703,Cool,Detonator,,704,secondary,Level 10 Flare Gun,351,weapon,False
+703,Cool,Scorch Shot,,428,secondary,Level 10 Flare Gun,740,weapon,False
+703,Cool,Loose Cannon,,1640,primary,Level 10 Grenade Launcher,996,weapon,False
+703,Cool,Holy Mackerel,,1274,melee,Level 42 Fish,221,weapon,False
+703,Cool,Shahanshah,,1190,melee,Level 5 Kukri,401,weapon,False
+703,Cool,Amputator,,210,melee,Level 15 Bonesaw,304,weapon,False
+703,Cool,Back Scratcher,,210,melee,Level 10 Garden Rake,326,weapon,False
+703,Cool,Bazaar Bargain,,2412,primary,Level 10 Sniper Rifle,402,weapon,False
+703,Cool,Black Box,,1050,primary,Level 5 Rocket Launcher,228,weapon,False
+703,Cool,Loch-n-Load,,249,primary,Level 10 Grenade Launcher,308,weapon,False
+703,Cool,Winger,,124,secondary,Level 15 Pistol,449,weapon,False
+703,Cool,Shortstop,,295,primary,Level 1 Peppergun,220,weapon,False
+703,Cool,Persian Persuader,,135,melee,Level 10 Sword,404,weapon,False
+703,Cool,Reserve Shooter,,28,secondary,Level 10 Shotgun,415,weapon,False
+703,Cool,Stickybomb Launcher,,1185,secondary,Level 1 Stickybomb Launcher,20,weapon,False
+703,Cool,Übersaw,,3834,melee,Level 10 Bonesaw,37,weapon,False
 396,Calm Snowfall,Coldfront Commander,11444.0,0,misc,Level 1-100 Hat,30939,cosmetic,True
 396,Calm Snowfall,Hellish Overlord,11444.0,2,misc,Level 1-100 Helmet,31481,cosmetic,True
 396,Calm Snowfall,Shadow Shroud,6866.4,1,misc,Level 1-100 Shroud,31473,cosmetic,True
