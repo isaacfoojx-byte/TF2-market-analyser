@@ -14,7 +14,7 @@ In Command Prompt:
 
 5) Run "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="%TEMP%\ChromeDebug" 
 
-6) In the chrome window that opens after step 3, go to backpack.tf. Pass CLoudflare manually if required.
+6) In the chrome window that opens after step 5, go to backpack.tf. Pass CLoudflare manually if required.
 
 7) Run python scraper/main.py
 
@@ -30,7 +30,7 @@ In VSCode:
 
 4) Input "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="$env:TEMP\ChromeDebug"
 
-5) In the chrome window that opens after step 2, go to backpack.tf. Pass Cloudflare manually if required.
+5) In the chrome window that opens after step 4, go to backpack.tf. Pass Cloudflare manually if required.
 
 6) Input python scraper/main.py
 
