@@ -10,6 +10,15 @@ plt.rcParams["figure.figsize"] = (10, 6)
 
 os.makedirs("figures", exist_ok=True)
 
+def save_plot(filename):
+    plt.tight_layout()
+    plt.savefig(
+        f"figures/{filename}",
+        dpi=300,
+        bbox_inches="tight"
+    )
+    plt.close()
+
 # -------------------------------------------------------
 # 1. Distribution of Prices
 # -------------------------------------------------------
@@ -23,9 +32,12 @@ plt.xlabel("Price (Refined)")
 plt.ylabel("Number of Listings")
 
 plt.tight_layout()
+
+save_plot("unusual_price_distribution.png")
+
 plt.show()
 
-plt.savefig("figures/unusual_price_distribution.png", dpi=300)
+
 # -------------------------------------------------------
 # 2. Rarity vs Price
 # -------------------------------------------------------
@@ -43,9 +55,13 @@ plt.xlabel("Existence")
 plt.ylabel("Price (Refined)")
 
 plt.tight_layout()
+
+save_plot("rarity_vs_price.png")
+
+
 plt.show()
 
-plt.savefig("figures/rarity_vs_price.png", dpi=300)
+
 
 # -------------------------------------------------------
 # 3. Top 20 Effects by Average Price
@@ -67,9 +83,13 @@ plt.xlabel("Average Price (Refined)")
 plt.ylabel("Effect")
 
 plt.tight_layout()
+
+save_plot("top_20_effects_by_average_price.png")
+
+
 plt.show()
 
-plt.savefig("figures/top_20_effects_by_average_price.png", dpi=300)
+
 
 # -------------------------------------------------------
 # 4. Top 20 Items by Average Price
@@ -91,9 +111,12 @@ plt.xlabel("Average Price (Refined)")
 plt.ylabel("Item")
 
 plt.tight_layout()
+
+save_plot("top_20_items_by_average_price.png")
+
 plt.show()
 
-plt.savefig("figures/top_20_items_by_average_price.png", dpi=300)
+
 
 # -------------------------------------------------------
 # 5. Average Price by Item Type
@@ -113,9 +136,12 @@ plt.xlabel("Item Type")
 plt.ylabel("Average Price (Refined)")
 
 plt.tight_layout()
+
+save_plot("average_price_by_item_type.png")
+
 plt.show()
 
-plt.savefig("figures/average_price_by_item_type.png", dpi=300)
+
 # -------------------------------------------------------
 # 6. Top 20 Most Common Effects
 # -------------------------------------------------------
@@ -134,9 +160,12 @@ plt.title("Most Common Effects")
 plt.xlabel("Number of Listings")
 
 plt.tight_layout()
+
+save_plot("most_common_effects.png")
+
 plt.show()
 
-plt.savefig("figures/most_common_effects.png", dpi=300)
+
 # -------------------------------------------------------
 # 7. Top 20 Most Common Items
 # -------------------------------------------------------
@@ -155,9 +184,12 @@ plt.title("Most Common Items")
 plt.xlabel("Number of Listings")
 
 plt.tight_layout()
+
+save_plot("most_common_items.png")
+
 plt.show()
 
-plt.savefig("figures/most_common_items.png", dpi=300)
+
 
 # -------------------------------------------------------
 # 8. Price Distribution by Item Type
@@ -176,6 +208,9 @@ plt.xlabel("Item Type")
 plt.ylabel("Price (Refined)")
 
 plt.tight_layout()
+
+save_plot("price_distribution_by_item_type.png")
+
+
 plt.show()
 
-plt.savefig("figures/price_distribution_by_item_type.png", dpi=300)
