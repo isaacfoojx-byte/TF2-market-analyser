@@ -1,6 +1,6 @@
 # BEFORE YOU GO ON
 
-In order to generate the complete CSV as shown in the folder "data" as an example, one must first create a remote chrome setup using these commands:
+In order to generate the complete CSV as shown in the folder "data" as an example, one must first create a remote chrome setup using these commands in VSCode's Powershell:
 
 "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222
 
