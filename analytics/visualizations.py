@@ -214,3 +214,94 @@ save_plot("price_distribution_by_item_type.png")
 
 plt.show()
 
+#-------------------------------------------------------
+# Calculating Coefficient of Variation for Effects
+#-------------------------------------------------------
+
+effect_stats = (
+    priced.groupby("effect_name")
+          .agg(
+              listings=("price_ref", "count"),
+              average_price=("price_ref", "mean"),
+              std_dev=("price_ref", "std")
+          )
+)
+
+effect_stats["coefficient_of_variation"] = (
+    effect_stats["std_dev"] /
+    effect_stats["average_price"]
+)
+
+#-------------------------------------------------------
+# Removing effects with fewer than 50 listings to ensure statistical significance
+#-------------------------------------------------------
+
+effect_stats = effect_stats[
+    effect_stats["listings"] >= 50
+]
+
+#-------------------------------------------------------
+# 9. Top 20 Most Stable Effects
+#-------------------------------------------------------
+
+stable_effects = (
+    effect_stats
+        .sort_values("coefficient_of_variation")
+        .head(20)
+)
+
+plt.figure(figsize=(12,8))
+
+stable_effects.sort_values("coefficient_of_variation").plot(
+    kind="barh",
+    y="coefficient_of_variation",
+    legend=False
+)
+
+plt.title("20 Most Stable Effects")
+plt.xlabel("Coefficient of Variation")
+plt.ylabel("Effect")
+
+plt.tight_layout()
+
+plt.savefig(
+    "figures/most_stable_effects.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.close()
+
+#-------------------------------------------------------
+# 10. Top 20 Most Volatile Effects
+#-------------------------------------------------------
+volatile_effects = (
+    effect_stats
+        .sort_values(
+            "coefficient_of_variation",
+            ascending=False
+        )
+        .head(20)
+)
+
+plt.figure(figsize=(12,8))
+
+volatile_effects.sort_values("coefficient_of_variation").plot(
+    kind="barh",
+    y="coefficient_of_variation",
+    legend=False
+)
+
+plt.title("20 Most Volatile Effects")
+plt.xlabel("Coefficient of Variation")
+plt.ylabel("Effect")
+
+plt.tight_layout()
+
+plt.savefig(
+    "figures/most_volatile_effects.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.close()
