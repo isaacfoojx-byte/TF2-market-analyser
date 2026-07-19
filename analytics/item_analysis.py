@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("data/cleaned_unusuals.csv")
+df = pd.read_csv("data/processed/cleaned_unusuals.csv")
 
 # Only analyse items with known prices
 priced = df[df["has_price"]]

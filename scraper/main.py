@@ -27,7 +27,7 @@ for i, effect in enumerate(effects, start=1):
 
         save_csv(
             master_dataset,
-            "data/all_unusuals.csv"
+            "data/raw/all_unusuals.csv"
         )
 
         print(
@@ -42,7 +42,7 @@ for i, effect in enumerate(effects, start=1):
         
         
 
-    time.sleep(1)
+    time.sleep(0.5)
 
 
     

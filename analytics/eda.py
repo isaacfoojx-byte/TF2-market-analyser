@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("data/cleaned_unusuals.csv")
+df = pd.read_csv("data/processed/cleaned_unusuals.csv")
 
 # "eda" stands for Exploratory Data Analysis, which is the process of analyzing and summarizing datasets to gain insights and understand their characteristics. In this code snippet, we are performing EDA on a dataset of unusual items in a game.
 

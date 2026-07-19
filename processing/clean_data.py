@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
+from processing.price_parser import convert_to_ref
 
-df = pd.read_csv("data/all_unusuals.csv")
+df = pd.read_csv("data/raw/all_unusuals.csv")
 
 # --------------------------------------
 # Feature Engineering
@@ -36,7 +37,7 @@ print("Saving Cleaned Data")
 print("=" * 60)
 
 df.to_csv(
-    "data/cleaned_unusuals.csv",
+    "data/processed/cleaned_unusuals.csv",
     index=False
 )
 

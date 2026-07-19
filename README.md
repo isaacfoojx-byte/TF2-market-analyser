@@ -45,4 +45,4 @@ Our project aims to inform TF2 players of which hats to invest in. We will retri
 
 # Collaborators
 
-Coded by Koh Min Xuan and Isaac Foo for the Build Beyond Hackathon
+Coded by Koh Min Xuan, Isaac Foo and Low Zong Xuan for the Build Beyond Hackathon

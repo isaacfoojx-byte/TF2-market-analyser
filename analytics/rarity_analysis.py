@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("data/cleaned_unusuals.csv")
+df = pd.read_csv("data/processed/cleaned_unusuals.csv")
 
 pd.set_option("display.max_columns", None)
 pd.set_option("display.width", None)
