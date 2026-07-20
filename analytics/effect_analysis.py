@@ -1,9 +1,6 @@
-import pandas as pd
+from utils import load_data
 
-df = pd.read_csv("data/processed/cleaned_unusuals.csv")
-
-# Only analyse effects with known prices
-priced = df[df["has_price"]]
+df, priced = load_data()
 
 # --------------------------------------
 # Build Effect Statistics Table
@@ -12,11 +9,11 @@ priced = df[df["has_price"]]
 effect_stats = (
     priced.groupby("effect_name")
           .agg(
-              count=("price_ref", "count"),
-              average_price=("price_ref", "mean"),
-              median_price=("price_ref", "median"),
-              minimum_price=("price_ref", "min"),
-              maximum_price=("price_ref", "max")
+              count=("bp_price_ref", "count"),
+              average_price=("bp_price_ref", "mean"),
+              median_price=("bp_price_ref", "median"),
+              minimum_price=("bp_price_ref", "min"),
+              maximum_price=("bp_price_ref", "max")
           )
 )
 

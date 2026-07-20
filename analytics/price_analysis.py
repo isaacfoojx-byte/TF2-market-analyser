@@ -1,9 +1,7 @@
-import pandas as pd
+from utils import load_data
 
-df = pd.read_csv("data/processed/cleaned_unusuals.csv")
+df, priced = load_data()
 
-# Only items with known prices
-priced = df[df["has_price"]]
 
 #--------------------------------------
 # Top 20 most expensive unusuals
@@ -14,11 +12,11 @@ print("=" * 60)
 
 print(priced.nlargest(
     20,
-    "price_ref"
+    "bp_price_ref"
 )[[
     "effect_name",
     "item_name",
-    "price_ref",
+    "bp_price_ref",
     "exist"
 ]])
 
@@ -33,8 +31,8 @@ print("=" * 60)
 effect_stats = (
     priced.groupby("effect_name")
       .agg(
-          average_price=("price_ref", "mean"),
-          count=("price_ref", "count")
+          average_price=("bp_price_ref", "mean"),
+          count=("bp_price_ref", "count")
       )
       .sort_values("average_price", ascending=False)
 )
@@ -52,11 +50,11 @@ print("=" * 60)
 
 print(priced[priced["item_type"] == "taunt"].nlargest(
     20,
-    "price_ref"
+    "bp_price_ref"
 )[[
     "effect_name",
     "item_name",
-    "price_ref",
+    "bp_price_ref",
     "exist"
 ]])
 
@@ -70,7 +68,7 @@ print("Average price by item type:")
 print("=" * 60)
 
 print(
-    priced.groupby("item_type")["price_ref"]
+    priced.groupby("item_type")["bp_price_ref"]
       .mean().round(2)
 )
 
@@ -84,7 +82,7 @@ print("Median Price by Item Type")
 print("=" * 60)
 
 print(
-    priced.groupby("item_type")["price_ref"]
+    priced.groupby("item_type")["bp_price_ref"]
       .median()
       .round(2)
 )
@@ -98,7 +96,7 @@ print("Maximum Price by Effect")
 print("=" * 60)
 
 max_effect_price = (
-    priced.groupby("effect_name")["price_ref"]
+    priced.groupby("effect_name")["bp_price_ref"]
       .max()
       .sort_values(ascending=False)
       .head(20)
@@ -132,3 +130,5 @@ price_summary["priced_percentage"] = (
 ).round(1)
 
 print(price_summary)
+
+

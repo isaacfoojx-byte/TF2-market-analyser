@@ -1,6 +1,7 @@
 import pandas as pd
+from utils import load_data
 
-df = pd.read_csv("data/processed/cleaned_unusuals.csv")
+df, priced = load_data()
 
 pd.set_option("display.max_columns", None)
 pd.set_option("display.width", None)
@@ -44,10 +45,10 @@ print(
     unique_df[[
         "effect_name",
         "item_name",
-        "price_ref",
+        "bp_price_ref",
         "item_type"
     ]]
-    .sort_values("price_ref", ascending=False).head(20)
+    .sort_values("bp_price_ref", ascending=False).head(20)
 )
 
 print(f"Total unique unusuals: {len(unique_df):,}")
@@ -62,7 +63,7 @@ print("Average Price by Existence Count")
 print("=" * 60)
 
 avg_price_by_exist = (
-    df.groupby("exist")["price_ref"]
+    df.groupby("exist")["bp_price_ref"]
       .mean()
       .sort_index()
       .round(2)
@@ -78,7 +79,7 @@ print("=" * 60)
 print("Correlation between Existence and Price")
 print("=" * 60)
 
-corr = df["exist"].corr(df["price_ref"])
+corr = df["exist"].corr(df["bp_price_ref"])
 
 print(f"Pearson correlation: {corr:.3f}")
 
@@ -99,7 +100,7 @@ print("=" * 60)
 
 print(
     cosmetics
-      .groupby("exist")["price_ref"]
+      .groupby("exist")["bp_price_ref"]
       .mean()
       .sort_index()
       .round(2)
@@ -117,7 +118,7 @@ print("=" * 60)
 
 print(
     taunts
-      .groupby("exist")["price_ref"]
+      .groupby("exist")["bp_price_ref"]
       .mean()
       .sort_index()
       .round(2)
@@ -136,10 +137,10 @@ print(
     unique_df[[
         "effect_name",
         "item_name",
-        "price_ref",
+        "bp_price_ref",
         "item_type"
     ]]
-    .sort_values("price_ref")
+    .sort_values("bp_price_ref")
     .head(20)
 )
 
@@ -159,7 +160,7 @@ print(
         "effect_name",
         "item_name",
         "exist",
-        "price_ref"
+        "bp_price_ref"
     ]]
 )
 
@@ -180,6 +181,6 @@ print(
         "effect_name",
         "item_name",
         "exist",
-        "price_ref"
+        "bp_price_ref"
     ]]
 )

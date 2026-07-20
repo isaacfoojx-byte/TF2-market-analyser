@@ -1,10 +1,8 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from utils import load_data
 
-df = pd.read_csv("data/processed/cleaned_unusuals.csv")
-
-priced = df[df["has_price"]].copy()
+df, priced = load_data()
 
 plt.rcParams["figure.figsize"] = (10, 6)
 
@@ -46,7 +44,7 @@ plt.figure()
 
 plt.scatter(
     priced["exist"],
-    priced["price_ref"],
+    priced["bp_price_ref"],
     alpha=0.3
 )
 
@@ -68,7 +66,7 @@ plt.show()
 # -------------------------------------------------------
 
 effect_avg = (
-    priced.groupby("effect_name")["price_ref"]
+    priced.groupby("effect_name")["bp_price_ref"]
           .mean()
           .sort_values(ascending=False)
           .head(20)
@@ -96,7 +94,7 @@ plt.show()
 # -------------------------------------------------------
 
 item_avg = (
-    priced.groupby("item_name")["price_ref"]
+    priced.groupby("item_name")["bp_price_ref"]
           .mean()
           .sort_values(ascending=False)
           .head(20)
@@ -123,7 +121,7 @@ plt.show()
 # -------------------------------------------------------
 
 item_type = (
-    priced.groupby("item_type")["price_ref"]
+    priced.groupby("item_type")["bp_price_ref"]
           .mean()
 )
 
@@ -198,7 +196,7 @@ plt.show()
 plt.figure()
 
 priced.boxplot(
-    column="price_ref",
+    column="bp_price_ref",
     by="item_type"
 )
 
@@ -221,9 +219,9 @@ plt.show()
 effect_stats = (
     priced.groupby("effect_name")
           .agg(
-              listings=("price_ref", "count"),
-              average_price=("price_ref", "mean"),
-              std_dev=("price_ref", "std")
+              listings=("bp_price_ref", "count"),
+              average_price=("bp_price_ref", "mean"),
+              std_dev=("bp_price_ref", "std")
           )
 )
 

@@ -1,10 +1,8 @@
-import pandas as pd
+from utils import load_data
 
-df = pd.read_csv("data/processed/cleaned_unusuals.csv")
+df, priced = load_data()
 
-priced = df[df["has_price"]]
-
-market_average = priced["price_ref"].mean()
+market_average = priced["bp_price_ref"].mean()
 
 # ---------------------------------------------------
 # Effect Market Statistics
@@ -13,12 +11,12 @@ market_average = priced["price_ref"].mean()
 effect_market = (
     priced.groupby("effect_name")
           .agg(
-              listings=("price_ref", "count"),
-              average_price=("price_ref", "mean"),
-              median_price=("price_ref", "median"),
-              std_dev=("price_ref", "std"),
-              min_price=("price_ref", "min"),
-              max_price=("price_ref", "max")
+              listings=("bp_price_ref", "count"),
+              average_price=("bp_price_ref", "mean"),
+              median_price=("bp_price_ref", "median"),
+              std_dev=("bp_price_ref", "std"),
+              min_price=("bp_price_ref", "min"),
+              max_price=("bp_price_ref", "max")
           )
 )
 
@@ -44,12 +42,12 @@ effect_market = effect_market.round(2)
 item_market = (
     priced.groupby("item_name")
           .agg(
-              listings=("price_ref", "count"),
-              average_price=("price_ref", "mean"),
-              median_price=("price_ref", "median"),
-              std_dev=("price_ref", "std"),
-              min_price=("price_ref", "min"),
-              max_price=("price_ref", "max")
+              listings=("bp_price_ref", "count"),
+              average_price=("bp_price_ref", "mean"),
+              median_price=("bp_price_ref", "median"),
+              std_dev=("bp_price_ref", "std"),
+              min_price=("bp_price_ref", "min"),
+              max_price=("bp_price_ref", "max")
           )
 )
 
@@ -77,7 +75,7 @@ print("Overall Market")
 print("=" * 60)
 
 print(f"Average unusual price : {market_average:,.2f} ref")
-print(f"Median unusual price  : {priced['price_ref'].median():,.2f} ref")
+print(f"Median unusual price  : {priced['bp_price_ref'].median():,.2f} ref")
 print(f"Number of listings    : {len(priced):,}")
 
 # ---------------------------------------------------
@@ -203,3 +201,4 @@ print(
                      ascending=False)
         .head(20)
 )
+

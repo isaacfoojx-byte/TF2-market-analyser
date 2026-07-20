@@ -57,7 +57,7 @@ for i, effect in enumerate(effects, start=1):
 
 driver.quit()
 
-clean_data(key_market["mid_price"])
+clean_data()
 
 print("Done!")
 

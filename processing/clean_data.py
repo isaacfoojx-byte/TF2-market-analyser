@@ -1,25 +1,58 @@
 import pandas as pd
 import numpy as np
-from processing.price_parser import convert_to_ref
+import re
+
+def parse_key_range(value):
+
+    if pd.isna(value):
+        return pd.Series([np.nan, np.nan, np.nan])
+
+    value = value.replace(" keys", "").strip()
+
+    numbers = re.findall(r"\d+(?:\.\d+)?", value)
+
+    if len(numbers) == 2:
+        low = float(numbers[0])
+        high = float(numbers[1])
+    elif len(numbers) == 1:
+        low = high = float(numbers[0])
+    else:
+        return pd.Series([np.nan, np.nan, np.nan])
+
+    mid = (low + high) / 2
+
+    return pd.Series([low, high, mid])
 
 
+def clean_data():
 
-# --------------------------------------
-# Price Conversion
-# --------------------------------------
-def clean_data(key_ref_price):
 
     df = pd.read_csv("data/raw/all_unusuals.csv")
 
-    df["price_ref"] = df["price_ref"].astype(float)
+    df["bp_price_ref"] = df["bp_price_ref"].astype(float)
 
-    df = df.rename(columns={
-        "bp_price_ref": "price_ref"
-    })
+    df["exist"] = df["exist"].astype(int)
+
+    df["defindex"] = df["defindex"].astype(int)
+
+    df["effect_id"] = df["effect_id"].astype(int)
 
     # --------------------------------------
     # Feature Engineering
     # --------------------------------------
+
+
+    df["usd_price"] = (
+        df["bp_price_all"]
+        .str.extract(r"\$([\d,]+(?:\.\d+)?)")[0]
+        .str.replace(",", "", regex=False)
+        .astype(float)
+    )
+
+    df[["key_low","key_high","key_mid"]] = (
+        df["bp_price_keys"]
+        .apply(parse_key_range)
+    )
 
     # Default classification
     df["item_type"] = "unknown"
@@ -36,10 +69,13 @@ def clean_data(key_ref_price):
     df.loc[df["item_name"] == "War Paint", "item_type"] = "war_paint"
 
     # Replace missing market prices with NaN
-    df.loc[df["price_ref"] == 0, "price_ref"] = np.nan
+    df.loc[df["bp_price_ref"] == 0, "bp_price_ref"] = np.nan
 
     # Convenience column
-    df["has_price"] = df["price_ref"].notna()
+    df["has_price"] = df["bp_price_ref"].notna()
+
+    # Remove redundant column
+    df = df.drop(columns=["bp_price_all"])
 
     # --------------------------------------
     # Save the cleaned data
@@ -55,3 +91,7 @@ def clean_data(key_ref_price):
     )
 
     print("Saved cleaned dataset.")
+
+if __name__ == "__main__":
+    clean_data()
+
