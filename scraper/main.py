@@ -1,6 +1,8 @@
 from browser import get_driver
 from effect_details import scrape_effect
 from effect_index import get_all_effects
+from processing.clean_data import clean_data
+from processing.key_price import get_key_market
 from csv_utils import save_csv
 from pathlib import Path
 import time
@@ -9,6 +11,8 @@ import time
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 driver = get_driver()
+
+key_market = get_key_market(driver)
 
 effects = get_all_effects(driver)
 
@@ -42,13 +46,18 @@ for i, effect in enumerate(effects, start=1):
         
         
 
-    time.sleep(0.5)
+    time.sleep(0.2)  # Be nice to the server
 
 
     
 
 
 driver.quit()
+
+clean_data(key_market["mid_price"])
+
+print("Current key market:")
+print(key_market)
 
 print("Done!")
 
