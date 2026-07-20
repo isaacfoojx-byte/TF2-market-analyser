@@ -8,9 +8,22 @@ def get_key_market(driver):
 
     driver.get(URL)
 
-    WebDriverWait(driver, 10).until(
-        lambda d: "Just a moment" not in d.title
-    )
+    print("Initial title:", driver.title)
+    print("Initial URL:", driver.current_url)
+
+    try:
+        WebDriverWait(driver, 10).until(
+            lambda d: "Just a moment" not in d.title
+        )
+    except Exception:
+        print("Timed out!")
+        print("Current title:", driver.title)
+        print("Current URL:", driver.current_url)
+        raise
+
+    print("After Cloudflare:")
+    print(driver.title)
+    print(driver.current_url)
 
     soup = BeautifulSoup(driver.page_source, "html.parser")
 

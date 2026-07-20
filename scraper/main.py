@@ -49,7 +49,7 @@ for i, effect in enumerate(effects, start=1):
         
         
 
-    time.sleep(0.2)  # Be nice to the server
+    time.sleep(0.1)  # Be nice to the server
 
 
     

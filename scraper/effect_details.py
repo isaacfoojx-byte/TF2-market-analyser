@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 def scrape_effect(driver, effect_name):
