@@ -14,7 +14,7 @@ In Command Prompt:
 
 5) Run & "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="$env:TEMP\ChromeDebug"
 
-6) In the chrome window that opens after step 5, go to backpack.tf. Pass CLoudflare manually if required.
+6) In the chrome window that opens after step 5, go to backpack.tf/effects . Pass Cloudflare manually if required.
 
 7) Navigate to your project root by running a command which looks something like cd C:\Users\isaac\OneDrive\Documents\GitHub\TF2-market-analyser with respect to your own PC (this navigates the console to your own project root), then run python -m scraper.main
 
@@ -32,7 +32,7 @@ If you just try to main.py, it would not work as it uses functions from other pa
 
 4) Input & "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="$env:TEMP\ChromeDebug"
 
-5) In the chrome window that opens after step 4, go to backpack.tf. Pass Cloudflare manually if required. 
+5) In the chrome window that opens after step 4, go to backpack.tf/effects . Pass Cloudflare manually if required. 
 
 6) Input python -m scraper.main
 
