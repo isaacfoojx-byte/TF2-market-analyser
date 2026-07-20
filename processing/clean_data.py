@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
+from pathlib import Path
 
 def parse_key_range(value):
 
@@ -24,10 +25,10 @@ def parse_key_range(value):
     return pd.Series([low, high, mid])
 
 
-def clean_data():
+def clean_data(raw_csv, processed_csv):
 
 
-    df = pd.read_csv("data/raw/all_unusuals.csv")
+    df = pd.read_csv(raw_csv)
 
     df["bp_price_ref"] = df["bp_price_ref"].astype(float)
 
@@ -85,13 +86,21 @@ def clean_data():
     print("Saving Cleaned Data")
     print("=" * 60)
 
+    Path(processed_csv).parent.mkdir(
+    parents=True,
+    exist_ok=True
+)
+
     df.to_csv(
-        "data/processed/cleaned_unusuals.csv",
+        processed_csv,
         index=False
     )
 
     print("Saved cleaned dataset.")
 
 if __name__ == "__main__":
-    clean_data()
 
+    clean_data(
+        "data/raw/all_unusuals.csv",
+        "data/processed/cleaned_unusuals.csv"
+    )

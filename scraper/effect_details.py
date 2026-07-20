@@ -1,7 +1,10 @@
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.ui import WebDriverWait
+from datetime import datetime
 
-def scrape_effect(driver, effect_name):
+
+
+def scrape_effect(driver, effect_name, scrape_timestamp):
 
     driver.get(f"https://backpack.tf/effect/{effect_name}")
 
@@ -37,6 +40,8 @@ def scrape_effect(driver, effect_name):
             "slot": effect.get("data-slot"),
             "summary": effect.get("data-summary"),
             "defindex": effect.get("data-defindex"),
+
+            "scrape_timestamp": scrape_timestamp
         })
 
     return effects

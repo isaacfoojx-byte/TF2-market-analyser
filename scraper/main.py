@@ -6,9 +6,18 @@ from processing.key_price import get_key_market
 from .csv_utils import save_csv
 from pathlib import Path
 import time
-
+from datetime import datetime
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+scrape_datetime = datetime.now()
+
+scrape_timestamp = datetime.now().isoformat(timespec="seconds")
+
+filename_timestamp = scrape_datetime.strftime("%Y-%m-%d_%H-%M-%S")
+
+raw_csv = f"data/raw/unusuals_{filename_timestamp}.csv"
+processed_csv = f"data/processed/cleaned_{filename_timestamp}.csv"
 
 driver = get_driver()
 
@@ -27,14 +36,15 @@ for i, effect in enumerate(effects, start=1):
     try:
         hats = scrape_effect(
             driver,
-            effect["effect_name"]
+            effect["effect_name"],
+            scrape_timestamp
         )
 
         master_dataset.extend(hats)
 
         save_csv(
             master_dataset,
-            "data/raw/all_unusuals.csv"
+            raw_csv
         )
 
         print(
@@ -57,7 +67,7 @@ for i, effect in enumerate(effects, start=1):
 
 driver.quit()
 
-clean_data()
+clean_data(raw_csv, processed_csv)
 
 print("Done!")
 
