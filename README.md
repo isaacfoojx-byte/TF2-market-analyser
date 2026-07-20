@@ -12,7 +12,7 @@ In Command Prompt:
 
 4) Run pip install -r requirements.txt
 
-5) Run "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="%TEMP%\ChromeDebug" 
+5) Run & "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="$env:TEMP\ChromeDebug"
 
 6) In the chrome window that opens after step 5, go to backpack.tf. Pass CLoudflare manually if required.
 
