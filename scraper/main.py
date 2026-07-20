@@ -14,6 +14,9 @@ driver = get_driver()
 
 key_market = get_key_market(driver)
 
+print("Current key market:")
+print(key_market)
+
 effects = get_all_effects(driver)
 
 master_dataset = []
@@ -55,9 +58,6 @@ for i, effect in enumerate(effects, start=1):
 driver.quit()
 
 clean_data(key_market["mid_price"])
-
-print("Current key market:")
-print(key_market)
 
 print("Done!")
 

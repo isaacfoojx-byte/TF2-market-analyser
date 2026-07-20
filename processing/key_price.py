@@ -37,12 +37,11 @@ def get_key_market(driver):
 
             official = item.get("data-p_bptf")   # "57–57.44 ref"
 
-            official = official.replace(" ref", "")
-
-            low, high = official.split("–")
-
-            official_low = float(low)
-            official_high = float(high)
+            if official:
+                official = official.replace(" ref", "")
+                low, high = official.split("–")
+                official_low = float(low)
+                official_high = float(high)
 
         if intent == "sell" and lowest_sell is None:
             lowest_sell = listing_price

@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from price_parser import convert_to_ref
+from processing.price_parser import convert_to_ref
 
 
 
@@ -14,6 +14,8 @@ def clean_data(key_ref_price):
     df["price_ref"] = df["listing_price"].apply(
             lambda price: convert_to_ref(price, key_ref_price)
         )
+
+    df["price_ref"] = df["price_ref"].astype(float)
 
     # --------------------------------------
     # Feature Engineering
