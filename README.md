@@ -16,7 +16,7 @@ In Command Prompt:
 
 6) In the chrome window that opens after step 5, go to backpack.tf. Pass CLoudflare manually if required.
 
-7) Run python scraper/main.py
+7) Navigate to your project root by running a command which looks something like cd C:\Users\isaac\OneDrive\Documents\GitHub\TF2-market-analyser with respect to your own PC, then run python -m scraper.main
 
 8) The chrome tab should start to document each item automatically now.
 
@@ -32,7 +32,7 @@ In VSCode:
 
 5) In the chrome window that opens after step 4, go to backpack.tf. Pass Cloudflare manually if required.
 
-6) Input python scraper/main.py
+6) Input python -m scraper.main
 
 7) The chrome tab should start to document each item automatically now.
 

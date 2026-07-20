@@ -24,11 +24,16 @@ def scrape_effect(driver, effect_name):
     
 
     for effect in elements:
+
         effects.append({
             "effect_id": effect.get("data-effect_id"),
             "effect_name": effect.get("data-effect_name"),
             "item_name": effect.get("data-base_name"),
-            "price_ref": effect.get("data-price"),
+
+            "bp_price_ref": effect.get("data-price"),
+            "bp_price_keys": effect.get("data-p_bptf"),
+            "bp_price_all": effect.get("data-p_bptf_all"),
+
             "exist": effect.get("data-exist"),
             "slot": effect.get("data-slot"),
             "summary": effect.get("data-summary"),
