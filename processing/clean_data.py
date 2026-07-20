@@ -11,11 +11,11 @@ def clean_data(key_ref_price):
 
     df = pd.read_csv("data/raw/all_unusuals.csv")
 
-    df["price_ref"] = df["listing_price"].apply(
-            lambda price: convert_to_ref(price, key_ref_price)
-        )
-
     df["price_ref"] = df["price_ref"].astype(float)
+
+    df = df.rename(columns={
+        "bp_price_ref": "price_ref"
+    })
 
     # --------------------------------------
     # Feature Engineering
