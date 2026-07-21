@@ -1,73 +1,84 @@
-from .browser import get_driver
-from .effect_details import scrape_effect
-from .effect_index import get_all_effects
-from processing.clean_data import clean_data
-from processing.key_price import get_key_market
-from .csv_utils import save_csv
-from pathlib import Path
+from __future__ import annotations
+import os
+import subprocess
+import sys
+import tempfile
 import time
-from datetime import datetime
+from importlib import import_module
+from pathlib import Path
+from urllib.error import URLError
+from urllib.request import urlopen
 
-BASE_DIR = Path(__file__).resolve().parent.parent
 
-scrape_datetime = datetime.now()
+DEBUG_PORT = 9222
+DEBUG_URL = f"http://localhost:{DEBUG_PORT}/json/version"
+START_URL = "https://backpack.tf/effects"
+STARTUP_TIMEOUT_SECONDS = 20
 
-scrape_timestamp = datetime.now().isoformat(timespec="seconds")
 
-filename_timestamp = scrape_datetime.strftime("%Y-%m-%d_%H-%M-%S")
+def find_chrome() -> Path:
+    candidates = [
+        Path(os.environ.get("PROGRAMFILES", r"C:\Program Files"))
+        / "Google/Chrome/Application/chrome.exe",
+        Path(os.environ.get("PROGRAMFILES(X86)", r"C:\Program Files (x86)"))
+        / "Google/Chrome/Application/chrome.exe",
+        Path(os.environ.get("LOCALAPPDATA", ""))
+        / "Google/Chrome/Application/chrome.exe",
+    ]
 
-raw_csv = f"data/raw/unusuals_{filename_timestamp}.csv"
-processed_csv = f"data/processed/cleaned_{filename_timestamp}.csv"
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
 
-driver = get_driver()
-
-current_key_price = get_key_market(driver)
-
-print("Current key market:")
-print(current_key_price)
-
-effects = get_all_effects(driver)
-
-master_dataset = []
-
-for i, effect in enumerate(effects, start=1):
-
-    
-    try:
-        hats = scrape_effect(
-            driver,
-            effect["effect_name"],
-            scrape_timestamp
-        )
-
-        master_dataset.extend(hats)
-
-        save_csv(
-            master_dataset,
-            raw_csv
-        )
-
-        print(
-        f"[{i}/{len(effects)}] "
-        f"{effect['effect_name']} "
-        f"| {len(hats)} hats "
-        f"| Total rows: {len(master_dataset)}"
+    raise FileNotFoundError(
+        f"Cannot find your google chrome!"
     )
 
-    except Exception as e:
-        print(f"Failed: {effect['effect_name']} ({e})")
-        
-        
 
-    time.sleep(0.05)  # Be nice to the server
-
-
-    
+def debugger_is_ready() -> bool:
+    try:
+        with urlopen(DEBUG_URL, timeout=1):
+            return True
+    except (OSError, URLError):
+        return False
 
 
-driver.quit()
+def launch_chrome() -> None:
+    if debugger_is_ready():
+        print(f"Using the Chrome instance already running on port {DEBUG_PORT}.")
+        return
 
-clean_data(raw_csv, processed_csv,current_key_price)
+    chrome = find_chrome()
+    profile_dir = Path(tempfile.gettempdir()) / "TF2MarketAnalyserChrome"
 
-print("Done!")
+    subprocess.Popen(
+        [
+            str(chrome),
+            f"--remote-debugging-port={DEBUG_PORT}",
+            f"--user-data-dir={profile_dir}",
+            START_URL,
+        ]
+    )
 
+    deadline = time.monotonic() + STARTUP_TIMEOUT_SECONDS
+    while time.monotonic() < deadline:
+        if debugger_is_ready():
+            return
+        time.sleep(0.25)
+
+    raise TimeoutError(
+        f"Chrome opened, but its debugging endpoint did not become available "
+    )
+
+
+def main() -> None:
+    launch_chrome()
+    if __package__:
+        import_module(f"{__package__}.scraper")
+    else:
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+        import_module("scraper.scraper")
+
+
+if __name__ == "__main__":
+    main()

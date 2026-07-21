@@ -1,6 +1,6 @@
 # BEFORE YOU GO ON
 
-In order to generate the complete CSV as shown in the folder "data" as an example, one must first create a remote chrome setup.
+The launcher now creates the remote Chrome setup automatically.
 
 In Command Prompt:
 
@@ -12,17 +12,13 @@ In Command Prompt:
 
 4) Run pip install -r requirements.txt
 
-5) Run & "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="$env:TEMP\ChromeDebug"
+5) Run python -m scraper.main
 
-6) In the chrome window that opens after step 5, go to backpack.tf/effects . Pass Cloudflare manually if required.
-
-7) Navigate to your project root by running a command which looks something like cd C:\Users\isaac\OneDrive\Documents\GitHub\TF2-market-analyser with respect to your own PC (this navigates the console to your own project root), then run python -m scraper.main
-
-8) The chrome tab should start to document each item automatically now.
+6) Chrome will open backpack.tf/effects with remote debugging enabled on localhost:9222, and scraping will begin. Pass Cloudflare manually in that window if required.
 
 In VSCode:
 
-If you just try to main.py, it would not work as it uses functions from other packages. Therefore, do this instead:
+Run the launcher from the project root so its package imports resolve correctly:
 
 1) Open the TF2-market-analyser folder in VS Code.
 
@@ -30,15 +26,11 @@ If you just try to main.py, it would not work as it uses functions from other pa
 
 3) Input pip install -r requirements.txt
 
-4) Input & "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="$env:TEMP\ChromeDebug"
+4) Input python -m scraper.main
 
-5) In the chrome window that opens after step 4, go to backpack.tf/effects. Pass Cloudflare manually if required. 
+5) Chrome will open backpack.tf/effects and scraping will begin. Pass Cloudflare manually in that window if required.
 
-6) Input python -m scraper.main
-
-7) The chrome tab should start to document each item automatically now.
-
-You must close all other chrome tabs first. It is done this way because backpack.tf uses cloudfare protection in order to protect itself against bots. This allows the code to manually enter the website using an existing chrome browser.
+The launcher uses a separate temporary Chrome profile because backpack.tf may require a manual Cloudflare check before Selenium can use the page.
 
 
 # Objective
