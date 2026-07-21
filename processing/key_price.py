@@ -28,7 +28,7 @@ def get_key_market(driver):
         intent = item.get("data-listing_intent")
         listing_price = item.get("data-listing_price")
 
-        if listing_price is None:
+        if not listing_price:
             continue
 
         listing_price = float(listing_price.replace(" ref", ""))
