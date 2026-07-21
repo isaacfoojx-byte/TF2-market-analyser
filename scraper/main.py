@@ -21,10 +21,12 @@ processed_csv = f"data/processed/cleaned_{filename_timestamp}.csv"
 
 driver = get_driver()
 
-current_key_price = get_key_market(driver)
+current_key_market = get_key_market(driver)
 
 print("Current key market:")
-print(current_key_price)
+print(current_key_market)
+
+current_key_price = current_key_market["mid_price"]
 
 effects = get_all_effects(driver)
 
