@@ -32,7 +32,7 @@ If you just try to main.py, it would not work as it uses functions from other pa
 
 4) Input & "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="$env:TEMP\ChromeDebug"
 
-5) In the chrome window that opens after step 4, go to backpack.tf/effects . Pass Cloudflare manually if required. 
+5) In the chrome window that opens after step 4, go to backpack.tf/effects. Pass Cloudflare manually if required. 
 
 6) Input python -m scraper.main
 
@@ -47,4 +47,4 @@ Our project aims to inform TF2 players of which hats to invest in. We will retri
 
 # Collaborators
 
-Coded by Koh Min Xuan, Isaac Foo and Low Zong Xuan for the Build Beyond Hackathon
+Coded by Isaac Foo, Koh Min Xuan, and Low Zong Xuan for the Build Beyond Hackathon
