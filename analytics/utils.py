@@ -3,6 +3,8 @@ import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data" / "processed"
+PRICE_COL = "bp_price_keys_equivalent"
+PRICE_UNIT = "keys"
 
 def load_data(csv_path):
 

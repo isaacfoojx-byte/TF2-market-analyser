@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 import os
-from utils import load_latest_data
+from utils import (
+    load_latest_data,
+    PRICE_COL,
+    PRICE_UNIT
+)
 
 df, priced = load_latest_data()
 

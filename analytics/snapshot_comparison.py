@@ -1,82 +1,154 @@
-import pandas as pd
+from pathlib import Path
 
 from utils import (
+    load_latest_data,
+    load_data,
     get_latest_pair,
-    load_data
+    PRICE_COL,
+    PRICE_UNIT
 )
 
-old_file, new_file = get_latest_pair()
 
-old_df, old_priced = load_data(old_file)
-new_df, new_priced = load_data(new_file)
+def build_comparison():
+    old_file, new_file = get_latest_pair()
 
-comparison = old_priced.merge(
-    new_priced,
-    on=["effect_id", "defindex"],
-    suffixes=("_old", "_new"),
-    how="outer",
-    indicator=True
-)
+    old_df, old_priced = load_data(old_file)
+    new_df, new_priced = load_data(new_file)
 
-comparison["status"] = "Unchanged"
+    comparison = old_priced.merge(
+        new_priced,
+        on=["effect_id", "defindex"],
+        suffixes=("_old", "_new"),
+        how="outer",
+        indicator=True
+    )
 
-comparison.loc[
-    comparison["_merge"] == "right_only",
-    "status"
-] = "New Listing"
+    return comparison
 
-comparison.loc[
-    comparison["_merge"] == "left_only",
-    "status"
-] = "Removed"
+def calculate_changes(comparison):
 
-comparison.loc[
-    comparison["key_change"] > 0,
-    "status"
-] = "Price Increased"
+    comparison["key_change"] = (
+        comparison["bp_price_keys_equivalent_new"]
+        - comparison["bp_price_keys_equivalent_old"]
+    )
 
-comparison.loc[
-    comparison["key_change"] < 0,
-    "status"
-] = "Price Decreased"
+    comparison["percent_change"] = (
+        comparison["key_change"]
+        / comparison["bp_price_keys_equivalent_old"]
+    ) * 100
 
-unchanged = comparison[
-    comparison["_merge"] == "both"
-]
+    return comparison
 
-new_items = comparison[
-    comparison["_merge"] == "right_only"
-]
+def classify_changes(comparison):
 
-removed_items = comparison[
-    comparison["_merge"] == "left_only"
-]
+    comparison["status"] = "Unchanged"
 
-comparison["key_change"] = (
-    comparison["bp_price_keys_equivalent_new"]
-    - comparison["bp_price_keys_equivalent_old"]
-)
+    comparison.loc[
+        comparison["_merge"] == "right_only",
+        "status"
+    ] = "New Listing"
 
-comparison["percent_change"] = (
-    comparison["key_change"]
-    / comparison["bp_price_keys_equivalent_old"]
-) * 100
+    comparison.loc[
+        comparison["_merge"] == "left_only",
+        "status"
+    ] = "Removed"
 
-price_changed = comparison[
-    comparison["key_change"] != 0
-]
+    comparison.loc[
+        comparison["key_change"] > 0,
+        "status"
+    ] = "Price Increased"
 
-comparison.nlargest(
-    10,
-    "key_change"
-)
+    comparison.loc[
+        comparison["key_change"] < 0,
+        "status"
+    ] = "Price Decreased"
+    
+    return comparison
 
-comparison.nsmallest(
-    10,
-    "key_change"
-)
+def print_summary(comparison):
 
-comparison.nlargest(
-    10,
-    "percent_change"
-)
+    print("=" * 60)
+    print("Market Summary")
+    print("=" * 60)
+
+    print(f"Total listings: {len(comparison):,}")
+
+    print(f"New listings: {(comparison['_merge'] == 'right_only').sum()}")
+
+    print(f"Removed listings: {(comparison['_merge'] == 'left_only').sum()}")
+
+    print(f"Price increases: {(comparison['key_change'] > 0).sum()}")
+
+    print(f"Price decreases: {(comparison['key_change'] < 0).sum()}")
+
+
+def print_top_movers(comparison):
+
+    print("=" * 60)
+    print("Top 10 Gainers")
+    print("=" * 60)
+
+    print(
+        comparison.nlargest(
+            10,
+            "key_change"
+        )[
+            [
+                "effect_name_new",
+                "item_name_new",
+                "bp_price_keys_equivalent_old",
+                "bp_price_keys_equivalent_new",
+                "key_change",
+                "percent_change"
+            ]
+        ]
+    )
+
+    print("=" * 60)
+    print("Top 10 Losers")
+    print("=" * 60)
+
+    print(
+        comparison.nsmallest(
+            10,
+            "key_change"
+        )[
+            [
+                "effect_name_new",
+                "item_name_new",
+                "bp_price_keys_equivalent_old",
+                "bp_price_keys_equivalent_new",
+                "key_change",
+                "percent_change"
+            ]
+        ]
+    )
+
+
+def save_results(comparison):
+
+    output = Path("data/comparisons")
+
+    output.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    comparison.to_csv(
+        output / "latest_comparison.csv",
+        index=False
+    )
+
+def main():
+
+    comparison = build_comparison()
+
+    comparison = calculate_changes(comparison)
+
+    comparison = classify_changes(comparison)
+
+    print_summary(comparison)
+
+    print_top_movers(comparison)
+
+    save_results(comparison)
