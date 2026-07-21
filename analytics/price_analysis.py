@@ -16,11 +16,11 @@ print("=" * 60)
 
 print(priced.nlargest(
     20,
-    "bp_price_ref"
+    PRICE_COL
 )[[
     "effect_name",
     "item_name",
-    "bp_price_ref",
+    PRICE_COL,
     "exist"
 ]])
 
@@ -35,8 +35,8 @@ print("=" * 60)
 effect_stats = (
     priced.groupby("effect_name")
       .agg(
-          average_price=("bp_price_ref", "mean"),
-          count=("bp_price_ref", "count")
+          average_price=(PRICE_COL, "mean"),
+          count=(PRICE_COL, "count")
       )
       .sort_values("average_price", ascending=False)
 )
@@ -54,11 +54,11 @@ print("=" * 60)
 
 print(priced[priced["item_type"] == "taunt"].nlargest(
     20,
-    "bp_price_ref"
+    PRICE_COL
 )[[
     "effect_name",
     "item_name",
-    "bp_price_ref",
+    PRICE_COL,
     "exist"
 ]])
 
@@ -72,7 +72,7 @@ print("Average price by item type:")
 print("=" * 60)
 
 print(
-    priced.groupby("item_type")["bp_price_ref"]
+    priced.groupby("item_type")[PRICE_COL]
       .mean().round(2)
 )
 
@@ -86,7 +86,7 @@ print("Median Price by Item Type")
 print("=" * 60)
 
 print(
-    priced.groupby("item_type")["bp_price_ref"]
+    priced.groupby("item_type")[PRICE_COL]
       .median()
       .round(2)
 )
@@ -100,7 +100,7 @@ print("Maximum Price by Effect")
 print("=" * 60)
 
 max_effect_price = (
-    priced.groupby("effect_name")["bp_price_ref"]
+    priced.groupby("effect_name")[PRICE_COL]
       .max()
       .sort_values(ascending=False)
       .head(20)

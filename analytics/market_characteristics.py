@@ -6,7 +6,7 @@ from utils import (
 
 df, priced = load_latest_data()
 
-market_average = priced["bp_price_ref"].mean()
+market_average = priced[PRICE_COL].mean()
 
 # ---------------------------------------------------
 # Effect Market Statistics
@@ -15,12 +15,12 @@ market_average = priced["bp_price_ref"].mean()
 effect_market = (
     priced.groupby("effect_name")
           .agg(
-              listings=("bp_price_ref", "count"),
-              average_price=("bp_price_ref", "mean"),
-              median_price=("bp_price_ref", "median"),
-              std_dev=("bp_price_ref", "std"),
-              min_price=("bp_price_ref", "min"),
-              max_price=("bp_price_ref", "max")
+              listings=(PRICE_COL, "count"),
+              average_price=(PRICE_COL, "mean"),
+              median_price=(PRICE_COL, "median"),
+              std_dev=(PRICE_COL, "std"),
+              min_price=(PRICE_COL, "min"),
+              max_price=(PRICE_COL, "max")
           )
 )
 
@@ -46,12 +46,12 @@ effect_market = effect_market.round(2)
 item_market = (
     priced.groupby("item_name")
           .agg(
-              listings=("bp_price_ref", "count"),
-              average_price=("bp_price_ref", "mean"),
-              median_price=("bp_price_ref", "median"),
-              std_dev=("bp_price_ref", "std"),
-              min_price=("bp_price_ref", "min"),
-              max_price=("bp_price_ref", "max")
+              listings=(PRICE_COL, "count"),
+              average_price=(PRICE_COL, "mean"),
+              median_price=(PRICE_COL, "median"),
+              std_dev=(PRICE_COL, "std"),
+              min_price=(PRICE_COL, "min"),
+              max_price=(PRICE_COL, "max")
           )
 )
 
@@ -78,8 +78,8 @@ print("=" * 60)
 print("Overall Market")
 print("=" * 60)
 
-print(f"Average unusual price : {market_average:,.2f} ref")
-print(f"Median unusual price  : {priced['bp_price_ref'].median():,.2f} ref")
+print(f"Average unusual price : {market_average:,.2f} {PRICE_UNIT}")
+print(f"Median unusual price  : {priced[PRICE_COL].median():,.2f} {PRICE_UNIT}")
 print(f"Number of listings    : {len(priced):,}")
 
 # ---------------------------------------------------

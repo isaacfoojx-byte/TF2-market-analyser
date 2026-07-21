@@ -28,13 +28,13 @@ def build_comparison():
 def calculate_changes(comparison):
 
     comparison["key_change"] = (
-        comparison["bp_price_keys_equivalent_new"]
-        - comparison["bp_price_keys_equivalent_old"]
+        comparison[f"{PRICE_COL}_new"]
+        - comparison[f"{PRICE_COL}_old"]
     )
 
     comparison["percent_change"] = (
         comparison["key_change"]
-        / comparison["bp_price_keys_equivalent_old"]
+        / comparison[f"{PRICE_COL}_old"]
     ) * 100
 
     return comparison
@@ -96,8 +96,8 @@ def print_top_movers(comparison):
             [
                 "effect_name_new",
                 "item_name_new",
-                "bp_price_keys_equivalent_old",
-                "bp_price_keys_equivalent_new",
+                f"{PRICE_COL}_old",
+                f"{PRICE_COL}_new",
                 "key_change",
                 "percent_change"
             ]
@@ -116,8 +116,8 @@ def print_top_movers(comparison):
             [
                 "effect_name_new",
                 "item_name_new",
-                "bp_price_keys_equivalent_old",
-                "bp_price_keys_equivalent_new",
+                f"{PRICE_COL}_old",
+                f"{PRICE_COL}_new",
                 "key_change",
                 "percent_change"
             ]

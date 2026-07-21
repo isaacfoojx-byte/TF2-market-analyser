@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 from pathlib import Path
+from datetime import datetime
 
 def parse_key_range(value):
 
@@ -25,7 +26,7 @@ def parse_key_range(value):
     return pd.Series([low, high, mid])
 
 
-def clean_data(raw_csv, processed_csv,current_key_price):
+def clean_data(raw_csv,processed_csv,current_key_price):
 
 
     df = pd.read_csv(raw_csv)
@@ -41,10 +42,6 @@ def clean_data(raw_csv, processed_csv,current_key_price):
     # --------------------------------------
     # Feature Engineering
     # --------------------------------------
-
-    df["bp_price_keys_equivalent"] = (
-        df["bp_price_ref"] / current_key_price
-    )
 
 
     df["usd_price"] = (
@@ -76,6 +73,11 @@ def clean_data(raw_csv, processed_csv,current_key_price):
     # Replace missing market prices with NaN
     df.loc[df["bp_price_ref"] == 0, "bp_price_ref"] = np.nan
 
+    # Convert refined to keys
+    df["bp_price_keys_equivalent"] = (
+        df["bp_price_ref"] / current_key_price
+    )
+
     # Convenience column
     df["has_price"] = df["bp_price_ref"].notna()
 
@@ -104,7 +106,18 @@ def clean_data(raw_csv, processed_csv,current_key_price):
 
 if __name__ == "__main__":
 
+    timestamp = "2026-07-21_00-59-16"
+
+    raw_csv = f"data/raw/unusuals_{timestamp}.csv"
+
+    processed_csv = (
+        f"data/processed/cleaned_{timestamp}.csv"
+    )
+
+    current_key_price = 60.77      # Temporary testing value
+
     clean_data(
-        "data/raw/all_unusuals.csv",
-        "data/processed/cleaned_unusuals.csv"
+        raw_csv,
+        processed_csv,
+        current_key_price
     )

@@ -49,10 +49,10 @@ print(
     unique_df[[
         "effect_name",
         "item_name",
-        "bp_price_ref",
+        PRICE_COL,
         "item_type"
     ]]
-    .sort_values("bp_price_ref", ascending=False).head(20)
+    .sort_values(PRICE_COL, ascending=False).head(20)
 )
 
 print(f"Total unique unusuals: {len(unique_df):,}")
@@ -67,7 +67,7 @@ print("Average Price by Existence Count")
 print("=" * 60)
 
 avg_price_by_exist = (
-    df.groupby("exist")["bp_price_ref"]
+    df.groupby("exist")[PRICE_COL]
       .mean()
       .sort_index()
       .round(2)
@@ -83,7 +83,7 @@ print("=" * 60)
 print("Correlation between Existence and Price")
 print("=" * 60)
 
-corr = df["exist"].corr(df["bp_price_ref"])
+corr = df["exist"].corr(df[PRICE_COL])
 
 print(f"Pearson correlation: {corr:.3f}")
 
@@ -104,7 +104,7 @@ print("=" * 60)
 
 print(
     cosmetics
-      .groupby("exist")["bp_price_ref"]
+      .groupby("exist")[PRICE_COL]
       .mean()
       .sort_index()
       .round(2)
@@ -122,7 +122,7 @@ print("=" * 60)
 
 print(
     taunts
-      .groupby("exist")["bp_price_ref"]
+      .groupby("exist")[PRICE_COL]
       .mean()
       .sort_index()
       .round(2)
@@ -141,10 +141,10 @@ print(
     unique_df[[
         "effect_name",
         "item_name",
-        "bp_price_ref",
+        PRICE_COL,
         "item_type"
     ]]
-    .sort_values("bp_price_ref")
+    .sort_values(PRICE_COL)
     .head(20)
 )
 
@@ -164,7 +164,7 @@ print(
         "effect_name",
         "item_name",
         "exist",
-        "bp_price_ref"
+        PRICE_COL
     ]]
 )
 
@@ -185,6 +185,6 @@ print(
         "effect_name",
         "item_name",
         "exist",
-        "bp_price_ref"
+        PRICE_COL
     ]]
 )

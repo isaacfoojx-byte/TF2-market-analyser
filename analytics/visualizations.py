@@ -27,13 +27,11 @@ def save_plot(filename):
 
 plt.figure()
 
-plt.hist(priced["price_ref"], bins=100)
+plt.hist(priced[PRICE_COL], bins=100)
 
 plt.title("Distribution of Unusual Prices")
-plt.xlabel("Price (Refined)")
+plt.xlabel(f"Price ({PRICE_UNIT})")
 plt.ylabel("Number of Listings")
-
-plt.tight_layout()
 
 save_plot("unusual_price_distribution.png")
 
@@ -48,15 +46,13 @@ plt.figure()
 
 plt.scatter(
     priced["exist"],
-    priced["bp_price_ref"],
+    priced[PRICE_COL],
     alpha=0.3
 )
 
 plt.title("Rarity vs Price")
 plt.xlabel("Existence")
-plt.ylabel("Price (Refined)")
-
-plt.tight_layout()
+plt.ylabel(f"Price ({PRICE_UNIT})")
 
 save_plot("rarity_vs_price.png")
 
@@ -70,7 +66,7 @@ plt.show()
 # -------------------------------------------------------
 
 effect_avg = (
-    priced.groupby("effect_name")["bp_price_ref"]
+    priced.groupby("effect_name")[PRICE_COL]
           .mean()
           .sort_values(ascending=False)
           .head(20)
@@ -81,10 +77,8 @@ plt.figure(figsize=(12,8))
 effect_avg.sort_values().plot(kind="barh")
 
 plt.title("Top 20 Effects by Average Price")
-plt.xlabel("Average Price (Refined)")
+plt.xlabel(f"Average Price ({PRICE_UNIT})")
 plt.ylabel("Effect")
-
-plt.tight_layout()
 
 save_plot("top_20_effects_by_average_price.png")
 
@@ -98,7 +92,7 @@ plt.show()
 # -------------------------------------------------------
 
 item_avg = (
-    priced.groupby("item_name")["bp_price_ref"]
+    priced.groupby("item_name")[PRICE_COL]
           .mean()
           .sort_values(ascending=False)
           .head(20)
@@ -109,10 +103,8 @@ plt.figure(figsize=(12,8))
 item_avg.sort_values().plot(kind="barh")
 
 plt.title("Top 20 Items by Average Price")
-plt.xlabel("Average Price (Refined)")
+plt.xlabel(f"Average Price ({PRICE_UNIT})")
 plt.ylabel("Item")
-
-plt.tight_layout()
 
 save_plot("top_20_items_by_average_price.png")
 
@@ -125,7 +117,7 @@ plt.show()
 # -------------------------------------------------------
 
 item_type = (
-    priced.groupby("item_type")["bp_price_ref"]
+    priced.groupby("item_type")[PRICE_COL]
           .mean()
 )
 
@@ -135,9 +127,7 @@ item_type.plot(kind="bar")
 
 plt.title("Average Price by Item Type")
 plt.xlabel("Item Type")
-plt.ylabel("Average Price (Refined)")
-
-plt.tight_layout()
+plt.ylabel(f"Average Price ({PRICE_UNIT})")
 
 save_plot("average_price_by_item_type.png")
 
@@ -161,8 +151,6 @@ effect_count.sort_values().plot(kind="barh")
 plt.title("Most Common Effects")
 plt.xlabel("Number of Listings")
 
-plt.tight_layout()
-
 save_plot("most_common_effects.png")
 
 plt.show()
@@ -185,8 +173,6 @@ item_count.sort_values().plot(kind="barh")
 plt.title("Most Common Items")
 plt.xlabel("Number of Listings")
 
-plt.tight_layout()
-
 save_plot("most_common_items.png")
 
 plt.show()
@@ -200,16 +186,14 @@ plt.show()
 plt.figure()
 
 priced.boxplot(
-    column="bp_price_ref",
+    column=PRICE_COL,
     by="item_type"
 )
 
 plt.title("Price Distribution by Item Type")
 plt.suptitle("")
 plt.xlabel("Item Type")
-plt.ylabel("Price (Refined)")
-
-plt.tight_layout()
+plt.ylabel(f"Price ({PRICE_UNIT})")
 
 save_plot("price_distribution_by_item_type.png")
 
@@ -223,9 +207,9 @@ plt.show()
 effect_stats = (
     priced.groupby("effect_name")
           .agg(
-              listings=("bp_price_ref", "count"),
-              average_price=("bp_price_ref", "mean"),
-              std_dev=("bp_price_ref", "std")
+              listings=(PRICE_COL, "count"),
+              average_price=(PRICE_COL, "mean"),
+              std_dev=(PRICE_COL, "std")
           )
 )
 
@@ -239,7 +223,7 @@ effect_stats["coefficient_of_variation"] = (
 #-------------------------------------------------------
 
 effect_stats = effect_stats[
-    effect_stats["listings"] >= 50
+    effect_stats["listings"] >= 100
 ]
 
 #-------------------------------------------------------

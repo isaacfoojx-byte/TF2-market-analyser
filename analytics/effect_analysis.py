@@ -13,11 +13,11 @@ df, priced = load_latest_data()
 effect_stats = (
     priced.groupby("effect_name")
           .agg(
-              count=("bp_price_ref", "count"),
-              average_price=("bp_price_ref", "mean"),
-              median_price=("bp_price_ref", "median"),
-              minimum_price=("bp_price_ref", "min"),
-              maximum_price=("bp_price_ref", "max")
+              count=(PRICE_COL, "count"),
+              average_price=(PRICE_COL, "mean"),
+              median_price=(PRICE_COL, "median"),
+              minimum_price=(PRICE_COL, "min"),
+              maximum_price=(PRICE_COL, "max")
           )
 )
 

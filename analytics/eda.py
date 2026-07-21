@@ -19,7 +19,7 @@ print(df.head())
 print(df["item_type"].value_counts())
 
 print("Average price by item type:")
-print(df.groupby("item_type")["bp_price_ref"].mean())
+print(df.groupby("item_type")[PRICE_COL].mean())
 
 print("Items per effect:")
 print(df.groupby("effect_name").size().sort_values(ascending=False))
@@ -31,14 +31,14 @@ print("Maximum existence:")
 print(df.loc[df["exist"].idxmax()])
 
 print("Missing price count by item type:")
-print(df[df["bp_price_ref"].isna()]["item_type"].value_counts())
+print(df[df[PRICE_COL].isna()]["item_type"].value_counts())
 
 print("Number of items with 0 recorded items in existence:")
 print("Items with exist == 0:", (df["exist"] == 0).sum())
 
 print("Sample rows with missing prices:")
 print(
-    df[df["bp_price_ref"].isna()][
+    df[df[PRICE_COL].isna()][
         ["effect_name", "item_name", "exist", "item_type"]
     ].head(30)
 )

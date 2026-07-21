@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import pandas as pd
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,11 +17,17 @@ def load_data(csv_path):
 
 def get_snapshots():
 
-    snapshots = sorted(
-        DATA_DIR.glob("cleaned_*.csv")
+    snapshots = []
+
+    pattern = re.compile(
+        r"cleaned_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.csv"
     )
 
-    return snapshots
+    for file in DATA_DIR.glob("cleaned_*.csv"):
+        if pattern.fullmatch(file.name):
+            snapshots.append(file)
+
+    return sorted(snapshots)
 
 def load_latest_data():
 
