@@ -31,7 +31,7 @@ def find_chrome() -> Path:
             return candidate
 
     raise FileNotFoundError(
-        f"Cannot find your google chrome!"
+        "Cannot find Google Chrome in a standard Windows install location."
     )
 
 
