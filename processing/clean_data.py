@@ -25,7 +25,7 @@ def parse_key_range(value):
     return pd.Series([low, high, mid])
 
 
-def clean_data(raw_csv, processed_csv):
+def clean_data(raw_csv, processed_csv,current_key_price):
 
 
     df = pd.read_csv(raw_csv)
@@ -41,6 +41,10 @@ def clean_data(raw_csv, processed_csv):
     # --------------------------------------
     # Feature Engineering
     # --------------------------------------
+
+    df["bp_price_keys_equivalent"] = (
+        df["bp_price_ref"] / current_key_price
+    )
 
 
     df["usd_price"] = (

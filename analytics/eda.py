@@ -1,6 +1,6 @@
-from utils import load_data
+from utils import load_latest_data
 
-df, priced = load_data()
+df, priced = load_latest_data()
 
 # "eda" stands for Exploratory Data Analysis, which is the process of analyzing and summarizing datasets to gain insights and understand their characteristics. In this code snippet, we are performing EDA on a dataset of unusual items in a game.
 

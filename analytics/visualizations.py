@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import os
-from utils import load_data
+from utils import load_latest_data
 
-df, priced = load_data()
+df, priced = load_latest_data()
 
 plt.rcParams["figure.figsize"] = (10, 6)
 

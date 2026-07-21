@@ -1,7 +1,7 @@
 import pandas as pd
-from utils import load_data
+from utils import load_latest_data
 
-df, priced = load_data()
+df, priced = load_latest_data()
 
 pd.set_option("display.max_columns", None)
 pd.set_option("display.width", None)
