@@ -6,44 +6,44 @@ TF2 MARKET COMPARISON REPORT
 ============================================================
 Market Summary
 ============================================================
-Unique unusual markets: 702
-New listings: 0
+Unique unusual markets: 40,749
+New listings: 1
 Net listing change: +0
 Removed listings: 0
 Price increases: 0
-Price decreases: 0
+Price decreases: 40748
 
 
 
 ============================================================
 Top 10 Gainers
 ============================================================
-effect_name                 item_name  average_price_old  average_price_new  price_change  percent_change
- Spellbound            Engineer's Cap         112.563934         112.563934           0.0             0.0
- Spellbound         Officer's Ushanka          89.113115          89.113115           0.0             0.0
- Spellbound             Stainless Pot          75.042623          75.042623           0.0             0.0
- Spellbound             Tyrant's Helm         157.589508         157.589508           0.0             0.0
- Spellbound          Glengarry Bonnet        2016.770492        2016.770492           0.0             0.0
- Spellbound  Respectless Rubber Glove        1031.836066        1031.836066           0.0             0.0
- Spellbound Otolaryngologist's Mirror          74.104590          74.104590           0.0             0.0
- Spellbound         Ye Olde Baker Boy         154.775410         154.775410           0.0             0.0
- Spellbound      Master's Yellow Belt         375.213115         375.213115           0.0             0.0
- Spellbound   Towering Pillar of Hats        1782.262295        1782.262295           0.0             0.0
+         effect_name                       item_name  average_price_old  average_price_new  price_change  percent_change
+     Floppin' Frenzy Taunt: The Trackman's Touchdown           1.458014           1.453951     -0.004063       -0.278689
+         Mega Strike  Taunt: Doctor's Defibrillators           1.505047           1.500852     -0.004194       -0.278689
+  Midnight Whirlwind Taunt: The Trackman's Touchdown           1.552080           1.547754     -0.004325       -0.278689
+         Showstopper             Taunt: The Headcase           1.646145           1.641557     -0.004588       -0.278689
+Festivized Formation       Taunt: Battin' a Thousand           1.693178           1.688459     -0.004719       -0.278689
+          Holy Grail Taunt: The Trackman's Touchdown           1.716694           1.711910     -0.004784       -0.278689
+ Fountain of Delight    Taunt: Bare Knuckle Beatdown           1.716694           1.711910     -0.004784       -0.278689
+  Midnight Whirlwind                Taunt: I See You           1.740210           1.735361     -0.004850       -0.278689
+   Sublime Snowstorm       Taunt: Battin' a Thousand           1.740210           1.735361     -0.004850       -0.278689
+  Skill Gotten Gains                Taunt: I See You           1.763727           1.758811     -0.004915       -0.278689
 
 ============================================================
 Top 10 Losers
 ============================================================
-effect_name                 item_name  average_price_old  average_price_new  price_change  percent_change
- Spellbound            Engineer's Cap         112.563934         112.563934           0.0             0.0
- Spellbound         Officer's Ushanka          89.113115          89.113115           0.0             0.0
- Spellbound             Stainless Pot          75.042623          75.042623           0.0             0.0
- Spellbound             Tyrant's Helm         157.589508         157.589508           0.0             0.0
- Spellbound          Glengarry Bonnet        2016.770492        2016.770492           0.0             0.0
- Spellbound  Respectless Rubber Glove        1031.836066        1031.836066           0.0             0.0
- Spellbound Otolaryngologist's Mirror          74.104590          74.104590           0.0             0.0
- Spellbound         Ye Olde Baker Boy         154.775410         154.775410           0.0             0.0
- Spellbound      Master's Yellow Belt         375.213115         375.213115           0.0             0.0
- Spellbound   Towering Pillar of Hats        1782.262295        1782.262295           0.0             0.0
+          effect_name          item_name  average_price_old  average_price_new  price_change  percent_change
+       Burning Flames          Noh Mercy       20741.426928       20683.622951    -57.803977       -0.278689
+               Arcana Virtual Viewfinder       19189.347361       19135.868852    -53.478509       -0.278689
+     Poisoned Shadows            Antlers       16743.646227       16696.983607    -46.662621       -0.278689
+           Spellbound            Antlers       15426.730232       15383.737705    -42.992527       -0.278689
+Bonzo the All-Gnawing Rotation Sensation       14297.945093       14258.098361    -39.846732       -0.278689
+           Spellbound Virtual Viewfinder       13004.545455       12968.303279    -36.242176       -0.278689
+            Darkblaze  Pyromancer's Mask       12952.809469       12916.711475    -36.097994       -0.278689
+           Spellbound     Hong Kong Cone       12933.996383       12897.950820    -36.045564       -0.278689
+           Spellbound    Soldered Sensei       12275.538386       12241.327869    -34.210517       -0.278689
+               Nebula Captain Space Mann       11617.080388       11584.704918    -32.375470       -0.278689
 
 
 
@@ -53,36 +53,56 @@ Effect Summary
 
 Top 10 Effects by Average Price Increase
 ------------------------------------------------------------
-          effect_name  average_change
-Bonzo the All-Gnawing             0.0
-            Darkblaze             0.0
-               Nebula             0.0
-     Poisoned Shadows             0.0
-           Spellbound             0.0
+       effect_name  average_change
+     Fossil Fueled       -0.010005
+      Shark Attack       -0.012537
+Midnight Whirlwind       -0.013010
+    Silver Cyclone       -0.013184
+       Mega Strike       -0.015538
+               '72       -0.015577
+    Solar Scorched       -0.015870
+Skill Gotten Gains       -0.016401
+   Screaming Tiger       -0.016430
+  Arachnid Assault       -0.016922
 Top 10 Most Active Effects
 ------------------------------------------------------------
-          effect_name  unusuals
-Bonzo the All-Gnawing       180
-           Spellbound       177
-     Poisoned Shadows       177
-            Darkblaze       163
-               Nebula         5
+        effect_name  unusuals
+     Burning Flames       555
+   Scorching Flames       550
+       Green Energy       544
+      Purple Energy       544
+           Sunbeams       543
+       Stormy Storm       539
+     Circling Heart       532
+    Blizzardy Storm       525
+Circling Peace Sign       524
+     Haunted Ghosts       521
 Top 10 Effects with Most Price Increases
 ------------------------------------------------------------
-          effect_name  increases
-Bonzo the All-Gnawing          0
-            Darkblaze          0
-               Nebula          0
-     Poisoned Shadows          0
-           Spellbound          0
+           effect_name  increases
+                   '72          0
+             Abduction          0
+          Abyssal Aura          0
+              Accursed          0
+             Aces High          0
+Acidic Bubbles of Envy          0
+        Acidic Climate          0
+           Aggradation          0
+           Amaranthine          0
+               Amatory          0
 Top 10 Effects by Average Listing Increase
 ------------------------------------------------------------
-          effect_name  average_listing_change
-Bonzo the All-Gnawing                     0.0
-            Darkblaze                     0.0
-               Nebula                     0.0
-     Poisoned Shadows                     0.0
-           Spellbound                     0.0
+           effect_name  average_listing_change
+                   '72                     0.0
+             Abduction                     0.0
+          Abyssal Aura                     0.0
+              Accursed                     0.0
+             Aces High                     0.0
+Acidic Bubbles of Envy                     0.0
+        Acidic Climate                     0.0
+           Aggradation                     0.0
+           Amaranthine                     0.0
+               Amatory                     0.0
 
 
 
@@ -92,54 +112,54 @@ Item Summary
 
 Top 10 Items by Average Price Increase
 ------------------------------------------------------------
-             item_name  average_change
-A Head Full of Hot Air             0.0
- A Rather Festive Tree             0.0
-              Allbrero             0.0
-                 Anger             0.0
-               Antlers             0.0
-     Armored Authority             0.0
-             Attendant             0.0
-      Aviator Assassin             0.0
-   B'aaarrgh-n-Bicorne             0.0
- Backbiter's Billycock             0.0
+                      item_name  average_change
+               Taunt: Ring King       -0.007864
+Taunt: The Trackman's Touchdown       -0.009902
+ Taunt: Doctor's Defibrillators       -0.010933
+      Taunt: Battin' a Thousand       -0.012641
+               Taunt: I See You       -0.013040
+             Taunt: Spin-to-Win       -0.013259
+   Taunt: The Profane Puppeteer       -0.013578
+    Taunt: The Killer Signature       -0.013925
+             Taunt: Most Wanted       -0.014206
+            Taunt: The Headcase       -0.015702
 Top 10 Most Active Items
 ------------------------------------------------------------
-            item_name  unusuals
-A Rather Festive Tree         4
-            Attendant         4
-          Black Watch         4
-        Blighted Beak         4
-           Bot Dogger         4
- Brim-Full of Bullets         4
-         Brown Bomber         4
-  Buccaneer's Bicorne         4
-      Burning Bandana         4
-Chieftain's Challenge         4
+               item_name  unusuals
+          Field Practice       172
+       A Hat to Kill For       171
+           Blast Defense       166
+            Patriot Peak       165
+                  Airdog       159
+                 Warhood       152
+              Tundra Top       151
+       Berlin Brain Bowl       149
+Taunt: The Schadenfreude       146
+        Sky High Fly Guy       140
 Top 10 Items with Most Price Increases
 ------------------------------------------------------------
              item_name  increases
+A Handsome Handy Thing          0
+     A Hat to Kill For          0
 A Head Full of Hot Air          0
  A Rather Festive Tree          0
-              Allbrero          0
-                 Anger          0
-               Antlers          0
-     Armored Authority          0
-             Attendant          0
-      Aviator Assassin          0
-   B'aaarrgh-n-Bicorne          0
- Backbiter's Billycock          0
+    A Well Wrapped Hat          0
+              Aimframe          0
+              Air Head          0
+                Airdog          0
+         Alakablamicon          0
+    All Hallows' Hatte          0
 Top 10 Items by Average Listing Increase
 ------------------------------------------------------------
              item_name  average_listing_change
+A Handsome Handy Thing                     0.0
+     A Hat to Kill For                     0.0
 A Head Full of Hot Air                     0.0
  A Rather Festive Tree                     0.0
-              Allbrero                     0.0
-                 Anger                     0.0
-               Antlers                     0.0
-     Armored Authority                     0.0
-             Attendant                     0.0
-      Aviator Assassin                     0.0
-   B'aaarrgh-n-Bicorne                     0.0
- Backbiter's Billycock                     0.0
+    A Well Wrapped Hat                     0.0
+              Aimframe                     0.0
+              Air Head                     0.0
+                Airdog                     0.0
+         Alakablamicon                     0.0
+    All Hallows' Hatte                     0.0
 
