@@ -23,7 +23,7 @@ def get_snapshots():
         r"cleaned_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.csv"
     )
 
-    for file in DATA_DIR.glob("cleaned_*.csv"):
+    for file in DATA_DIR.rglob("cleaned_*.csv"):
         if pattern.fullmatch(file.name):
             snapshots.append(file)
 

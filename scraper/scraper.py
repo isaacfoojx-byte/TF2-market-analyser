@@ -36,7 +36,7 @@ def build_output_paths(
 
     return (
         data_dir / "raw" / f"unusuals_{timestamp}.csv",
-        data_dir / "processed" / f"cleaned_{timestamp}.csv",
+        data_dir / "processed" / "archive" / f"cleaned_{timestamp}.csv",
     )
 
 
