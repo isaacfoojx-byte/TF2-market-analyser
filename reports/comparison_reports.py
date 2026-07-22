@@ -1,17 +1,18 @@
 from pathlib import Path
 
-from snapshot_comparison import (
+from analytics.snapshot_comparison import (
     build_comparison,
     calculate_changes,
     classify_changes,
     build_effect_summary,
     build_item_summary,
-    build_market_summary,
     format_market_summary,
     format_top_movers
 )
 
-OUTPUT = Path("reports")
+from reports.report_utils import section, subsection, dataframe
+
+OUTPUT = Path("generated/reports")
 
 OUTPUT.mkdir(
     parents=True,
