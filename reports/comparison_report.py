@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from analytics.snapshot_comparison import (
     build_comparison,
     calculate_changes,

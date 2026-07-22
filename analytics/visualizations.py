@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import os
-from utils import (
+from analytics.utils import (
     load_latest_data,
     PRICE_COL,
     PRICE_UNIT

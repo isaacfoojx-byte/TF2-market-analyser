@@ -1,7 +1,7 @@
 from pathlib import Path
 import pandas as pd
 
-from utils import (
+from analytics.utils import (
     load_data,
     get_latest_pair,
     PRICE_COL,

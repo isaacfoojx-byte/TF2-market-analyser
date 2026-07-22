@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import (
     Paragraph,
@@ -12,6 +10,7 @@ from reports.report_config import (
     OUTPUT_DIR,
     PDF_FILENAME,
 )
+
 
 
 def save_pdf(report):
@@ -92,3 +91,5 @@ def save_pdf(report):
     document.build(story)
 
     return filename
+
+
