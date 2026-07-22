@@ -47,15 +47,4 @@ def save_text(report, filename):
 
     return filename
 
-def blank():
 
-    return ""
-
-def section(title):
-
-    return "\n".join([
-        "=" * REPORT_WIDTH,
-        title,
-        "=" * REPORT_WIDTH,
-        ""
-    ])

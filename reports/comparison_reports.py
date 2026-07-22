@@ -10,26 +10,28 @@ from analytics.snapshot_comparison import (
     format_top_movers
 )
 
-from reports.report_utils import section, subsection, dataframe
+from reports.pdf_report import save_pdf
 
-OUTPUT = Path("generated/reports")
+from reports.report_utils import section, subsection, dataframe, save_text
 
-OUTPUT.mkdir(
-    parents=True,
-    exist_ok=True
+from reports.report_config import (
+    OUTPUT_DIR,
+    TEXT_FILENAME,
 )
+
+filename = OUTPUT_DIR / TEXT_FILENAME
 
 def format_effect_summary(effect_summary):
 
     lines = []
 
-    lines.append("=" * 60)
-    lines.append("Effect Summary")
-    lines.append("=" * 60)
-    lines.append("")
+    
+    lines.append(section("Effect Summary"))
+    
+    
 
-    lines.append("Top 10 Effects by Average Price Increase")
-    lines.append("-" * 60)
+    lines.append(subsection("Top 10 Effects by Average Price Increase"))
+    
 
     top_gainers = (
         effect_summary
@@ -41,12 +43,11 @@ def format_effect_summary(effect_summary):
         ]
     )
 
-    lines.append(top_gainers.to_string(index=False))
-    lines.append("")
+    lines.append(dataframe(top_gainers))
+    
 
-    lines.append("Top 10 Most Active Effects")
-    lines.append("-" * 60)
-
+    lines.append(subsection("Top 10 Most Active Effects"))
+    
     most_active = (
         effect_summary
         .nlargest(10, "unusuals")[
@@ -57,11 +58,11 @@ def format_effect_summary(effect_summary):
         ]
     )
 
-    lines.append(most_active.to_string(index=False))
-    lines.append("")
+    lines.append(dataframe(most_active))
+    
 
-    lines.append("Top 10 Effects with Most Price Increases")
-    lines.append("-" * 60)
+    lines.append(subsection("Top 10 Effects with Most Price Increases"))
+    
 
     increases = (
         effect_summary
@@ -73,12 +74,12 @@ def format_effect_summary(effect_summary):
         ]
     )
 
-    lines.append(increases.to_string(index=False))
+    lines.append(dataframe(increases))
 
 
-    lines.append("")
-    lines.append("Top 10 Effects by Average Listing Increase")
-    lines.append("-" * 60)
+    
+    lines.append(subsection("Top 10 Effects by Average Listing Increase"))
+   
 
     listing = (
         effect_summary
@@ -90,7 +91,7 @@ def format_effect_summary(effect_summary):
         ]
     )
 
-    lines.append(listing.to_string(index=False))
+    lines.append(dataframe(listing))
 
     return "\n".join(lines)
 
@@ -98,13 +99,13 @@ def format_item_summary(item_summary):
 
     lines = []
 
-    lines.append("=" * 60)
-    lines.append("Item Summary")
-    lines.append("=" * 60)
-    lines.append("")
+    
+    lines.append(section("Item Summary"))
+    
+    
 
-    lines.append("Top 10 Items by Average Price Increase")
-    lines.append("-" * 60)
+    lines.append(subsection("Top 10 Items by Average Price Increase"))
+    
 
     top_gainers = (
         item_summary
@@ -116,11 +117,11 @@ def format_item_summary(item_summary):
         ]
     )
 
-    lines.append(top_gainers.to_string(index=False))
-    lines.append("")
+    lines.append(dataframe(top_gainers))
+    
 
-    lines.append("Top 10 Most Active Items")
-    lines.append("-" * 60)
+    lines.append(subsection("Top 10 Most Active Items"))
+    
 
     most_active = (
         item_summary
@@ -132,11 +133,11 @@ def format_item_summary(item_summary):
         ]
     )
 
-    lines.append(most_active.to_string(index=False))
-    lines.append("")
+    lines.append(dataframe(most_active))
+    
 
-    lines.append("Top 10 Items with Most Price Increases")
-    lines.append("-" * 60)
+    lines.append(subsection("Top 10 Items with Most Price Increases"))
+    
 
     increases = (
         item_summary
@@ -148,12 +149,10 @@ def format_item_summary(item_summary):
         ]
     )
 
-    lines.append(increases.to_string(index=False))
+    lines.append(dataframe(increases))
 
-
-    lines.append("")
-    lines.append("Top 10 Items by Average Listing Increase")
-    lines.append("-" * 60)
+    lines.append(subsection("Top 10 Items by Average Listing Increase"))
+    
 
     listing = (
         item_summary
@@ -165,7 +164,7 @@ def format_item_summary(item_summary):
         ]
     )
 
-    lines.append(listing.to_string(index=False))
+    lines.append(dataframe(listing))
 
     return "\n".join(lines)
 
@@ -186,10 +185,8 @@ def build_report():
 
     report = []
 
-    report.append("=" * 60)
-    report.append("TF2 MARKET COMPARISON REPORT")
-    report.append("=" * 60)
-    report.append("")
+    report.append(section("TF2 MARKET COMPARISON REPORT"))
+    
 
     report.append(
         format_market_summary(comparison)
@@ -204,7 +201,7 @@ def build_report():
     report.append("")
 
     report.append(
-    format_effect_summary(effect_summary)
+        format_effect_summary(effect_summary)
     )
 
     report.append("")
@@ -221,18 +218,9 @@ def build_report():
 
 def save_report(report):
 
-    filename = (
-        OUTPUT /
-        "comparison_report.txt"
-    )
+    filename = OUTPUT_DIR / "comparison_report.txt"
 
-    with open(
-        filename,
-        "w",
-        encoding="utf-8"
-    ) as f:
-
-        f.write(report)
+    save_text(report, filename)
 
 
 def main():
@@ -242,6 +230,8 @@ def main():
     print(report)
 
     save_report(report)
+
+    save_pdf(report)
 
 
 if __name__ == "__main__":
