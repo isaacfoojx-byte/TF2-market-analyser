@@ -1,0 +1,145 @@
+============================================================
+TF2 MARKET COMPARISON REPORT
+============================================================
+
+
+============================================================
+Market Summary
+============================================================
+Unique unusual markets: 702
+New listings: 0
+Net listing change: +0
+Removed listings: 0
+Price increases: 0
+Price decreases: 0
+
+
+
+============================================================
+Top 10 Gainers
+============================================================
+effect_name                 item_name  average_price_old  average_price_new  price_change  percent_change
+ Spellbound            Engineer's Cap         112.563934         112.563934           0.0             0.0
+ Spellbound         Officer's Ushanka          89.113115          89.113115           0.0             0.0
+ Spellbound             Stainless Pot          75.042623          75.042623           0.0             0.0
+ Spellbound             Tyrant's Helm         157.589508         157.589508           0.0             0.0
+ Spellbound          Glengarry Bonnet        2016.770492        2016.770492           0.0             0.0
+ Spellbound  Respectless Rubber Glove        1031.836066        1031.836066           0.0             0.0
+ Spellbound Otolaryngologist's Mirror          74.104590          74.104590           0.0             0.0
+ Spellbound         Ye Olde Baker Boy         154.775410         154.775410           0.0             0.0
+ Spellbound      Master's Yellow Belt         375.213115         375.213115           0.0             0.0
+ Spellbound   Towering Pillar of Hats        1782.262295        1782.262295           0.0             0.0
+
+============================================================
+Top 10 Losers
+============================================================
+effect_name                 item_name  average_price_old  average_price_new  price_change  percent_change
+ Spellbound            Engineer's Cap         112.563934         112.563934           0.0             0.0
+ Spellbound         Officer's Ushanka          89.113115          89.113115           0.0             0.0
+ Spellbound             Stainless Pot          75.042623          75.042623           0.0             0.0
+ Spellbound             Tyrant's Helm         157.589508         157.589508           0.0             0.0
+ Spellbound          Glengarry Bonnet        2016.770492        2016.770492           0.0             0.0
+ Spellbound  Respectless Rubber Glove        1031.836066        1031.836066           0.0             0.0
+ Spellbound Otolaryngologist's Mirror          74.104590          74.104590           0.0             0.0
+ Spellbound         Ye Olde Baker Boy         154.775410         154.775410           0.0             0.0
+ Spellbound      Master's Yellow Belt         375.213115         375.213115           0.0             0.0
+ Spellbound   Towering Pillar of Hats        1782.262295        1782.262295           0.0             0.0
+
+
+
+============================================================
+Effect Summary
+============================================================
+
+Top 10 Effects by Average Price Increase
+------------------------------------------------------------
+          effect_name  average_change
+Bonzo the All-Gnawing             0.0
+            Darkblaze             0.0
+               Nebula             0.0
+     Poisoned Shadows             0.0
+           Spellbound             0.0
+Top 10 Most Active Effects
+------------------------------------------------------------
+          effect_name  unusuals
+Bonzo the All-Gnawing       180
+           Spellbound       177
+     Poisoned Shadows       177
+            Darkblaze       163
+               Nebula         5
+Top 10 Effects with Most Price Increases
+------------------------------------------------------------
+          effect_name  increases
+Bonzo the All-Gnawing          0
+            Darkblaze          0
+               Nebula          0
+     Poisoned Shadows          0
+           Spellbound          0
+Top 10 Effects by Average Listing Increase
+------------------------------------------------------------
+          effect_name  average_listing_change
+Bonzo the All-Gnawing                     0.0
+            Darkblaze                     0.0
+               Nebula                     0.0
+     Poisoned Shadows                     0.0
+           Spellbound                     0.0
+
+
+
+============================================================
+Item Summary
+============================================================
+
+Top 10 Items by Average Price Increase
+------------------------------------------------------------
+             item_name  average_change
+A Head Full of Hot Air             0.0
+ A Rather Festive Tree             0.0
+              Allbrero             0.0
+                 Anger             0.0
+               Antlers             0.0
+     Armored Authority             0.0
+             Attendant             0.0
+      Aviator Assassin             0.0
+   B'aaarrgh-n-Bicorne             0.0
+ Backbiter's Billycock             0.0
+Top 10 Most Active Items
+------------------------------------------------------------
+            item_name  unusuals
+A Rather Festive Tree         4
+            Attendant         4
+          Black Watch         4
+        Blighted Beak         4
+           Bot Dogger         4
+ Brim-Full of Bullets         4
+         Brown Bomber         4
+  Buccaneer's Bicorne         4
+      Burning Bandana         4
+Chieftain's Challenge         4
+Top 10 Items with Most Price Increases
+------------------------------------------------------------
+             item_name  increases
+A Head Full of Hot Air          0
+ A Rather Festive Tree          0
+              Allbrero          0
+                 Anger          0
+               Antlers          0
+     Armored Authority          0
+             Attendant          0
+      Aviator Assassin          0
+   B'aaarrgh-n-Bicorne          0
+ Backbiter's Billycock          0
+Top 10 Items by Average Listing Increase
+------------------------------------------------------------
+             item_name  average_listing_change
+A Head Full of Hot Air                     0.0
+ A Rather Festive Tree                     0.0
+              Allbrero                     0.0
+                 Anger                     0.0
+               Antlers                     0.0
+     Armored Authority                     0.0
+             Attendant                     0.0
+      Aviator Assassin                     0.0
+   B'aaarrgh-n-Bicorne                     0.0
+ Backbiter's Billycock                     0.0
+

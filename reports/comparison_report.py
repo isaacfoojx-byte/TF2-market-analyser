@@ -19,6 +19,7 @@ from reports.report_config import (
 
 filename = OUTPUT_DIR / TEXT_FILENAME
 
+
 def format_effect_summary(effect_summary):
 
     lines = []
@@ -220,7 +221,7 @@ def save_report(report):
 
     save_text(report, filename)
 
-
+# In order to run the main() function, you have to use the command in VSCode python "-m reports.comparison_report", or else python will not recognise the imports from the analytics.snapshot_comparison.py file.
 def main():
 
     report = build_report()

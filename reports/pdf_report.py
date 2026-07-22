@@ -17,7 +17,7 @@ def save_pdf(report):
 
     filename = OUTPUT_DIR / PDF_FILENAME
 
-    document = SimpleDocTemplate(filename)
+    document = SimpleDocTemplate(str(filename))
 
     styles = getSampleStyleSheet()
 
