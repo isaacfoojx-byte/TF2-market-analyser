@@ -14,6 +14,7 @@ DEBUG_PORT = 9222
 DEBUG_URL = f"http://localhost:{DEBUG_PORT}/json/version"
 START_URL = "https://backpack.tf/effects"
 STARTUP_TIMEOUT_SECONDS = 20
+PAGE_SETTLE_SECONDS = 10
 
 
 def find_chrome() -> Path:
@@ -73,6 +74,9 @@ def launch_chrome() -> None:
 
 def main() -> None:
     launch_chrome()
+    print(f"Waiting {PAGE_SETTLE_SECONDS} seconds for backpack.tf cloudflare bypass...")
+    time.sleep(PAGE_SETTLE_SECONDS)
+
     if __package__:
         import_module(f"{__package__}.scraper")
     else:
