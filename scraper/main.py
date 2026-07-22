@@ -110,10 +110,12 @@ def main() -> None:
         print("No Cloudflare detected, starting scraping")
 
     if __package__:
-        import_module(f"{__package__}.scraper")
+        scraper_module = import_module(f"{__package__}.scraper")
     else:
         sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-        import_module("scraper.scraper")
+        scraper_module = import_module("scraper.scraper")
+
+    scraper_module.run_scraper()
 
 
 if __name__ == "__main__":
