@@ -11,8 +11,14 @@ from analytics.utils import (
 def build_comparison():
     old_file, new_file = get_latest_pair()
 
+    print("Old:", old_file.name)  #For debugging only, doesn't do anything
+    print("New:", new_file.name)
+
     old_df, old_priced = load_data(old_file)
     new_df, new_priced = load_data(new_file)
+
+    print(old_priced[PRICE_COL].describe()) # For debugging only
+    print(new_priced[PRICE_COL].describe())
 
     old_market = (
     old_priced
