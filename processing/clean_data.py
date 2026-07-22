@@ -106,7 +106,7 @@ def clean_data(raw_csv,processed_csv,current_key_price):
 
 if __name__ == "__main__":
 
-    timestamp = "2026-07-21_21-21-48"
+    timestamp = "2026-07-21_22-54-09"
 
     raw_csv = f"data/raw/unusuals_{timestamp}.csv"
 
