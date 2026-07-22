@@ -119,68 +119,88 @@ def classify_changes(comparison):
     
     return comparison
 
-def print_summary(comparison):
+def format_market_summary(comparison):
 
-    print("=" * 60)
-    print("Market Summary")
-    print("=" * 60)
+    lines = []
 
-    print(f"Unique unusual markets: {len(comparison):,}")
+    lines.append("=" * 60)
+    lines.append("Market Summary")
+    lines.append("=" * 60)
 
-    print(f"New listings: {(comparison['_merge'] == 'right_only').sum()}")
-
-    print(f"Net listing change: "
-          f"{comparison['listing_change'].sum():+,.0f}"
+    lines.append(
+        f"Unique unusual markets: {len(comparison):,}"
     )
 
-    print(f"Removed listings: {(comparison['_merge'] == 'left_only').sum()}")
+    lines.append(
+        f"New listings: {(comparison['_merge'] == 'right_only').sum()}"
+    )
 
-    print(f"Price increases: {(comparison['price_change'] > 0).sum()}")
+    lines.append(
+        f"Net listing change: "
+        f"{comparison['listing_change'].sum():+,.0f}"
+    )
 
-    print(f"Price decreases: {(comparison['price_change'] < 0).sum()}")
+    lines.append(
+        f"Removed listings: {(comparison['_merge'] == 'left_only').sum()}"
+    )
 
+    lines.append(
+        f"Price increases: {(comparison['price_change'] > 0).sum()}"
+    )
 
-def print_top_movers(comparison):
+    lines.append(
+        f"Price decreases: {(comparison['price_change'] < 0).sum()}"
+    )
 
-    print("=" * 60)
-    print("Top 10 Gainers")
-    print("=" * 60)
+    return "\n".join(lines)
 
-    print(
-        comparison.nlargest(
-            10,
-            "price_change"
-        )[
-            [
-                "effect_name",
-                "item_name",
-                "average_price_old",
-                "average_price_new",
-                "price_change",
-                "percent_change"
-            ]
+def format_top_movers(comparison):
+
+    lines = []
+
+    lines.append("=" * 60)
+    lines.append("Top 10 Gainers")
+    lines.append("=" * 60)
+
+    gainers = comparison.nlargest(
+        10,
+        "price_change"
+    )[
+        [
+            "effect_name",
+            "item_name",
+            "average_price_old",
+            "average_price_new",
+            "price_change",
+            "percent_change"
         ]
-    )
+    ]
 
-    print("=" * 60)
-    print("Top 10 Losers")
-    print("=" * 60)
+    lines.append(gainers.to_string(index=False))
 
-    print(
-        comparison.nsmallest(
-            10,
-            "price_change"
-        )[
-            [
-                "effect_name",
-                "item_name",
-                "average_price_old",
-                "average_price_new",
-                "price_change",
-                "percent_change"
-            ]
+    lines.append("")
+
+    lines.append("=" * 60)
+    lines.append("Top 10 Losers")
+    lines.append("=" * 60)
+
+    losers = comparison.nsmallest(
+        10,
+        "price_change"
+    )[
+        [
+            "effect_name",
+            "item_name",
+            "average_price_old",
+            "average_price_new",
+            "price_change",
+            "percent_change"
         ]
-    )
+    ]
+
+    lines.append(losers.to_string(index=False))
+
+    return "\n".join(lines)
 
 
 def save_results(comparison):
@@ -392,9 +412,11 @@ def main():
 
     market_summary = build_market_summary(comparison)
 
-    print_summary(comparison)
+    print(format_market_summary(comparison))
 
-    print_top_movers(comparison)
+    print()
+
+    print(format_top_movers(comparison))
 
     save_results(comparison)
 
