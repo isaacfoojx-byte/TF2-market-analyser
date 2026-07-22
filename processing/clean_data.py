@@ -106,7 +106,7 @@ def clean_data(raw_csv,processed_csv,current_key_price):
 
 if __name__ == "__main__":
 
-    timestamp = "2026-07-21_22-54-09"
+    timestamp = "2026-07-22_19-15-25"
 
     raw_csv = f"data/raw/unusuals_{timestamp}.csv"
 
@@ -114,7 +114,7 @@ if __name__ == "__main__":
         f"data/processed/cleaned_{timestamp}.csv"
     )
 
-    current_key_price = 60.77      # Temporary testing value
+    current_key_price = 61.00      # Temporary testing value
 
     clean_data(
         raw_csv,
