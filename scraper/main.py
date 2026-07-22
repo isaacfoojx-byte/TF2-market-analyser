@@ -1,4 +1,5 @@
 from __future__ import annotations
+import json
 import os
 import subprocess
 import sys
@@ -12,6 +13,7 @@ from urllib.request import urlopen
 
 DEBUG_PORT = 9222
 DEBUG_URL = f"http://localhost:{DEBUG_PORT}/json/version"
+DEBUG_TABS_URL = f"http://localhost:{DEBUG_PORT}/json"
 START_URL = "https://backpack.tf/effects"
 STARTUP_TIMEOUT_SECONDS = 20
 PAGE_SETTLE_SECONDS = 10
@@ -44,9 +46,33 @@ def debugger_is_ready() -> bool:
         return False
 
 
+def cloudflare_challenge_is_active() -> bool:
+    try:
+        with urlopen(DEBUG_TABS_URL, timeout=2) as response:
+            tabs = json.load(response)
+    except (OSError, URLError, json.JSONDecodeError):
+        return False
+
+    markers = (
+        "just a moment",
+        "attention required",
+        "cdn-cgi/challenge-platform",
+    )
+
+    for tab in tabs:
+        title = str(tab.get("title", "")).lower()
+        url = str(tab.get("url", "")).lower()
+        if "backpack.tf" not in url:
+            continue
+        if any(marker in title or marker in url for marker in markers):
+            return True
+
+    return False
+
+
 def launch_chrome() -> None:
     if debugger_is_ready():
-        print(f"Using the Chrome instance already running on port {DEBUG_PORT}.")
+        print(f"Using the browser instance already running on port {DEBUG_PORT}.")
         return
 
     chrome = find_chrome()
@@ -74,8 +100,14 @@ def launch_chrome() -> None:
 
 def main() -> None:
     launch_chrome()
-    print(f"Waiting {PAGE_SETTLE_SECONDS} seconds for backpack.tf cloudflare bypass...")
-    time.sleep(PAGE_SETTLE_SECONDS)
+
+    if cloudflare_challenge_is_active():
+        print(
+            f"Cloudflare detected, waiting {PAGE_SETTLE_SECONDS} seconds before continuing.."
+        )
+        time.sleep(PAGE_SETTLE_SECONDS)
+    else:
+        print("No Cloudflare detected, starting scraping")
 
     if __package__:
         import_module(f"{__package__}.scraper")
