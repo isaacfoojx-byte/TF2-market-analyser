@@ -1,5 +1,7 @@
 import streamlit as st
 import plotly.express as px
+from datetime import datetime
+
 
 from analytics.snapshot_comparison import (
     build_comparison,
@@ -31,6 +33,10 @@ st.set_page_config(
 )
 
 st.title("📈 Market Overview")
+
+st.caption(
+    f"Last updated: {datetime.now():%d %b %Y %H:%M}"
+)
 
 comparison, market_summary, effect_summary, item_summary = load_market()
 
@@ -105,10 +111,15 @@ fig = px.bar(
     text="Count",
 )
 
+fig.update_traces(
+    textposition="outside",
+)
+
 fig.update_layout(
     xaxis_title="",
     yaxis_title="Number of Listings",
     showlegend=False,
+    template="plotly_white",
 )
 
 st.plotly_chart(fig, use_container_width=True)
@@ -134,8 +145,20 @@ columns = [
     "status",
 ]
 
+top_movers = top_movers[columns].copy()
+
+top_movers["price_change"] = (
+    top_movers["price_change"]
+    .map("{:+.2f}%".format)
+)
+
+top_movers["listing_change"] = (
+    top_movers["listing_change"]
+    .map("{:+d}".format)
+)
+
 st.dataframe(
-    top_movers[columns],
+    top_movers,
     use_container_width=True,
     hide_index=True,
 )
