@@ -172,12 +172,27 @@ def wait_for_cloudflare_clearance(
 
             backpack_tab = None
 
-            for tab in tabs:
-                url = str(tab.get("url", "")).lower()
+            print("------")
 
-                if "backpack.tf" in url:
+            for tab in tabs:
+                print(tab.get("title"))
+                print(tab.get("url"))
+
+                url = str(tab.get("url", "")).lower()
+                title = tab.get("title", "").lower()
+
+                if (
+                    "backpack.tf" in url 
+                    and "cdn-cgi" not in url
+                    and "just a moment" not in title
+                ):
                     backpack_tab = tab
+                    usable = True
                     break
+
+            if usable:
+                print("Session established.")
+                return
 
             if backpack_tab is None:
                 time.sleep(poll_interval_seconds)
