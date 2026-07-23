@@ -14,6 +14,8 @@ from .csv_utils import save_csv
 from .effect_details import scrape_effect
 from .effect_index import get_all_effects
 
+from analytics.metadata import save_metadata
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_REQUEST_DELAY_SECONDS = 0.05
@@ -47,6 +49,7 @@ def run_scraper(
     scrape_datetime: datetime | None = None,
 ) -> ScrapeResult:
     started_at = scrape_datetime or datetime.now()
+    overall_start = time.perf_counter()
     scrape_timestamp = started_at.isoformat(timespec="seconds")
     raw_csv, processed_csv = build_output_paths(output_dir, started_at)
 
@@ -92,6 +95,15 @@ def run_scraper(
 
     clean_data(raw_csv, processed_csv, current_key_price)
     print("Done!")
+
+    scrape_duration = time.perf_counter() - overall_start
+
+    save_metadata(
+        snapshot_timestamp=scrape_timestamp,
+        key_price=current_key_price,
+        total_listings=len(master_dataset),
+        scrape_duration=round(scrape_duration, 2),
+    )
 
     return ScrapeResult(
         raw_csv=raw_csv,

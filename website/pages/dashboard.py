@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
-from datetime import datetime
-
+import pandas as pd
+from analytics.metadata import load_metadata
 
 from analytics.snapshot_comparison import (
     build_comparison,
@@ -24,7 +24,9 @@ def load_market():
     effect_summary = build_effect_summary(comparison)
     item_summary = build_item_summary(comparison)
 
-    return comparison, market_summary, effect_summary, item_summary
+    
+    metadata = load_metadata()
+    return comparison, market_summary, effect_summary, item_summary, metadata
 
 st.set_page_config(
     page_title="Market Overview",
@@ -32,13 +34,26 @@ st.set_page_config(
     layout="wide"
 )
 
+
+comparison, market_summary, effect_summary, item_summary, metadata = load_market()
+
 st.title("📈 Market Overview")
 
-st.caption(
-    f"Last updated: {datetime.now():%d %b %Y %H:%M}"
-)
+if metadata is not None:
+    snapshot_time = pd.to_datetime(
+        metadata["snapshot_timestamp"]
+    )
 
-comparison, market_summary, effect_summary, item_summary = load_market()
+    st.caption(
+        f"Summary of the latest TF2 unusual market snapshot.\n\n"
+        f"Market snapshot: {snapshot_time:%d %b %Y %H:%M}"
+    )
+else:
+    st.caption(
+        "Summary of the latest TF2 unusual market snapshot."
+    )
+
+
 
 summary = market_summary.iloc[0]
 
@@ -137,7 +152,7 @@ top_movers = (
     .head(10)
 )
 
-columns = [
+top_mover_columns = [
     "item_name",
     "effect_name",
     "price_change",
@@ -145,7 +160,7 @@ columns = [
     "status",
 ]
 
-top_movers = top_movers[columns].copy()
+top_movers = top_movers[top_mover_columns].copy()
 
 top_movers["price_change"] = (
     top_movers["price_change"]
