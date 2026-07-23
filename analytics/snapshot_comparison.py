@@ -370,7 +370,7 @@ def build_market_summary(comparison):
             comparison["price_change"].min()
     }
 
-    return pd.DataFrame([summary])
+    return summary
 
 def save_market_summary(market_summary):
 
