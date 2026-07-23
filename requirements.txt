@@ -6,3 +6,4 @@ matplotlib==3.10.7
 reportlab==5.0.0
 numpy==2.3.4
 streamlit==1.60.0
+plotly==6.9.0
