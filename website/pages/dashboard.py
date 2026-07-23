@@ -1,32 +1,11 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-from analytics.metadata import load_metadata
-
-from analytics.snapshot_comparison import (
-    build_comparison,
-    calculate_changes,
-    classify_changes,
-    build_market_summary,
-    build_effect_summary,
-    build_item_summary
-)
+from website.utils import load_dashboard
 
 # In order to run this website, type this command in VSCode: python -m streamlit run website/app.py
 
-@st.cache_data
-def load_market():
-    comparison = build_comparison()
-    comparison = calculate_changes(comparison)
-    comparison = classify_changes(comparison)
 
-    market_summary = build_market_summary(comparison)
-    effect_summary = build_effect_summary(comparison)
-    item_summary = build_item_summary(comparison)
-
-    
-    metadata = load_metadata()
-    return comparison, market_summary, effect_summary, item_summary, metadata
 
 st.set_page_config(
     page_title="Market Overview",
@@ -35,7 +14,7 @@ st.set_page_config(
 )
 
 
-comparison, market_summary, effect_summary, item_summary, metadata = load_market()
+comparison, market_summary, effect_summary, item_summary, metadata = load_dashboard()
 
 st.title("📈 Market Overview")
 
