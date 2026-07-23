@@ -41,6 +41,7 @@ def build_output_paths(
 
 
 def run_scraper(
+    debug_port: int,
     output_dir: str | Path | None = None,
     request_delay_seconds: float = DEFAULT_REQUEST_DELAY_SECONDS,
     scrape_datetime: datetime | None = None,
@@ -49,7 +50,7 @@ def run_scraper(
     scrape_timestamp = started_at.isoformat(timespec="seconds")
     raw_csv, processed_csv = build_output_paths(output_dir, started_at)
 
-    driver = get_driver()
+    driver = get_driver(debug_port)
     master_dataset: list[dict] = []
     current_key_price: float | None = None
 

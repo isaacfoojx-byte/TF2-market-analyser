@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 URL = "https://backpack.tf/stats/Unique/Mann%20Co.%20Supply%20Crate%20Key/Tradable/Craftable"
 
@@ -9,9 +11,9 @@ def get_key_market(driver):
     driver.get(URL)
 
     
-    WebDriverWait(driver, 10).until(
-        lambda d: "Just a moment" not in d.title
-        )
+    WebDriverWait(driver, 60).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "div.item"))
+    )
 
     soup = BeautifulSoup(driver.page_source, "html.parser")
 

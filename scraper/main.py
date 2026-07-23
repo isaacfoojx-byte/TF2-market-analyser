@@ -13,13 +13,17 @@ from urllib.error import URLError
 from urllib.request import urlopen
 
 
-DEBUG_PORT = 9222
-DEBUG_URL = f"http://localhost:{DEBUG_PORT}/json/version"
-DEBUG_TABS_URL = f"http://localhost:{DEBUG_PORT}/json"
+DEBUG_PORTS = [9222,9333,9444]
+DEBUG_PORT = None
+# DEBUG_URL = f"http://localhost:{DEBUG_PORT}/json/version"
+# DEBUG_TABS_URL = f"http://localhost:{DEBUG_PORT}/json"
+# DEBUG_URL = f"http://[::1]:{DEBUG_PORT}/json/version"
+# DEBUG_TABS_URL = f"http://[::1]:{DEBUG_PORT}/json"
 START_URL = "https://backpack.tf/effects"
 STARTUP_TIMEOUT_SECONDS = 20
 PAGE_SETTLE_SECONDS = 10
 CLOUDFLARE_POLL_SECONDS = 1
+
 
 
 def is_github_actions() -> bool:
@@ -62,17 +66,49 @@ def find_chrome() -> Path:
     )
 
 
-def debugger_is_ready() -> bool:
+# def debugger_is_ready() -> bool:
+#     try:
+#         with urlopen(DEBUG_URL, timeout=1):
+#             return True
+#     except (OSError, URLError):
+#         return False
+
+def debugger_is_ready(port):
+    browser = "Unknown"
     try:
-        with urlopen(DEBUG_URL, timeout=1):
+        debug_url = f"http://localhost:{port}/json/version"
+
+        with urlopen(debug_url, timeout=1) as response:
+            data = json.load(response)
+
+        browser = data.get("Browser", "")
+
+        if browser.startswith("Chrome/"):
+            print(f"Found Chrome on port {port}")
             return True
-    except (OSError, URLError):
+
+        print(f"Port {port} belongs to {browser}")
+        return False
+    
+    except Exception as e:
+        print(f"Port {port} unavailable: {e}")
+        return False
+
+def port_is_in_use(port) -> bool:
+    try:
+        debug_url = f"http://localhost:{port}/json/version"
+
+        with urlopen(debug_url, timeout=1):
+            return True
+
+    except Exception:
         return False
 
 
-def cloudflare_challenge_is_active() -> bool:
+def cloudflare_challenge_is_active(port) -> bool:
     try:
-        with urlopen(DEBUG_TABS_URL, timeout=2) as response:
+        tabs_url = f"http://localhost:{port}/json"
+        with urlopen(tabs_url, timeout=2) as response:
             tabs = json.load(response)
     except (OSError, URLError, json.JSONDecodeError):
         return False
@@ -94,32 +130,99 @@ def cloudflare_challenge_is_active() -> bool:
     return False
 
 
+# def wait_for_cloudflare_clearance(port,
+#     timeout_seconds: float = PAGE_SETTLE_SECONDS,
+#     poll_interval_seconds: float = CLOUDFLARE_POLL_SECONDS,
+# ) -> None:
+#     if not cloudflare_challenge_is_active(port):
+#         print("No Cloudflare challenge detected, starting scraper.")
+#         return
+
+#     print(f"Cloudflare challenge detected; waiting up to {timeout_seconds:g} seconds...")
+#     checks = max(1, math.ceil(timeout_seconds / poll_interval_seconds))
+
+#     for i in range(checks):
+#         time.sleep(poll_interval_seconds)
+#         if not cloudflare_challenge_is_active(port):
+#             print("Cloudflare challenge cleared, starting scraper.")
+#             return
+
+#     raise RuntimeError(
+#         "Cloudflare challenge remained active. Refusing to start an incomplete scrape."
+#     )
+
 def wait_for_cloudflare_clearance(
+    port,
     timeout_seconds: float = PAGE_SETTLE_SECONDS,
     poll_interval_seconds: float = CLOUDFLARE_POLL_SECONDS,
 ) -> None:
-    if not cloudflare_challenge_is_active():
-        print("No Cloudflare challenge detected, starting scraper.")
-        return
 
-    print(f"Cloudflare challenge detected; waiting up to {timeout_seconds:g} seconds...")
-    checks = max(1, math.ceil(timeout_seconds / poll_interval_seconds))
+    print("Waiting for backpack.tf session to become stable...")
 
-    for i in range(checks):
+    deadline = time.monotonic() + timeout_seconds
+    clear_since = None
+
+    while time.monotonic() < deadline:
+
+        try:
+            tabs_url = f"http://localhost:{port}/json"
+
+            with urlopen(tabs_url, timeout=2) as response:
+                tabs = json.load(response)
+
+            backpack_tab = None
+
+            for tab in tabs:
+                url = str(tab.get("url", "")).lower()
+
+                if "backpack.tf" in url:
+                    backpack_tab = tab
+                    break
+
+            if backpack_tab is None:
+                time.sleep(poll_interval_seconds)
+                continue
+
+            title = backpack_tab.get("title", "").lower()
+            url = backpack_tab.get("url", "").lower()
+
+            challenge = (
+                "just a moment" in title
+                or "attention required" in title
+                or "cdn-cgi/challenge-platform" in url
+            )
+
+            if challenge:
+                clear_since = None
+
+            else:
+                if clear_since is None:
+                    clear_since = time.monotonic()
+
+                # Require the session to remain clear for 5 seconds
+                elif time.monotonic() - clear_since >= 5:
+                    print("Cloudflare session established.")
+                    return
+
+        except Exception:
+            pass
+
         time.sleep(poll_interval_seconds)
-        if not cloudflare_challenge_is_active():
-            print("Cloudflare challenge cleared, starting scraper.")
-            return
 
-    raise RuntimeError(
-        "Cloudflare challenge remained active. Refusing to start an incomplete scrape."
-    )
+    raise RuntimeError("Cloudflare challenge did not finish.")
 
 
-def build_chrome_command(chrome: Path, profile_dir: Path) -> list[str]:
+def build_chrome_command(chrome: Path, profile_dir: Path, port) -> list[str]:
+    # command = [
+    #     str(chrome),
+    #     f"--remote-debugging-port={DEBUG_PORT}",
+    #     f"--user-data-dir={profile_dir}",
+    # ]
+
     command = [
         str(chrome),
-        f"--remote-debugging-port={DEBUG_PORT}",
+        "--remote-debugging-address=127.0.0.1",
+        f"--remote-debugging-port={port}",
         f"--user-data-dir={profile_dir}",
     ]
 
@@ -138,32 +241,48 @@ def build_chrome_command(chrome: Path, profile_dir: Path) -> list[str]:
 
 
 def launch_chrome() -> None:
-    if debugger_is_ready():
-        print(f"Using the browser instance already running on port {DEBUG_PORT}.")
-        return
+
+    global DEBUG_PORT
 
     chrome = find_chrome()
-    if is_github_actions():
-        profile_dir = Path(tempfile.mkdtemp(prefix="TF2MarketAnalyserChrome-"))
-    else:
-        profile_dir = Path(tempfile.gettempdir()) / "TF2MarketAnalyserChrome"
 
-    subprocess.Popen(build_chrome_command(chrome, profile_dir))
+    for port in DEBUG_PORTS:
 
-    deadline = time.monotonic() + STARTUP_TIMEOUT_SECONDS
-    while time.monotonic() < deadline:
-        if debugger_is_ready():
+        if debugger_is_ready(port):
+            DEBUG_PORT = port
+            print(f"Using Chrome on debugging port {port}.")
             return
-        time.sleep(0.25)
 
-    raise TimeoutError(
-        f"Chrome opened, but its debugging endpoint did not become available "
-    )
+        if port_is_in_use(port):
+            print(f"Port {port} is already in use by another application, skipping.")
+            continue
+
+        if is_github_actions():
+            profile_dir = Path(tempfile.mkdtemp(prefix="TF2MarketAnalyserChrome-"))
+        else:
+            # profile_dir = Path(tempfile.gettempdir()) / "TF2MarketAnalyserChrome"
+            profile_dir = Path(tempfile.mkdtemp(prefix="TF2MarketAnalyserChrome-"))
+
+        subprocess.Popen(build_chrome_command(chrome, profile_dir,port))
+
+        deadline = time.monotonic() + STARTUP_TIMEOUT_SECONDS
+
+        while time.monotonic() < deadline:
+            if debugger_is_ready(port):
+                DEBUG_PORT = port
+                print(f"Using Chrome on debugging port {port}.")
+                return
+            time.sleep(0.25)
+
+        print(f"Port {port} failed, trying another port...")
+    raise RuntimeError("Could not launch Chrome on any debugging port.")
+
+    
 
 
 def main() -> None:
     launch_chrome()
-    wait_for_cloudflare_clearance()
+    wait_for_cloudflare_clearance(DEBUG_PORT)
 
     if __package__:
         scraper_module = import_module(f"{__package__}.scraper")
@@ -171,7 +290,7 @@ def main() -> None:
         sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
         scraper_module = import_module("scraper.scraper")
 
-    scraper_module.run_scraper()
+    scraper_module.run_scraper(DEBUG_PORT)
 
 
 if __name__ == "__main__":
