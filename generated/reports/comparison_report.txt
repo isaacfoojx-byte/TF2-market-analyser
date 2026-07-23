@@ -6,44 +6,44 @@ TF2 MARKET COMPARISON REPORT
 ============================================================
 Market Summary
 ============================================================
-Unique unusual markets: 40,749
-New listings: 1
+Unique unusual markets: 40,781
+New listings: 32
 Net listing change: +0
-Removed listings: 0
-Price increases: 0
-Price decreases: 40748
+Removed listings: 161
+Price increases: 32
+Price decreases: 40556
 
 
 
 ============================================================
 Top 10 Gainers
 ============================================================
-         effect_name                       item_name  average_price_old  average_price_new  price_change  percent_change
-     Floppin' Frenzy Taunt: The Trackman's Touchdown           1.458014           1.453951     -0.004063       -0.278689
-         Mega Strike  Taunt: Doctor's Defibrillators           1.505047           1.500852     -0.004194       -0.278689
-  Midnight Whirlwind Taunt: The Trackman's Touchdown           1.552080           1.547754     -0.004325       -0.278689
-         Showstopper             Taunt: The Headcase           1.646145           1.641557     -0.004588       -0.278689
-Festivized Formation       Taunt: Battin' a Thousand           1.693178           1.688459     -0.004719       -0.278689
-          Holy Grail Taunt: The Trackman's Touchdown           1.716694           1.711910     -0.004784       -0.278689
- Fountain of Delight    Taunt: Bare Knuckle Beatdown           1.716694           1.711910     -0.004784       -0.278689
-  Midnight Whirlwind                Taunt: I See You           1.740210           1.735361     -0.004850       -0.278689
-   Sublime Snowstorm       Taunt: Battin' a Thousand           1.740210           1.735361     -0.004850       -0.278689
-  Skill Gotten Gains                Taunt: I See You           1.763727           1.758811     -0.004915       -0.278689
+               effect_name           item_name  average_price_old  average_price_new  price_change  percent_change
+                 Darkblaze             War Pig         790.292623       10734.889234   9944.596611     1258.343596
+     Bonzo the All-Gnawing   Armored Authority        1406.111148        3508.133737   2102.022589      149.491923
+                  Hellfire        Brigade Helm         515.918033        1637.129077   1121.211044      217.323484
+It's a Secret to Everybody       Classy Capper         562.819672         982.277446    419.457774       74.527916
+      The Eldritch Opening          Polar Bear          77.856721         392.910979    315.054257      404.659035
+                Roboactive  Crocleather Slouch         139.766885         388.233467    248.466582      177.772139
+              Stormy Storm       Blighted Beak         422.114754         580.011444    157.896690       37.406106
+       Circling Peace Sign          Lil' Bitey         110.218852         257.263141    147.044288      133.411195
+       Eerie Orbiting Fire   Ye Olde Baker Boy          38.459344         140.325349    101.866005      264.866724
+             Purple Energy Cranial Carcharodon          60.972131         159.035396     98.063265      160.832930
 
 ============================================================
 Top 10 Losers
 ============================================================
-          effect_name          item_name  average_price_old  average_price_new  price_change  percent_change
-       Burning Flames          Noh Mercy       20741.426928       20683.622951    -57.803977       -0.278689
-               Arcana Virtual Viewfinder       19189.347361       19135.868852    -53.478509       -0.278689
-     Poisoned Shadows            Antlers       16743.646227       16696.983607    -46.662621       -0.278689
-           Spellbound            Antlers       15426.730232       15383.737705    -42.992527       -0.278689
-Bonzo the All-Gnawing Rotation Sensation       14297.945093       14258.098361    -39.846732       -0.278689
-           Spellbound Virtual Viewfinder       13004.545455       12968.303279    -36.242176       -0.278689
-            Darkblaze  Pyromancer's Mask       12952.809469       12916.711475    -36.097994       -0.278689
-           Spellbound     Hong Kong Cone       12933.996383       12897.950820    -36.045564       -0.278689
-           Spellbound    Soldered Sensei       12275.538386       12241.327869    -34.210517       -0.278689
-               Nebula Captain Space Mann       11617.080388       11584.704918    -32.375470       -0.278689
+          effect_name             item_name  average_price_old  average_price_new  price_change  percent_change
+             Sunbeams Horrific Headsplitter         351.762295         238.553094   -113.209201      -32.183438
+       Burning Flames             Noh Mercy       20683.622951       20627.826371    -55.796580       -0.269762
+               Arcana    Virtual Viewfinder       19135.868852       19084.247527    -51.621325       -0.269762
+     Poisoned Shadows               Antlers       16696.983607       16651.941470    -45.042137       -0.269762
+           Spellbound               Antlers       15383.737705       15342.238208    -41.499497       -0.269762
+      Frosty Flavours   Coldfront Commander         146.333115         106.647266    -39.685849      -27.120211
+Bonzo the All-Gnawing    Rotation Sensation       14258.098361       14219.635412    -38.462948       -0.269762
+           Spellbound    Virtual Viewfinder       12968.303279       12933.319709    -34.983570       -0.269762
+            Darkblaze     Pyromancer's Mask       12916.711475       12881.867081    -34.844395       -0.269762
+           Spellbound        Hong Kong Cone       12897.950820       12863.157034    -34.793785       -0.269762
 
 
 
@@ -53,17 +53,17 @@ Effect Summary
 
 Top 10 Effects by Average Price Increase
 ------------------------------------------------------------
-       effect_name  average_change
-     Fossil Fueled       -0.010005
-      Shark Attack       -0.012537
-Midnight Whirlwind       -0.013010
-    Silver Cyclone       -0.013184
-       Mega Strike       -0.015538
-               '72       -0.015577
-    Solar Scorched       -0.015870
-Skill Gotten Gains       -0.016401
-   Screaming Tiger       -0.016430
-  Arachnid Assault       -0.016922
+               effect_name  average_change
+                 Darkblaze       57.395984
+     Bonzo the All-Gnawing        8.167948
+      The Eldritch Opening        6.685135
+                  Hellfire        4.098410
+      Otherworldly Weather        0.917052
+              Candle Flame        0.719688
+It's a Secret to Everybody        0.672799
+        Glittering Juniper        0.562729
+             Bubble Breeze        0.466681
+                Roboactive        0.236842
 Top 10 Most Active Effects
 ------------------------------------------------------------
         effect_name  unusuals
@@ -76,20 +76,20 @@ Top 10 Most Active Effects
      Circling Heart       532
     Blizzardy Storm       525
 Circling Peace Sign       524
-     Haunted Ghosts       521
+     Haunted Ghosts       522
 Top 10 Effects with Most Price Increases
 ------------------------------------------------------------
-           effect_name  increases
-                   '72          0
-             Abduction          0
-          Abyssal Aura          0
-              Accursed          0
-             Aces High          0
-Acidic Bubbles of Envy          0
-        Acidic Climate          0
-           Aggradation          0
-           Amaranthine          0
-               Amatory          0
+          effect_name  increases
+  Circling Peace Sign          2
+       Molten Mallard          2
+Bonzo the All-Gnawing          1
+        Bubble Breeze          1
+             Bubbling          1
+       Burning Flames          1
+         Candle Flame          1
+          Cloudy Moon          1
+            Darkblaze          1
+      Dead Presidents          1
 Top 10 Effects by Average Listing Increase
 ------------------------------------------------------------
            effect_name  average_listing_change
@@ -112,17 +112,17 @@ Item Summary
 
 Top 10 Items by Average Price Increase
 ------------------------------------------------------------
-                      item_name  average_change
-               Taunt: Ring King       -0.007864
-Taunt: The Trackman's Touchdown       -0.009902
- Taunt: Doctor's Defibrillators       -0.010933
-      Taunt: Battin' a Thousand       -0.012641
-               Taunt: I See You       -0.013040
-             Taunt: Spin-to-Win       -0.013259
-   Taunt: The Profane Puppeteer       -0.013578
-    Taunt: The Killer Signature       -0.013925
-             Taunt: Most Wanted       -0.014206
-            Taunt: The Headcase       -0.015702
+          item_name  average_change
+            War Pig      189.976844
+  Armored Authority       35.058427
+       Brigade Helm       17.966022
+         Lil' Bitey        3.805993
+ Crocleather Slouch        3.796837
+      Classy Capper        3.100248
+         Polar Bear        2.724155
+        Bullet Buzz        1.517771
+Cranial Carcharodon        1.176462
+  Ye Olde Baker Boy        0.996136
 Top 10 Most Active Items
 ------------------------------------------------------------
                item_name  unusuals
@@ -131,24 +131,24 @@ Top 10 Most Active Items
            Blast Defense       166
             Patriot Peak       165
                   Airdog       159
+              Tundra Top       152
                  Warhood       152
-              Tundra Top       151
        Berlin Brain Bowl       149
 Taunt: The Schadenfreude       146
         Sky High Fly Guy       140
 Top 10 Items with Most Price Increases
 ------------------------------------------------------------
-             item_name  increases
-A Handsome Handy Thing          0
-     A Hat to Kill For          0
-A Head Full of Hot Air          0
- A Rather Festive Tree          0
-    A Well Wrapped Hat          0
-              Aimframe          0
-              Air Head          0
-                Airdog          0
-         Alakablamicon          0
-    All Hallows' Hatte          0
+                   item_name  increases
+         Thousand-Yard Stare          4
+                      Airdog          1
+           Armored Authority          1
+Baseball Bill's Sports Shine          1
+           Berlin Brain Bowl          1
+               Blighted Beak          1
+                Brigade Helm          1
+         Buccaneer's Bicorne          1
+                 Bullet Buzz          1
+            Burning Question          1
 Top 10 Items by Average Listing Increase
 ------------------------------------------------------------
              item_name  average_listing_change
