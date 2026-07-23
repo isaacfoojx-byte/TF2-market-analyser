@@ -160,7 +160,7 @@ def wait_for_cloudflare_clearance(
     print("Waiting for backpack.tf session to become stable...")
 
     deadline = time.monotonic() + timeout_seconds
-    clear_since = None
+    # clear_since = None
 
     while time.monotonic() < deadline:
 
@@ -170,13 +170,12 @@ def wait_for_cloudflare_clearance(
             with urlopen(tabs_url, timeout=2) as response:
                 tabs = json.load(response)
 
-            backpack_tab = None
+            usable = False
+            
 
             print("------")
 
             for tab in tabs:
-                print(tab.get("title"))
-                print(tab.get("url"))
 
                 url = str(tab.get("url", "")).lower()
                 title = tab.get("title", "").lower()
@@ -186,7 +185,7 @@ def wait_for_cloudflare_clearance(
                     and "cdn-cgi" not in url
                     and "just a moment" not in title
                 ):
-                    backpack_tab = tab
+                    
                     usable = True
                     break
 
@@ -194,35 +193,30 @@ def wait_for_cloudflare_clearance(
                 print("Session established.")
                 return
 
-            if backpack_tab is None:
-                time.sleep(poll_interval_seconds)
-                continue
+            # challenge = (
+            #     "just a moment" in title
+            #     or "attention required" in title
+            #     or "cdn-cgi/challenge-platform" in url
+            # )
 
-            title = backpack_tab.get("title", "").lower()
-            url = backpack_tab.get("url", "").lower()
+            # if challenge:
+            #     clear_since = None
 
-            challenge = (
-                "just a moment" in title
-                or "attention required" in title
-                or "cdn-cgi/challenge-platform" in url
-            )
+            # else:
+            #     if clear_since is None:
+            #         clear_since = time.monotonic()
 
-            if challenge:
-                clear_since = None
+            #     # Require the session to remain clear for 5 seconds
+            #     elif time.monotonic() - clear_since >= 5:
+            #         print("Cloudflare session established.")
+            #         return
 
-            else:
-                if clear_since is None:
-                    clear_since = time.monotonic()
-
-                # Require the session to remain clear for 5 seconds
-                elif time.monotonic() - clear_since >= 5:
-                    print("Cloudflare session established.")
-                    return
+            time.sleep(poll_interval_seconds)
 
         except Exception:
             pass
 
-        time.sleep(poll_interval_seconds)
+        
 
     raise RuntimeError("Cloudflare challenge did not finish.")
 
@@ -296,8 +290,10 @@ def launch_chrome() -> None:
 
 
 def main() -> None:
+    start = time.perf_counter()
     launch_chrome()
     wait_for_cloudflare_clearance(DEBUG_PORT)
+    print(f"Startup took {time.perf_counter() - start:.1f} seconds")
 
     if __package__:
         scraper_module = import_module(f"{__package__}.scraper")
