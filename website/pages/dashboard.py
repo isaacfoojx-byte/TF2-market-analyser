@@ -24,3 +24,5 @@ market_summary = build_market_summary(comparison)
 st.subheader("Market Overview")
 
 st.dataframe(market_summary)
+
+# In order to run this website, type this command in VSCode: python -m streamlit run website/app.py
