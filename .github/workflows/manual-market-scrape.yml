@@ -15,10 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     env:
-      OUTPUT_DIR: ${{ runner.temp }}/tf2-market-output
       PYTHONUNBUFFERED: "1"
 
     steps:
+      - name: Configure output directory
+        run: echo "OUTPUT_DIR=$RUNNER_TEMP/tf2-market-output" >> "$GITHUB_ENV"
+
       - name: Check out repository
         uses: actions/checkout@v4
 
@@ -49,8 +51,8 @@ jobs:
         with:
           name: tf2-market-scrape-${{ github.run_id }}
           path: |
-            ${{ env.OUTPUT_DIR }}/raw/*.csv
-            ${{ env.OUTPUT_DIR }}/processed/archive/*.csv
+            ${{ runner.temp }}/tf2-market-output/raw/*.csv
+            ${{ runner.temp }}/tf2-market-output/processed/archive/*.csv
             ${{ runner.temp }}/scraper.log
             generated/metadata.json
           if-no-files-found: warn
