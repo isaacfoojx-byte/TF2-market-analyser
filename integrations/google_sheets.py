@@ -35,6 +35,7 @@ class UploadResult:
     column_count: int
     scrape_timestamp: str
     updated_cells: int
+    verified_rows: int
 
 
 def required_environment(name: str) -> str:
@@ -146,9 +147,15 @@ def upload_csv_to_latest(
     spreadsheet_id: str | None = None,
     sheet_name: str | None = None,
     batch_rows: int | None = None,
+    max_rows: int | None = None,
 ) -> UploadResult:
     path = Path(csv_path)
     headers, rows, scrape_timestamp = load_processed_csv(path)
+
+    if max_rows is not None:
+        if max_rows < 1:
+            raise ValueError("Maximum row count must be positive")
+        rows = rows[:max_rows]
 
     target_spreadsheet = spreadsheet_id or required_environment(
         "GOOGLE_SPREADSHEET_ID"
@@ -193,6 +200,23 @@ def upload_csv_to_latest(
         response = execute_with_retry(request)
         updated_cells += int(response.get("totalUpdatedCells", 0))
 
+    written_range = f"{quoted_sheet}!A1:{last_column}{len(values)}"
+    verify_request = sheets_service.spreadsheets().values().get(
+        spreadsheetId=target_spreadsheet,
+        range=written_range,
+        majorDimension="ROWS",
+    )
+    verified_values = execute_with_retry(verify_request).get("values", [])
+    if not verified_values or verified_values[0] != headers:
+        raise RuntimeError("Google Sheets read-back header verification failed")
+
+    verified_rows = len(verified_values) - 1
+    if verified_rows != len(rows):
+        raise RuntimeError(
+            f"Google Sheets read-back row mismatch: expected={len(rows)}, "
+            f"actual={verified_rows}"
+        )
+
     return UploadResult(
         spreadsheet_id=target_spreadsheet,
         sheet_name=target_sheet,
@@ -200,17 +224,27 @@ def upload_csv_to_latest(
         column_count=len(headers),
         scrape_timestamp=scrape_timestamp,
         updated_cells=updated_cells,
+        verified_rows=verified_rows,
     )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("csv_path", type=Path)
+    parser.add_argument("--sheet-name")
+    parser.add_argument("--batch-rows", type=int)
+    parser.add_argument("--max-rows", type=int)
     args = parser.parse_args()
 
-    result = upload_csv_to_latest(args.csv_path)
+    result = upload_csv_to_latest(
+        args.csv_path,
+        sheet_name=args.sheet_name,
+        batch_rows=args.batch_rows,
+        max_rows=args.max_rows,
+    )
     print(
-        f"Uploaded {result.row_count:,} rows and {result.updated_cells:,} cells "
+        f"Uploaded and verified {result.verified_rows:,} rows and "
+        f"{result.updated_cells:,} cells "
         f"to {result.sheet_name!r} for snapshot {result.scrape_timestamp}"
     )
 

@@ -1,0 +1,64 @@
+name: Test Google Sheets upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      csv_path:
+        description: Processed CSV path in the repository
+        required: true
+        default: data/processed/cleaned_2026-07-23_14-22-23.csv
+        type: string
+      sheet_name:
+        description: Existing Google Sheets tab for the controlled test
+        required: true
+        default: Integration Test
+        type: string
+      max_rows:
+        description: Maximum data rows to upload
+        required: true
+        default: "25"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: google-sheets-integration-test
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+      GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+      CSV_PATH: ${{ inputs.csv_path }}
+      TEST_SHEET_NAME: ${{ inputs.sheet_name }}
+      TEST_MAX_ROWS: ${{ inputs.max_rows }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Verify configuration
+        shell: bash
+        run: |
+          test -n "$GOOGLE_SERVICE_ACCOUNT_JSON"
+          test -n "$GOOGLE_SPREADSHEET_ID"
+          test -f "$CSV_PATH"
+
+      - name: Upload controlled sample
+        run: >-
+          python -m integrations.google_sheets "$CSV_PATH"
+          --sheet-name "$TEST_SHEET_NAME"
+          --max-rows "$TEST_MAX_ROWS"
