@@ -1,8 +1,8 @@
 import streamlit as st
 import plotly.express as px
 
-from website.utils import load_effects
-from website.components import (
+from utils import load_effects
+from components import (
     page_header,
     metric_row,
     show_table,

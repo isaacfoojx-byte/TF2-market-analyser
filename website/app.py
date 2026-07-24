@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 
-from website.components import (
+from components import (
     page_header,
     metric_row,
 )
 
-from website.utils import load_dashboard
+from utils import load_dashboard
 from pathlib import Path
 
 LOGO = (
