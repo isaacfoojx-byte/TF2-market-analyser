@@ -15,9 +15,10 @@ concurrency:
 jobs:
   scrape-and-upload:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 30
     env:
       PYTHONUNBUFFERED: "1"
+      BACKPACK_TF_API_KEY: ${{ secrets.BACKPACK_TF_API_KEY }}
       GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
       GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
       GOOGLE_SHEET_NAME: Latest
@@ -41,15 +42,15 @@ jobs:
       - name: Verify configuration
         shell: bash
         run: |
+          test -n "$BACKPACK_TF_API_KEY"
           test -n "$GOOGLE_SERVICE_ACCOUNT_JSON"
           test -n "$GOOGLE_SPREADSHEET_ID"
-          google-chrome --version
 
-      - name: Scrape and clean market data
+      - name: Fetch and clean market data
         shell: bash
         run: |
           set -o pipefail
-          python -m scraper.main 2>&1 | tee "$RUNNER_TEMP/scraper.log"
+          python -m scraper.scraping 2>&1 | tee "$RUNNER_TEMP/scraper.log"
 
       - name: Validate generated snapshots
         run: python scripts/validate_scrape_output.py "$OUTPUT_DIR"

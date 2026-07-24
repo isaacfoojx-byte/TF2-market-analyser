@@ -10,6 +10,7 @@ def save_metadata(
     key_price,
     total_listings,
     scrape_duration,
+    source=None,
 ):
     metadata = {
         "snapshot_timestamp": snapshot_timestamp,
@@ -17,6 +18,8 @@ def save_metadata(
         "total_listings": total_listings,
         "scrape_duration": scrape_duration,
     }
+    if source:
+        metadata["source"] = source
 
     METADATA_FILE.parent.mkdir(parents=True, exist_ok=True)
 
