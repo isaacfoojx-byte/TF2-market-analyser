@@ -7,3 +7,5 @@ reportlab==5.0.0
 numpy==2.3.4
 streamlit==1.60.0
 plotly==6.9.0
+google-api-python-client==2.198.0
+google-auth==2.56.0

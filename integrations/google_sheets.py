@@ -1,0 +1,219 @@
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import math
+import os
+import random
+import re
+import time
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Callable
+
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+from scripts.validate_scrape_output import REQUIRED_PROCESSED_COLUMNS
+
+
+SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets"
+TRANSIENT_HTTP_STATUSES = {429, 500, 502, 503, 504}
+DEFAULT_BATCH_ROWS = 2000
+DEFAULT_MAX_ATTEMPTS = 5
+INTEGER_PATTERN = re.compile(r"^-?\d+$")
+FLOAT_PATTERN = re.compile(r"^-?(?:\d+\.\d*|\d*\.\d+)(?:[eE][+-]?\d+)?$")
+
+
+@dataclass(frozen=True)
+class UploadResult:
+    spreadsheet_id: str
+    sheet_name: str
+    row_count: int
+    column_count: int
+    scrape_timestamp: str
+    updated_cells: int
+
+
+def required_environment(name: str) -> str:
+    value = os.environ.get(name)
+    if not value:
+        raise RuntimeError(f"Missing required environment variable: {name}")
+    return value
+
+
+def build_service_from_environment():
+    credentials_info = json.loads(required_environment("GOOGLE_SERVICE_ACCOUNT_JSON"))
+    credentials = service_account.Credentials.from_service_account_info(
+        credentials_info,
+        scopes=[SHEETS_SCOPE],
+    )
+    return build("sheets", "v4", credentials=credentials, cache_discovery=False)
+
+
+def coerce_value(value: str) -> Any:
+    stripped = value.strip()
+    lowered = stripped.lower()
+
+    if stripped == "":
+        return ""
+    if lowered == "true":
+        return True
+    if lowered == "false":
+        return False
+    if INTEGER_PATTERN.fullmatch(stripped):
+        return int(stripped)
+    if FLOAT_PATTERN.fullmatch(stripped):
+        number = float(stripped)
+        if math.isfinite(number):
+            return number
+
+    return value
+
+
+def load_processed_csv(csv_path: Path) -> tuple[list[str], list[list[Any]], str]:
+    with csv_path.open(encoding="utf-8", newline="") as file:
+        reader = csv.DictReader(file)
+        headers = reader.fieldnames or []
+        missing = REQUIRED_PROCESSED_COLUMNS - set(headers)
+        if missing:
+            raise ValueError(
+                f"{csv_path} is missing required columns: {', '.join(sorted(missing))}"
+            )
+
+        rows = [[coerce_value(row.get(header, "")) for header in headers] for row in reader]
+
+    if not rows:
+        raise ValueError(f"{csv_path} contains no data rows")
+
+    timestamp_index = headers.index("scrape_timestamp")
+    scrape_timestamp = str(rows[0][timestamp_index])
+    return headers, rows, scrape_timestamp
+
+
+def execute_with_retry(
+    request,
+    max_attempts: int = DEFAULT_MAX_ATTEMPTS,
+    sleep: Callable[[float], None] = time.sleep,
+    random_value: Callable[[], float] = random.random,
+):
+    for attempt in range(max_attempts):
+        try:
+            return request.execute()
+        except HttpError as error:
+            status = getattr(error.resp, "status", None)
+            if status not in TRANSIENT_HTTP_STATUSES or attempt == max_attempts - 1:
+                raise
+            sleep(min(2**attempt + random_value(), 32))
+
+    raise RuntimeError("Google Sheets request exhausted its retry attempts")
+
+
+def quote_sheet_name(sheet_name: str) -> str:
+    return "'" + sheet_name.replace("'", "''") + "'"
+
+
+def column_name(column_number: int) -> str:
+    if column_number < 1:
+        raise ValueError("Column number must be positive")
+
+    result = ""
+    while column_number:
+        column_number, remainder = divmod(column_number - 1, 26)
+        result = chr(65 + remainder) + result
+    return result
+
+
+def ensure_sheet_exists(service, spreadsheet_id: str, sheet_name: str) -> None:
+    request = service.spreadsheets().get(
+        spreadsheetId=spreadsheet_id,
+        fields="sheets.properties.title",
+    )
+    response = execute_with_retry(request)
+    titles = {
+        sheet.get("properties", {}).get("title")
+        for sheet in response.get("sheets", [])
+    }
+    if sheet_name not in titles:
+        raise ValueError(f"Spreadsheet does not contain a tab named {sheet_name!r}")
+
+
+def upload_csv_to_latest(
+    csv_path: str | Path,
+    service=None,
+    spreadsheet_id: str | None = None,
+    sheet_name: str | None = None,
+    batch_rows: int | None = None,
+) -> UploadResult:
+    path = Path(csv_path)
+    headers, rows, scrape_timestamp = load_processed_csv(path)
+
+    target_spreadsheet = spreadsheet_id or required_environment(
+        "GOOGLE_SPREADSHEET_ID"
+    )
+    target_sheet = sheet_name or os.environ.get("GOOGLE_SHEET_NAME", "Latest")
+    rows_per_batch = (
+        batch_rows
+        if batch_rows is not None
+        else int(os.environ.get("GOOGLE_SHEETS_BATCH_ROWS", DEFAULT_BATCH_ROWS))
+    )
+
+    if rows_per_batch < 1:
+        raise ValueError("Batch row count must be positive")
+
+    sheets_service = service or build_service_from_environment()
+    ensure_sheet_exists(sheets_service, target_spreadsheet, target_sheet)
+    quoted_sheet = quote_sheet_name(target_sheet)
+
+    clear_request = sheets_service.spreadsheets().values().clear(
+        spreadsheetId=target_spreadsheet,
+        range=quoted_sheet,
+        body={},
+    )
+    execute_with_retry(clear_request)
+
+    values = [headers, *rows]
+    last_column = column_name(len(headers))
+    updated_cells = 0
+
+    for start_index in range(0, len(values), rows_per_batch):
+        batch = values[start_index : start_index + rows_per_batch]
+        start_row = start_index + 1
+        end_row = start_row + len(batch) - 1
+        target_range = f"{quoted_sheet}!A{start_row}:{last_column}{end_row}"
+        request = sheets_service.spreadsheets().values().batchUpdate(
+            spreadsheetId=target_spreadsheet,
+            body={
+                "valueInputOption": "RAW",
+                "data": [{"range": target_range, "values": batch}],
+            },
+        )
+        response = execute_with_retry(request)
+        updated_cells += int(response.get("totalUpdatedCells", 0))
+
+    return UploadResult(
+        spreadsheet_id=target_spreadsheet,
+        sheet_name=target_sheet,
+        row_count=len(rows),
+        column_count=len(headers),
+        scrape_timestamp=scrape_timestamp,
+        updated_cells=updated_cells,
+    )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("csv_path", type=Path)
+    args = parser.parse_args()
+
+    result = upload_csv_to_latest(args.csv_path)
+    print(
+        f"Uploaded {result.row_count:,} rows and {result.updated_cells:,} cells "
+        f"to {result.sheet_name!r} for snapshot {result.scrape_timestamp}"
+    )
+
+
+if __name__ == "__main__":
+    main()
