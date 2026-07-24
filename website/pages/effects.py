@@ -2,6 +2,12 @@ import streamlit as st
 import plotly.express as px
 
 from website.utils import load_effects
+from website.components import (
+    page_header,
+    metric_row,
+    show_table,
+    style_bar_chart,
+)
 
 st.set_page_config(
     page_title="Effect Analytics",
@@ -10,41 +16,36 @@ st.set_page_config(
 )
 
 
-comparison, effect_summary = load_effects()
+_, effect_summary = load_effects()
 
-st.title("✨ Effect Analytics")
-
-st.caption(
-    "Market statistics grouped by unusual effect."
+page_header(
+    "✨ Effect Analytics",
+    "Market statistics grouped by unusual effect.",
 )
 
 st.subheader("Summary")
 
-col1, col2, col3, col4 = st.columns(4)
+total_effects = effect_summary["effect_name"].nunique()
 
-col1.metric(
-    "Effects",
-    effect_summary["effect_name"].nunique(),
+total_markets = int(
+    effect_summary["unusuals"].sum()
 )
 
-col2.metric(
-    "Markets",
-    int(effect_summary["unusuals"].sum()),
-)
-
-col3.metric(
-    "Average Change",
-    f"{effect_summary['average_change'].mean():.2f}%",
+average_change = (
+    effect_summary["average_change"].mean()
 )
 
 best_effect = effect_summary.loc[
-    effect_summary["average_change"].idxmax()
+    effect_summary["average_change"].idxmax(),
+    "effect_name",
 ]
 
-col4.metric(
-    "Top Effect",
-    best_effect["effect_name"],
-)
+metric_row([
+    ("Effects", total_effects, None),
+    ("Markets", total_markets, None),
+    ("Average Change", f"{average_change:.2f}%", None),
+    ("Top Effect", best_effect, None),
+])
 
 st.divider()
 
@@ -58,11 +59,7 @@ leaderboard = (
     )
 )
 
-st.dataframe(
-    leaderboard,
-    use_container_width=True,
-    hide_index=True,
-)
+show_table(leaderboard)
 
 st.divider()
 
@@ -77,11 +74,7 @@ gainers = (
     .head(10)
 )
 
-st.dataframe(
-    gainers,
-    use_container_width=True,
-    hide_index=True,
-)
+show_table(gainers)
 
 st.divider()
 
@@ -96,11 +89,7 @@ losers = (
     .head(10)
 )
 
-st.dataframe(
-    losers,
-    use_container_width=True,
-    hide_index=True,
-)
+show_table(losers)
 
 st.divider()
 
@@ -117,18 +106,10 @@ fig = px.bar(
     text="unusuals",
 )
 
-fig.update_traces(
-    textposition="outside",
-)
-
-fig.update_layout(
-    xaxis_title="Effect",
-    yaxis_title="Markets",
-    showlegend=False,
-    template="plotly_white",
-)
+fig = style_bar_chart(fig,"Effect","Markets")
 
 st.plotly_chart(
     fig,
     use_container_width=True,
 )
+

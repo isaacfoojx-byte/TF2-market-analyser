@@ -2,17 +2,23 @@ import streamlit as st
 from pathlib import Path
 import pandas as pd
 
+from website.components import (
+    page_header,
+    show_table
+)
+
+
 st.set_page_config(
     page_title="Reports",
     page_icon="📄",
     layout="wide",
 )
 
-st.title("📄 Reports")
-
-st.caption(
-    "Download generated reports and analytics."
+page_header(
+    "📄 Reports",
+    "Download generated reports and analytics.",
 )
+
 
 REPORT_DIR = Path("data/comparisons")
 
@@ -36,11 +42,7 @@ for file in csv_files:
 
 st.subheader("Available Reports")
 
-st.dataframe(
-    pd.DataFrame(report_info),
-    hide_index=True,
-    use_container_width=True,
-)
+show_table(pd.DataFrame(report_info))
 
 st.subheader("Downloads")
 
