@@ -104,7 +104,7 @@ def execute_request(api_key: str) -> dict[str, Any]:
         try:
             response = requests.get(
                 PRICES_URL,
-                params={"key": api_key, "raw": 2},
+                params={"key": api_key.strip(), "raw": 2},
                 headers=headers,
                 timeout=REQUEST_TIMEOUT_SECONDS,
             )
@@ -119,13 +119,21 @@ def execute_request(api_key: str) -> dict[str, Any]:
                 continue
 
             response.raise_for_status()
-            payload = response.json()
+            body = response.json()
+            payload = body.get("response", body)
+            if not isinstance(payload, dict):
+                raise ValueError("Pricing API returned an invalid response structure")
             if not payload.get("success"):
+                message = payload.get("message", "")
+                if isinstance(message, list):
+                    message = " ".join(str(value) for value in message)
                 raise RuntimeError(
-                    f"Pricing API rejected the request: {payload.get('message', '')}"
+                    f"Pricing API rejected the request: {message}"
                 )
             return payload
-        except (requests.RequestException, ValueError, RuntimeError) as error:
+        except RuntimeError:
+            raise
+        except (requests.RequestException, ValueError) as error:
             last_error = error
             if attempt == MAX_ATTEMPTS:
                 break
@@ -141,8 +149,12 @@ def execute_request(api_key: str) -> dict[str, Any]:
     ) from last_error
 
 
-def get_mapping_value(mapping: dict[str, Any], key: str) -> Any:
-    return mapping.get(key, mapping.get(str(key)))
+def get_mapping_value(mapping: Any, key: str) -> Any:
+    if isinstance(mapping, dict):
+        return mapping.get(key, mapping.get(str(key)))
+    if isinstance(mapping, list) and key == "0" and mapping:
+        return mapping[0]
+    return None
 
 
 def get_price_entry(
@@ -222,6 +234,8 @@ def format_key_range(low: float, high: float) -> str:
 
 def select_defindex(item: dict[str, Any], item_name: str, catalog: Catalog) -> int:
     defindices = item.get("defindex", [])
+    if isinstance(defindices, dict):
+        defindices = list(defindices.values())
     for value in defindices:
         try:
             defindex = int(value)
