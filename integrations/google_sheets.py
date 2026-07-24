@@ -127,18 +127,68 @@ def column_name(column_number: int) -> str:
     return result
 
 
-def ensure_sheet_exists(service, spreadsheet_id: str, sheet_name: str) -> None:
+def ensure_sheet_capacity(
+    service,
+    spreadsheet_id: str,
+    sheet_name: str,
+    required_rows: int,
+    required_columns: int,
+) -> None:
     request = service.spreadsheets().get(
         spreadsheetId=spreadsheet_id,
-        fields="sheets.properties.title",
+        fields=(
+            "sheets.properties("
+            "sheetId,title,gridProperties(rowCount,columnCount)"
+            ")"
+        ),
     )
     response = execute_with_retry(request)
-    titles = {
-        sheet.get("properties", {}).get("title")
-        for sheet in response.get("sheets", [])
-    }
-    if sheet_name not in titles:
+    properties = next(
+        (
+            sheet.get("properties", {})
+            for sheet in response.get("sheets", [])
+            if sheet.get("properties", {}).get("title") == sheet_name
+        ),
+        None,
+    )
+    if properties is None:
         raise ValueError(f"Spreadsheet does not contain a tab named {sheet_name!r}")
+
+    grid = properties.get("gridProperties", {})
+    current_rows = int(grid.get("rowCount", 0))
+    current_columns = int(grid.get("columnCount", 0))
+    target_rows = max(current_rows, required_rows)
+    target_columns = max(current_columns, required_columns)
+
+    if target_rows == current_rows and target_columns == current_columns:
+        return
+
+    resize_request = service.spreadsheets().batchUpdate(
+        spreadsheetId=spreadsheet_id,
+        body={
+            "requests": [
+                {
+                    "updateSheetProperties": {
+                        "properties": {
+                            "sheetId": properties["sheetId"],
+                            "gridProperties": {
+                                "rowCount": target_rows,
+                                "columnCount": target_columns,
+                            },
+                        },
+                        "fields": (
+                            "gridProperties(rowCount,columnCount)"
+                        ),
+                    }
+                }
+            ]
+        },
+    )
+    execute_with_retry(resize_request)
+    print(
+        f"Expanded {sheet_name!r} grid to "
+        f"{target_rows:,} rows and {target_columns:,} columns"
+    )
 
 
 def upload_csv_to_latest(
@@ -170,8 +220,15 @@ def upload_csv_to_latest(
     if rows_per_batch < 1:
         raise ValueError("Batch row count must be positive")
 
+    values = [headers, *rows]
     sheets_service = service or build_service_from_environment()
-    ensure_sheet_exists(sheets_service, target_spreadsheet, target_sheet)
+    ensure_sheet_capacity(
+        sheets_service,
+        target_spreadsheet,
+        target_sheet,
+        required_rows=len(values),
+        required_columns=len(headers),
+    )
     quoted_sheet = quote_sheet_name(target_sheet)
 
     clear_request = sheets_service.spreadsheets().values().clear(
@@ -181,7 +238,6 @@ def upload_csv_to_latest(
     )
     execute_with_retry(clear_request)
 
-    values = [headers, *rows]
     last_column = column_name(len(headers))
     updated_cells = 0
 
