@@ -13,7 +13,7 @@ from analytics.metadata import load_metadata
 
 
 @st.cache_data
-def load_market_data():
+def load_market():
     comparison = build_comparison()
     comparison = calculate_changes(comparison)
     comparison = classify_changes(comparison)
@@ -22,8 +22,8 @@ def load_market_data():
 
 
 @st.cache_data
-def load_dashboard_data():
-    comparison = load_market_data()
+def load_dashboard():
+    comparison = load_market()
 
     return (
         comparison,
@@ -35,8 +35,8 @@ def load_dashboard_data():
 
 
 @st.cache_data
-def load_effect_data():
-    comparison = load_market_data()
+def load_effects():
+    comparison = load_market()
 
     return (
         comparison,
@@ -45,8 +45,8 @@ def load_effect_data():
 
 
 @st.cache_data
-def load_item_data():
-    comparison = load_market_data()
+def load_items():
+    comparison = load_market()
 
     return (
         comparison,
