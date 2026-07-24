@@ -7,10 +7,16 @@ from website.components import (
 )
 
 from website.utils import load_dashboard
+from pathlib import Path
 
+LOGO = (
+    Path(__file__).parent
+    / "assets"
+    / "logo_only.png"
+)
 st.set_page_config(
     page_title="TFAnalytics",
-    page_icon="🎩",
+    page_icon=str(LOGO),
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -30,7 +36,7 @@ st.markdown(
 
 comparison, market_summary, effect_summary, item_summary, metadata = load_dashboard()
 
-summary = market_summary.iloc[0]
+summary = market_summary
 
 snapshot_time = pd.to_datetime(
     metadata["snapshot_timestamp"]

@@ -43,7 +43,7 @@ page_header(
 
 
 
-summary = market_summary.iloc[0]
+summary = market_summary
 
 activity = {
     "Category": [
@@ -130,6 +130,7 @@ top_movers["price_change"] = (
 
 top_movers["listing_change"] = (
     top_movers["listing_change"]
+    .astype(int)
     .map("{:+d}".format)
 )
 
