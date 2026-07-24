@@ -1,6 +1,12 @@
 import streamlit as st
 import plotly.express as px
 from website.utils import load_items
+from website.components import (
+    page_header,
+    metric_row,
+    show_table,
+    style_bar_chart,
+)
 
 st.set_page_config(
     page_title="Item Analytics",
@@ -11,41 +17,36 @@ st.set_page_config(
 
 
 
-comparison, item_summary = load_items()
+_, item_summary = load_items()
 
-st.title("📦 Item Analytics")
-
-st.caption(
-    "Market statistics grouped by TF2 item."
+page_header(
+    "📦 Item Analytics",
+    "Market statistics grouped by TF2 item.",
 )
 
 st.subheader("Summary")
 
-col1, col2, col3, col4 = st.columns(4)
+total_items = item_summary["item_name"].nunique()
 
-col1.metric(
-    "Items",
-    item_summary["item_name"].nunique(),
+total_markets = int(
+    item_summary["unusuals"].sum()
 )
 
-col2.metric(
-    "Markets",
-    int(item_summary["unusuals"].sum()),
-)
-
-col3.metric(
-    "Average Change",
-    f"{item_summary['average_change'].mean():.2f}%",
+average_change = (
+    item_summary["average_change"].mean()
 )
 
 best_item = item_summary.loc[
-    item_summary["average_change"].idxmax()
+    item_summary["average_change"].idxmax(),
+    "item_name",
 ]
 
-col4.metric(
-    "Top Item",
-    best_item["item_name"],
-)
+metric_row([
+    ("Items", total_items, None),
+    ("Markets", total_markets, None),
+    ("Average Change", f"{average_change:.2f}%", None),
+    ("Top Item", best_item, None),
+])
 
 st.divider()
 
@@ -59,11 +60,7 @@ leaderboard = (
     )
 )
 
-st.dataframe(
-    leaderboard,
-    use_container_width=True,
-    hide_index=True,
-)
+show_table(leaderboard)
 
 st.divider()
 
@@ -78,11 +75,7 @@ gainers = (
     .head(10)
 )
 
-st.dataframe(
-    gainers,
-    use_container_width=True,
-    hide_index=True,
-)
+show_table(gainers)
 
 st.divider()
 
@@ -97,11 +90,7 @@ losers = (
     .head(10)
 )
 
-st.dataframe(
-    losers,
-    use_container_width=True,
-    hide_index=True,
-)
+show_table(losers)
 
 st.divider()
 
@@ -114,15 +103,10 @@ fig = px.bar(
     text="unusuals",
 )
 
-fig.update_traces(
-    textposition="outside",
-)
-
-fig.update_layout(
-    xaxis_title="Item",
-    yaxis_title="Markets",
-    showlegend=False,
-    template="plotly_white",
+fig = style_bar_chart(
+    fig,
+    "Item",
+    "Markets",
 )
 
 st.plotly_chart(
