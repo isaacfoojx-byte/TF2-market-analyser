@@ -1,16 +1,17 @@
 import streamlit as st
 import pandas as pd
 
-from components import (
+from website.components import (
     page_header,
     metric_row,
 )
 
-from utils import load_dashboard
+from website.utils import load_dashboard
 from pathlib import Path
 
 LOGO = (
     Path(__file__).parent
+    / "website"
     / "assets"
     / "logo_only.png"
 )

@@ -2,7 +2,7 @@ import streamlit as st
 from pathlib import Path
 import pandas as pd
 
-from components import (
+from website.components import (
     page_header,
     show_table
 )

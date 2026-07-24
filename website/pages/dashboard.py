@@ -1,8 +1,8 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-from utils import load_dashboard
-from components import (
+from website.utils import load_dashboard
+from website.components import (
     page_header,
     metric_row,
     show_table,
