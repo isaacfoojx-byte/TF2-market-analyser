@@ -9,9 +9,12 @@ def get_driver(port):
 
     service = Service(log_output="chromedriver.log")
 
-    return webdriver.Chrome(
+    driver = webdriver.Chrome(
         service=service,
         options=chrome_options
     )
+    driver.set_page_load_timeout(60)
+    driver.set_script_timeout(30)
+    return driver
 
 

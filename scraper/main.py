@@ -250,7 +250,19 @@ def build_chrome_command(chrome: Path, profile_dir: Path, port) -> list[str]:
     return command
 
 
-def launch_chrome() -> None:
+def stop_chrome(process) -> None:
+    if process is None or process.poll() is not None:
+        return
+
+    process.terminate()
+    try:
+        process.wait(timeout=10)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait(timeout=10)
+
+
+def launch_chrome():
 
     global DEBUG_PORT
 
@@ -261,7 +273,7 @@ def launch_chrome() -> None:
         if debugger_is_ready(port):
             DEBUG_PORT = port
             print(f"Using Chrome on debugging port {port}.")
-            return
+            return None, None
 
         if port_is_in_use(port):
             print(f"Port {port} is already in use by another application, skipping.")
@@ -273,7 +285,19 @@ def launch_chrome() -> None:
             # profile_dir = Path(tempfile.gettempdir()) / "TF2MarketAnalyserChrome"
             profile_dir = Path(tempfile.mkdtemp(prefix="TF2MarketAnalyserChrome-"))
 
-        subprocess.Popen(build_chrome_command(chrome, profile_dir,port))
+        process_options = {}
+        if is_github_actions():
+            process_options = {
+                "stdin": subprocess.DEVNULL,
+                "stdout": subprocess.DEVNULL,
+                "stderr": subprocess.DEVNULL,
+                "start_new_session": True,
+            }
+
+        process = subprocess.Popen(
+            build_chrome_command(chrome, profile_dir, port),
+            **process_options,
+        )
 
         deadline = time.monotonic() + STARTUP_TIMEOUT_SECONDS
 
@@ -281,9 +305,11 @@ def launch_chrome() -> None:
             if debugger_is_ready(port):
                 DEBUG_PORT = port
                 print(f"Using Chrome on debugging port {port}.")
-                return
+                return process, profile_dir
             time.sleep(0.25)
 
+        stop_chrome(process)
+        shutil.rmtree(profile_dir, ignore_errors=True)
         print(f"Port {port} failed, trying another port...")
     raise RuntimeError("Could not launch Chrome on any debugging port.")
 
@@ -292,30 +318,37 @@ def launch_chrome() -> None:
 
 def main() -> None:
     start = time.perf_counter()
-    launch_chrome()
-    wait_for_cloudflare_clearance(DEBUG_PORT)
-    print(f"Startup took {time.perf_counter() - start:.1f} seconds")
-
-    if __package__:
-        scraper_module = import_module(f"{__package__}.scraper")
-    else:
-        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-        scraper_module = import_module("scraper.scraper")
-
-    scrape_start = time.perf_counter()
-    print(
-        f"Scraper started at "
-        f"{datetime.now().astimezone().isoformat(timespec='seconds')}"
-    )
+    chrome_process = None
+    profile_dir = None
     try:
-        scraper_module.run_scraper(DEBUG_PORT)
-    finally:
-        elapsed_seconds = time.perf_counter() - scrape_start
+        chrome_process, profile_dir = launch_chrome()
+        wait_for_cloudflare_clearance(DEBUG_PORT)
+        print(f"Startup took {time.perf_counter() - start:.1f} seconds")
+
+        if __package__:
+            scraper_module = import_module(f"{__package__}.scraper")
+        else:
+            sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+            scraper_module = import_module("scraper.scraper")
+
+        scrape_start = time.perf_counter()
         print(
-            f"Scraper stopped at "
+            f"Scraper started at "
             f"{datetime.now().astimezone().isoformat(timespec='seconds')}"
         )
-        print(f"Scraper elapsed time: {elapsed_seconds:.1f} seconds")
+        try:
+            scraper_module.run_scraper(DEBUG_PORT)
+        finally:
+            elapsed_seconds = time.perf_counter() - scrape_start
+            print(
+                f"Scraper stopped at "
+                f"{datetime.now().astimezone().isoformat(timespec='seconds')}"
+            )
+            print(f"Scraper elapsed time: {elapsed_seconds:.1f} seconds")
+    finally:
+        stop_chrome(chrome_process)
+        if profile_dir is not None:
+            shutil.rmtree(profile_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":

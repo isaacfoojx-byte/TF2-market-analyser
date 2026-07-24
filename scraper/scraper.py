@@ -19,6 +19,7 @@ from analytics.metadata import save_metadata
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_REQUEST_DELAY_SECONDS = 0.05
+MAX_CONSECUTIVE_EFFECT_FAILURES = 5
 
 
 @dataclass(frozen=True)
@@ -56,6 +57,7 @@ def run_scraper(
     driver = get_driver(debug_port)
     master_dataset: list[dict] = []
     current_key_price: float | None = None
+    consecutive_failures = 0
 
     try:
         current_key_market = get_key_market(driver)
@@ -73,6 +75,7 @@ def run_scraper(
                     scrape_timestamp,
                 )
                 master_dataset.extend(hats)
+                consecutive_failures = 0
 
                 # Keep a recoverable checkpoint after every completed effect.
                 save_csv(master_dataset, raw_csv)
@@ -84,7 +87,13 @@ def run_scraper(
                     f"| Total rows: {len(master_dataset)}"
                 )
             except Exception as error:
+                consecutive_failures += 1
                 print(f"Failed: {effect['effect_name']} ({error})")
+                if consecutive_failures >= MAX_CONSECUTIVE_EFFECT_FAILURES:
+                    raise RuntimeError(
+                        f"Stopped after {consecutive_failures} consecutive "
+                        f"effect failures"
+                    ) from error
 
             time.sleep(request_delay_seconds)
     finally:

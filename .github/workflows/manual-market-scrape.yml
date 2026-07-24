@@ -53,7 +53,9 @@ jobs:
           path: |
             ${{ runner.temp }}/tf2-market-output/raw/*.csv
             ${{ runner.temp }}/tf2-market-output/processed/archive/*.csv
+            ${{ runner.temp }}/tf2-market-output/diagnostics/*
             ${{ runner.temp }}/scraper.log
+            chromedriver.log
             generated/metadata.json
           if-no-files-found: warn
           retention-days: 14
