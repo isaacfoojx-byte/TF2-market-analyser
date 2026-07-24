@@ -214,7 +214,7 @@ def wait_for_cloudflare_clearance(
             time.sleep(poll_interval_seconds)
 
         except Exception:
-            pass
+            time.sleep(poll_interval_seconds)
 
         
 

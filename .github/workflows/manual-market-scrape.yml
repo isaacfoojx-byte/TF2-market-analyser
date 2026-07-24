@@ -1,0 +1,57 @@
+name: Manual market scrape
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: manual-market-scrape
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      OUTPUT_DIR: ${{ runner.temp }}/tf2-market-output
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Verify Chrome
+        run: google-chrome --version
+
+      - name: Scrape and clean market data
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m scraper.main 2>&1 | tee "$RUNNER_TEMP/scraper.log"
+
+      - name: Validate generated snapshots
+        run: python scripts/validate_scrape_output.py "$OUTPUT_DIR"
+
+      - name: Upload snapshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tf2-market-scrape-${{ github.run_id }}
+          path: |
+            ${{ env.OUTPUT_DIR }}/raw/*.csv
+            ${{ env.OUTPUT_DIR }}/processed/archive/*.csv
+            ${{ runner.temp }}/scraper.log
+            generated/metadata.json
+          if-no-files-found: warn
+          retention-days: 14

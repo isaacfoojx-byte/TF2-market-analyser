@@ -43,7 +43,7 @@ def build_output_paths(
 
 
 def run_scraper(
-    debug_port: int,
+    debug_port: int = 9222,
     output_dir: str | Path | None = None,
     request_delay_seconds: float = DEFAULT_REQUEST_DELAY_SECONDS,
     scrape_datetime: datetime | None = None,
