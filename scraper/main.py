@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from datetime import datetime
 from importlib import import_module
 from pathlib import Path
 from urllib.error import URLError
@@ -301,7 +302,20 @@ def main() -> None:
         sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
         scraper_module = import_module("scraper.scraper")
 
-    scraper_module.run_scraper(DEBUG_PORT)
+    scrape_start = time.perf_counter()
+    print(
+        f"Scraper started at "
+        f"{datetime.now().astimezone().isoformat(timespec='seconds')}"
+    )
+    try:
+        scraper_module.run_scraper(DEBUG_PORT)
+    finally:
+        elapsed_seconds = time.perf_counter() - scrape_start
+        print(
+            f"Scraper stopped at "
+            f"{datetime.now().astimezone().isoformat(timespec='seconds')}"
+        )
+        print(f"Scraper elapsed time: {elapsed_seconds:.1f} seconds")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,73 @@
+name: Daily market update
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-market-update
+  cancel-in-progress: false
+
+jobs:
+  scrape-and-upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      OUTPUT_DIR: ${{ runner.temp }}/tf2-market-output
+      PYTHONUNBUFFERED: "1"
+      GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+      GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+      GOOGLE_SHEET_NAME: Latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Verify configuration
+        shell: bash
+        run: |
+          test -n "$GOOGLE_SERVICE_ACCOUNT_JSON"
+          test -n "$GOOGLE_SPREADSHEET_ID"
+          google-chrome --version
+
+      - name: Scrape and clean market data
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m scraper.main 2>&1 | tee "$RUNNER_TEMP/scraper.log"
+
+      - name: Validate generated snapshots
+        run: python scripts/validate_scrape_output.py "$OUTPUT_DIR"
+
+      - name: Upload latest snapshot to Google Sheets
+        shell: bash
+        run: |
+          processed_csv="$(find "$OUTPUT_DIR/processed/archive" -maxdepth 1 -type f -name 'cleaned_*.csv' | sort | tail -n 1)"
+          test -n "$processed_csv"
+          python -m integrations.google_sheets "$processed_csv"
+
+      - name: Archive snapshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tf2-market-update-${{ github.run_id }}
+          path: |
+            ${{ env.OUTPUT_DIR }}/raw/*.csv
+            ${{ env.OUTPUT_DIR }}/processed/archive/*.csv
+            ${{ runner.temp }}/scraper.log
+            generated/metadata.json
+          if-no-files-found: warn
+          retention-days: 14
