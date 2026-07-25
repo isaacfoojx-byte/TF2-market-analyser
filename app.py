@@ -39,10 +39,10 @@ items = st.Page(
     icon="📦",
 )
 
-reports = st.Page(
+downloads = st.Page(
     "website/pages/reports.py",
-    title="Reports",
-    icon="📄",
+    title="Downloads",
+    icon="📁",
 )
 
 pg = st.navigation([
@@ -50,7 +50,7 @@ pg = st.navigation([
     dashboard,
     effects,
     items,
-    reports,
+    downloads,
 ])
 
 pg.run()
