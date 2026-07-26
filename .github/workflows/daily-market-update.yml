@@ -21,7 +21,6 @@ jobs:
       BACKPACK_TF_API_KEY: ${{ secrets.BACKPACK_TF_API_KEY }}
       GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
       GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
-      GOOGLE_SHEET_NAME: Latest
 
     steps:
       - name: Configure output directory
@@ -55,7 +54,7 @@ jobs:
       - name: Validate generated snapshots
         run: python scripts/validate_scrape_output.py "$OUTPUT_DIR"
 
-      - name: Upload latest snapshot to Google Sheets
+      - name: Upload daily snapshot to Google Sheets
         shell: bash
         run: |
           processed_csv="$(find "$OUTPUT_DIR/processed/archive" -maxdepth 1 -type f -name 'cleaned_*.csv' | sort | tail -n 1)"

@@ -9,6 +9,7 @@ import random
 import re
 import time
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
@@ -127,6 +128,16 @@ def column_name(column_number: int) -> str:
     return result
 
 
+def sheet_name_from_timestamp(scrape_timestamp: str) -> str:
+    normalized = scrape_timestamp.strip().replace("Z", "+00:00")
+    try:
+        return datetime.fromisoformat(normalized).date().isoformat()
+    except ValueError as error:
+        raise ValueError(
+            f"Invalid scrape_timestamp for sheet naming: {scrape_timestamp!r}"
+        ) from error
+
+
 def ensure_sheet_capacity(
     service,
     spreadsheet_id: str,
@@ -152,7 +163,27 @@ def ensure_sheet_capacity(
         None,
     )
     if properties is None:
-        raise ValueError(f"Spreadsheet does not contain a tab named {sheet_name!r}")
+        add_request = service.spreadsheets().batchUpdate(
+            spreadsheetId=spreadsheet_id,
+            body={
+                "requests": [
+                    {
+                        "addSheet": {
+                            "properties": {
+                                "title": sheet_name,
+                                "gridProperties": {
+                                    "rowCount": max(required_rows, 1000),
+                                    "columnCount": max(required_columns, 26),
+                                },
+                            }
+                        }
+                    }
+                ]
+            },
+        )
+        execute_with_retry(add_request)
+        print(f"Created sheet {sheet_name!r}")
+        return
 
     grid = properties.get("gridProperties", {})
     current_rows = int(grid.get("rowCount", 0))
@@ -210,7 +241,11 @@ def upload_csv_to_latest(
     target_spreadsheet = spreadsheet_id or required_environment(
         "GOOGLE_SPREADSHEET_ID"
     )
-    target_sheet = sheet_name or os.environ.get("GOOGLE_SHEET_NAME", "Latest")
+    target_sheet = (
+        sheet_name
+        or os.environ.get("GOOGLE_SHEET_NAME")
+        or sheet_name_from_timestamp(scrape_timestamp)
+    )
     rows_per_batch = (
         batch_rows
         if batch_rows is not None
