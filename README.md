@@ -37,6 +37,11 @@ The launcher uses a separate temporary Chrome profile because backpack.tf may re
 
 Our project aims to inform TF2 players of which hats to invest in. We will retrieve data on every type of hat with unusual effects&mdash;the total number of hats in existence, the number of hats bought to date, the number of hats that were sold to date. Through analysing these trends, we can predict if a hat is likely to increase in price and hence be profitable.
 
+# Google Sheets Data
+
+- [TF2 Analysis — Sheet 1](https://docs.google.com/spreadsheets/d/1R_gXJRX8stscCKpitq7pSceQWhtFM2ZwoEY-kSZlD_8/edit)
+- [TF2 Analysis — Sheet 2](https://docs.google.com/spreadsheets/d/19PjHGJh1Wtb1gjfmQfL1LoL0y6FhggBBC95FbGet8Jg/edit?gid=1061679333#gid=1061679333)
+
 # Collaborators
 
 Coded by Isaac Foo, Koh Min Xuan, and Low Zong Xuan for the Build Beyond Hackathon
