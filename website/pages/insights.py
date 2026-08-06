@@ -16,17 +16,29 @@ from website.utils import load_dashboard
 def spotlight(summary: pd.DataFrame, name_column: str, minimum_markets: int):
     """Choose a positive mover with enough represented markets to be useful."""
 
-    required = {name_column, "average_change", "unusuals"}
-    if summary.empty or not required.issubset(summary.columns):
-        return None
-
-    candidates = summary.dropna(subset=[name_column, "average_change", "unusuals"])
-    candidates = candidates.loc[candidates["unusuals"] >= minimum_markets]
+    candidates = spotlight_candidates(summary, name_column, minimum_markets)
 
     if candidates.empty:
         return None
 
     return candidates.loc[candidates["average_change"].idxmax()]
+
+
+def spotlight_candidates(
+    summary: pd.DataFrame,
+    name_column: str,
+    minimum_markets: int,
+) -> pd.DataFrame:
+    """Return the same thresholded data used by each spotlight card."""
+
+    required = {name_column, "average_change", "unusuals"}
+    if summary.empty or not required.issubset(summary.columns):
+        return pd.DataFrame()
+
+    candidates = summary.dropna(subset=[name_column, "average_change", "unusuals"])
+    candidates = candidates.loc[candidates["unusuals"] >= minimum_markets]
+
+    return candidates
 
 
 def column_maximum(
@@ -67,7 +79,11 @@ if sentiment["score"] is None:
     st.warning(sentiment["reason"])
 else:
     metric_row([
-        ("Market Sentiment", sentiment["label"], f"{sentiment['score']}/100"),
+        (
+            "Market Sentiment",
+            f"{sentiment['label']} ({sentiment['score']}/100)",
+            None,
+        ),
         ("Confidence", sentiment["confidence"], None),
         ("Rising Markets", f"{sentiment['breadth_percent']:.1f}%", None),
         ("Median Movement", f"{sentiment['median_change_keys']:+.2f} keys", None),
@@ -126,7 +142,10 @@ with opportunities_tab:
     )
 
     if opportunities.empty:
-        st.info("No candidates meet the current opportunity filters.")
+        st.info(
+            "No markets increased in price while meeting the selected liquidity "
+            "and listing-supply conditions."
+        )
     else:
         opportunity_columns = [
             "effect_name",
@@ -184,6 +203,16 @@ with spotlights_tab:
         "item_name",
         minimum_markets,
     )
+    spotlight_effects = spotlight_candidates(
+        effect_summary,
+        "effect_name",
+        minimum_markets,
+    )
+    spotlight_items = spotlight_candidates(
+        item_summary,
+        "item_name",
+        minimum_markets,
+    )
 
     effect_column, item_column = st.columns(2)
 
@@ -197,7 +226,7 @@ with spotlights_tab:
                 f"{effect_spotlight['average_change']:+.2f} keys",
                 f"{int(effect_spotlight['unusuals'])} markets represented",
             )
-            for insight in generate_effect_insights(effect_summary):
+            for insight in generate_effect_insights(spotlight_effects):
                 st.write(f"• {insight}")
 
     with item_column:
@@ -210,5 +239,5 @@ with spotlights_tab:
                 f"{item_spotlight['average_change']:+.2f} keys",
                 f"{int(item_spotlight['unusuals'])} markets represented",
             )
-            for insight in generate_item_insights(item_summary):
+            for insight in generate_item_insights(spotlight_items):
                 st.write(f"• {insight}")

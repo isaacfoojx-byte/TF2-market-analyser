@@ -105,6 +105,16 @@ def detect_market_risks(comparison: pd.DataFrame) -> list[str]:
             "Low confidence: fewer than 25 comparable priced markets are available."
         )
 
+    falling_share = percentage(
+        sentiment["falling_markets"],
+        sentiment["comparable_markets"],
+    )
+    if falling_share >= 70:
+        risks.append(
+            f"Broad market decline: {falling_share:.1f}% of comparable markets "
+            "fell in price."
+        )
+
     if "percent_change" in comparison.columns:
         percent_changes = pd.to_numeric(
             comparison["percent_change"],
