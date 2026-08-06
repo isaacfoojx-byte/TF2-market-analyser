@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from insights import (
+    assess_spotlight,
     calculate_market_sentiment,
     detect_market_risks,
     find_opportunities,
@@ -56,6 +57,36 @@ def column_maximum(
         return fallback
 
     return max(fallback, int(values.max()))
+
+
+def render_spotlight_assessment(assessment: dict) -> None:
+    """Render the evidence and cautions attached to a spotlight selection."""
+
+    confidence_color = {
+        "High": "green",
+        "Medium": "orange",
+        "Low": "red",
+    }[assessment["confidence"]]
+    risk_color = {
+        "Low": "green",
+        "Medium": "orange",
+        "High": "red",
+    }[assessment["risk_level"]]
+
+    st.badge(
+        f"Confidence: {assessment['confidence']}",
+        color=confidence_color,
+    )
+    st.badge(
+        f"Risk: {assessment['risk_level']}",
+        color=risk_color,
+    )
+    st.caption(assessment["explanation"])
+
+    if assessment["risk_reasons"]:
+        st.caption(
+            "Risk factors: " + " ".join(assessment["risk_reasons"])
+        )
 
 
 comparison, market_summary, effect_summary, item_summary, metadata = load_dashboard()
@@ -214,30 +245,60 @@ with spotlights_tab:
         minimum_markets,
     )
 
+    effect_assessment = None
+    if effect_spotlight is not None:
+        effect_assessment = assess_spotlight(
+            comparison,
+            entity_column="effect_name",
+            entity_name=effect_spotlight["effect_name"],
+            represented_markets=int(effect_spotlight["unusuals"]),
+            minimum_markets=minimum_markets,
+            average_change=float(effect_spotlight["average_change"]),
+        )
+
+    item_assessment = None
+    if item_spotlight is not None:
+        item_assessment = assess_spotlight(
+            comparison,
+            entity_column="item_name",
+            entity_name=item_spotlight["item_name"],
+            represented_markets=int(item_spotlight["unusuals"]),
+            minimum_markets=minimum_markets,
+            average_change=float(item_spotlight["average_change"]),
+        )
+
     effect_column, item_column = st.columns(2)
 
     with effect_column:
         st.markdown("#### ✨ Effect Spotlight")
-        if effect_spotlight is None:
-            st.info("No effect meets this market threshold.")
+        if effect_spotlight is None or effect_assessment["confidence"] == "Low":
+            st.info(
+                "Not enough supporting markets for a credible effect spotlight. "
+                "Lower the threshold or collect more snapshots."
+            )
         else:
             st.metric(
                 effect_spotlight["effect_name"],
                 f"{effect_spotlight['average_change']:+.2f} keys",
                 f"{int(effect_spotlight['unusuals'])} markets represented",
             )
+            render_spotlight_assessment(effect_assessment)
             for insight in generate_effect_insights(spotlight_effects):
                 st.write(f"• {insight}")
 
     with item_column:
         st.markdown("#### 📦 Item Spotlight")
-        if item_spotlight is None:
-            st.info("No item meets this market threshold.")
+        if item_spotlight is None or item_assessment["confidence"] == "Low":
+            st.info(
+                "Not enough supporting markets for a credible item spotlight. "
+                "Lower the threshold or collect more snapshots."
+            )
         else:
             st.metric(
                 item_spotlight["item_name"],
                 f"{item_spotlight['average_change']:+.2f} keys",
                 f"{int(item_spotlight['unusuals'])} markets represented",
             )
+            render_spotlight_assessment(item_assessment)
             for insight in generate_item_insights(spotlight_items):
                 st.write(f"• {insight}")
