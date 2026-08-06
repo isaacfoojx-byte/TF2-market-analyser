@@ -11,7 +11,7 @@ def style_bar_chart(
         xaxis_title=x_title,
         yaxis_title=y_title,
         showlegend=False,
-        template="plotly_white",
+        template="plotly_dark",
     )
 
     return fig

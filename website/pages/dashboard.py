@@ -95,7 +95,7 @@ fig.update_layout(
     xaxis_title="",
     yaxis_title="Number of Listings",
     showlegend=False,
-    template="plotly_white",
+    template="plotly_dark",
 )
 
 st.plotly_chart(fig, use_container_width=True)

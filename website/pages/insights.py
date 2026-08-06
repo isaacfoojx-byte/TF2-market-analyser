@@ -16,6 +16,53 @@ from website.components import metric_row, page_header, show_table
 from website.utils import load_dashboard, load_history
 
 
+def apply_insights_styles() -> None:
+    """Apply lightweight, theme-safe polish to the Insights page."""
+
+    st.markdown(
+        """
+        <style>
+        .block-container {
+            max-width: 1450px;
+            padding-top: 1.5rem;
+            padding-bottom: 3rem;
+        }
+
+        [data-testid="stMetric"] {
+            background: rgba(127, 127, 127, 0.08);
+            border: 1px solid rgba(127, 127, 127, 0.22);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+        }
+
+        [data-testid="stMetricLabel"] {
+            font-weight: 650;
+        }
+
+        [data-testid="stTabs"] [data-baseweb="tab-list"] {
+            gap: 0.4rem;
+        }
+
+        [data-testid="stTabs"] [data-baseweb="tab"] {
+            height: 2.7rem;
+            padding: 0 0.8rem;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def format_snapshot_timestamp(timestamp: str) -> str:
+    """Turn an ISO timestamp into a compact, readable UI label."""
+
+    parsed_timestamp = pd.to_datetime(timestamp, errors="coerce")
+    if pd.isna(parsed_timestamp):
+        return timestamp
+
+    return parsed_timestamp.strftime("%d %b %Y, %H:%M")
+
+
 def spotlight(summary: pd.DataFrame, name_column: str, minimum_markets: int):
     """Choose a positive mover with enough represented markets to be useful."""
 
@@ -93,35 +140,43 @@ def render_spotlight_assessment(assessment: dict) -> None:
 
 comparison, market_summary, effect_summary, item_summary, metadata = load_dashboard()
 
+apply_insights_styles()
+
 page_header(
     "💡 Market Insights",
     "Explainable market sentiment, risk flags, and opportunity screening from the latest comparison.",
 )
 
 if metadata is not None and metadata.get("snapshot_timestamp"):
-    st.caption(f"Latest snapshot: {metadata['snapshot_timestamp']}")
+    st.badge(
+        f"Latest snapshot: {format_snapshot_timestamp(metadata['snapshot_timestamp'])}",
+        color="blue",
+    )
 
 sentiment = calculate_market_sentiment(comparison)
 risks = detect_market_risks(comparison)
 
-if sentiment["score"] is None:
-    metric_row([
-        ("Market Sentiment", "Unavailable", None),
-        ("Confidence", sentiment["confidence"], None),
-    ])
-    st.warning(sentiment["reason"])
-else:
-    metric_row([
-        (
-            "Market Sentiment",
-            f"{sentiment['label']} ({sentiment['score']}/100)",
-            None,
-        ),
-        ("Confidence", sentiment["confidence"], None),
-        ("Rising Markets", f"{sentiment['breadth_percent']:.1f}%", None),
-        ("Median Movement", f"{sentiment['median_change_keys']:+.2f} keys", None),
-    ])
-    st.caption(sentiment["reason"])
+with st.container(border=True):
+    st.caption("Latest comparison summary")
+
+    if sentiment["score"] is None:
+        metric_row([
+            ("Market Sentiment", "Unavailable", None),
+            ("Confidence", sentiment["confidence"], None),
+        ])
+        st.warning(sentiment["reason"])
+    else:
+        metric_row([
+            (
+                "Market Sentiment",
+                f"{sentiment['label']} ({sentiment['score']}/100)",
+                None,
+            ),
+            ("Confidence", sentiment["confidence"], None),
+            ("Rising Markets", f"{sentiment['breadth_percent']:.1f}%", None),
+            ("Median Movement", f"{sentiment['median_change_keys']:+.2f} keys", None),
+        ])
+        st.caption(sentiment["reason"])
 
 st.divider()
 
