@@ -27,6 +27,12 @@ dashboard = st.Page(
     icon="📈",
 )
 
+insights = st.Page(
+    "website/pages/insights.py",
+    title="Insights",
+    icon="💡",
+)
+
 effects = st.Page(
     "website/pages/effects.py",
     title="Effects",
@@ -48,6 +54,7 @@ downloads = st.Page(
 pg = st.navigation([
     home,
     dashboard,
+    insights,
     effects,
     items,
     downloads,
