@@ -71,8 +71,8 @@ metric_row([
 st.divider()
 
 metric_row([
-    ("Average Change", f"{summary['average_change']:.2f}%", None),
-    ("Median Change", f"{summary['median_change']:.2f}%", None),
+    ("Average Change", f"{summary['average_change']:.2f}", None),
+    ("Median Change", f"{summary['median_change']:.2f}", None),
     ("Unchanged", int(summary["unchanged"]), None),
 ])
 
@@ -125,7 +125,7 @@ top_movers = top_movers[top_mover_columns].copy()
 
 top_movers["price_change"] = (
     top_movers["price_change"]
-    .map("{:+.2f}%".format)
+    .map("{:+.2f}".format)
 )
 
 top_movers["listing_change"] = (

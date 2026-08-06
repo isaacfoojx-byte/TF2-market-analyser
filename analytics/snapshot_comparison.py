@@ -7,6 +7,8 @@ from analytics.utils import (
     PRICE_COL,
 )
 
+from analytics.metadata import load_metadata
+
 
 def build_comparison():
     old_file, new_file = get_latest_pair()
@@ -386,7 +388,8 @@ def save_market_summary(market_summary):
         index=False
     )
 
-def update_market_history(market_summary):
+def update_market_history( market_summary: dict,
+    snapshot_timestamp: str,):
 
     output = Path("data/comparisons")
 
@@ -397,11 +400,16 @@ def update_market_history(market_summary):
 
     history_file = output / "market_history.csv"
 
-    market_summary.to_csv(
+    row = pd.DataFrame([{
+        "snapshot_timestamp": snapshot_timestamp,
+        **market_summary,
+    }])
+
+    row.to_csv(
         history_file,
         mode="a",
         header=not history_file.exists(),
-        index=False
+        index=False,
     )
 
 def main():
@@ -430,6 +438,12 @@ def main():
 
     save_item_summary(item_summary)
 
-    save_market_summary(market_summary)
+    metadata = load_metadata()
 
-    update_market_history(market_summary)
+    if metadata is None or "snapshot_timestamp" not in metadata:
+        raise ValueError("Missing snapshot timestamp in generated/metadata.json")
+
+    snapshot_timestamp = metadata["snapshot_timestamp"]
+
+    save_market_summary(market_summary)
+    update_market_history(market_summary, snapshot_timestamp)

@@ -1,26 +1,43 @@
 import pandas as pd
 
+from .common import missing_columns, unavailable_insight
+
 
 def generate_item_insights(
     item_summary: pd.DataFrame,
 ) -> list[str]:
 
-    insights = []
+    required = {"item_name", "average_change"}
+    missing = missing_columns(item_summary, required)
 
-    biggest = item_summary.loc[
-        item_summary["average_change"].idxmax()
-    ]
+    if missing:
+        return unavailable_insight(
+            "item",
+            f"Missing required data: {', '.join(missing)}.",
+        )
 
-    worst = item_summary.loc[
-        item_summary["average_change"].idxmin()
-    ]
-
-    insights.append(
-        f"Best-performing item: {biggest['item_name']} ({biggest['average_change']:.2f}%)."
+    usable_items = item_summary.dropna(
+        subset=["item_name", "average_change"]
     )
 
-    insights.append(
-        f"Largest decline: {worst['item_name']} ({worst['average_change']:.2f}%)."
-    )
+    if usable_items.empty:
+        return unavailable_insight(
+            "item",
+            "Collect another priced market snapshot and try again.",
+        )
 
-    return insights
+    biggest = usable_items.loc[
+        usable_items["average_change"].idxmax()
+    ]
+
+    worst = usable_items.loc[
+        usable_items["average_change"].idxmin()
+    ]
+
+    # average_change is currently calculated from price_change, in keys.
+    return [
+        f"Best-performing item: {biggest['item_name']} "
+        f"({biggest['average_change']:+.2f} keys on average).",
+        f"Largest decline: {worst['item_name']} "
+        f"({worst['average_change']:+.2f} keys on average).",
+    ]
