@@ -2,7 +2,6 @@ import pandas as pd
 import streamlit as st
 
 from insights import (
-    assess_spotlight,
     calculate_market_sentiment,
     detect_market_risks,
     find_opportunities,
@@ -10,6 +9,7 @@ from insights import (
     generate_item_insights,
     generate_market_insights,
 )
+from insights.common import assess_spotlight
 from website.components import metric_row, page_header, show_table
 from website.utils import load_dashboard
 
