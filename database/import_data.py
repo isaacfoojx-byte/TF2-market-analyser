@@ -1,6 +1,6 @@
 import sqlite3
 import pandas as pd
-from pathlib import Path
+import gspread
 
 # ==========================================================
 # STEP 1
@@ -12,27 +12,29 @@ cursor = conn.cursor()
 
 # ==========================================================
 # STEP 2
-# Find the newest processed CSV automatically
+# Connect to Google Sheets
 # ==========================================================
 
-processed_folder = Path("data/processed")
+gc = gspread.service_account("credentials.json")
 
-csv_files = list(processed_folder.glob("cleaned_*.csv"))
-
-if len(csv_files) == 0:
-    raise FileNotFoundError("No processed CSV files found.")
-
-# newest file based on modification time
-latest_csv = max(csv_files, key=lambda x: x.stat().st_mtime)
-
-print(f"Importing: {latest_csv.name}")
+spreadsheet = gc.open_by_key(
+    "1R_gXJRX8stscCKpitq7pSceQWhtFM2ZwoEY-kSZlD_8"
+)
 
 # ==========================================================
 # STEP 3
-# Read the CSV
+# Read the newest worksheet
 # ==========================================================
 
-df = pd.read_csv(latest_csv)
+worksheets = spreadsheet.worksheets()
+
+latest_sheet = worksheets[-1]
+
+print(f"Importing worksheet: {latest_sheet.title}")
+
+records = latest_sheet.get_all_records()
+
+df = pd.DataFrame(records)
 
 duplicates = df[df.duplicated(["effect_name", "item_name"], keep=False)]
 
