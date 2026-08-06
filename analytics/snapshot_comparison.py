@@ -383,13 +383,15 @@ def save_market_summary(market_summary):
         exist_ok=True
     )
 
-    market_summary.to_csv(
+    pd.DataFrame([market_summary]).to_csv(
         output / "market_summary.csv",
         index=False
     )
 
-def update_market_history( market_summary: dict,
-    snapshot_timestamp: str,):
+def update_market_history(
+    market_summary: dict,
+    snapshot_timestamp: str,
+):
 
     output = Path("data/comparisons")
 
@@ -405,12 +407,20 @@ def update_market_history( market_summary: dict,
         **market_summary,
     }])
 
-    row.to_csv(
-        history_file,
-        mode="a",
-        header=not history_file.exists(),
-        index=False,
+    if history_file.exists():
+        history = pd.read_csv(history_file)
+        history = pd.concat([history, row], ignore_index=True)
+    else:
+        history = row
+
+    # Re-running the comparison for the same scrape should update that row,
+    # not create a duplicate point in the time series.
+    history = (
+        history
+        .drop_duplicates(subset="snapshot_timestamp", keep="last")
+        .sort_values("snapshot_timestamp")
     )
+    history.to_csv(history_file, index=False)
 
 def main():
 
@@ -447,3 +457,7 @@ def main():
 
     save_market_summary(market_summary)
     update_market_history(market_summary, snapshot_timestamp)
+
+
+if __name__ == "__main__":
+    main()

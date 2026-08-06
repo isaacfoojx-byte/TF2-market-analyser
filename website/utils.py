@@ -1,5 +1,7 @@
 import streamlit as st
 
+from analytics.history import history_signature, load_market_history
+
 from analytics.snapshot_comparison import (
     build_comparison,
     calculate_changes,
@@ -52,3 +54,16 @@ def load_items():
         comparison,
         build_item_summary(comparison),
     )
+
+
+@st.cache_data
+def _load_history(_: tuple[tuple[str, int, int], ...]):
+    """Load aggregate history from every processed market snapshot."""
+
+    return load_market_history()
+
+
+def load_history():
+    """Load history and refresh the cache whenever processed snapshots change."""
+
+    return _load_history(history_signature())

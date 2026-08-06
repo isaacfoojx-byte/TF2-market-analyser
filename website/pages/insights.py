@@ -1,6 +1,8 @@
 import pandas as pd
+import plotly.express as px
 import streamlit as st
 
+from analytics.history import compare_snapshots
 from insights import (
     calculate_market_sentiment,
     detect_market_risks,
@@ -11,7 +13,7 @@ from insights import (
 )
 from insights.common import assess_spotlight
 from website.components import metric_row, page_header, show_table
-from website.utils import load_dashboard
+from website.utils import load_dashboard, load_history
 
 
 def spotlight(summary: pd.DataFrame, name_column: str, minimum_markets: int):
@@ -123,10 +125,11 @@ else:
 
 st.divider()
 
-overview_tab, opportunities_tab, spotlights_tab = st.tabs([
+overview_tab, opportunities_tab, spotlights_tab, historical_tab = st.tabs([
     "Market Overview",
     "Opportunity Detector",
     "Effect & Item Spotlights",
+    "Historical Comparison",
 ])
 
 with overview_tab:
@@ -147,10 +150,30 @@ with opportunities_tab:
     st.subheader("Opportunity Detector")
     st.caption(
         "Candidates must be rising in price, have stable or falling listing supply, "
-        "and meet the selected liquidity threshold. This is a screening tool, not investment advice."
+        "and meet the selected liquidity threshold. Longer periods screen for momentum "
+        "instead of a single snapshot movement. This is not investment advice."
     )
 
-    maximum_listings = column_maximum(comparison, "listings_new", fallback=3)
+    opportunity_history = load_history()
+    opportunity_comparison = comparison
+
+    if len(opportunity_history) >= 2:
+        period_choice = st.selectbox(
+            "Opportunity comparison period",
+            options=["Latest snapshot pair", "All available snapshots"],
+        )
+
+        if period_choice == "All available snapshots":
+            opportunity_comparison = compare_snapshots(
+                opportunity_history.iloc[0]["source_file"],
+                opportunity_history.iloc[-1]["source_file"],
+            )
+
+    maximum_listings = column_maximum(
+        opportunity_comparison,
+        "listings_new",
+        fallback=3,
+    )
 
     if maximum_listings > 3:
         minimum_listings = st.slider(
@@ -168,14 +191,14 @@ with opportunities_tab:
         )
 
     opportunities = find_opportunities(
-        comparison,
+        opportunity_comparison,
         minimum_listings=minimum_listings,
     )
 
     if opportunities.empty:
         st.info(
-            "No markets increased in price while meeting the selected liquidity "
-            "and listing-supply conditions."
+            "No markets increased in price over the selected period while meeting "
+            "the liquidity and listing-supply conditions."
         )
     else:
         opportunity_columns = [
@@ -302,3 +325,140 @@ with spotlights_tab:
             render_spotlight_assessment(item_assessment)
             for insight in generate_item_insights(spotlight_items):
                 st.write(f"• {insight}")
+
+with historical_tab:
+    st.subheader("Historical Comparison")
+    st.caption(
+        "Market-level price trends across every processed snapshot. "
+        "A priced market represents an effect/item combination with a usable price."
+    )
+
+    history = load_history()
+
+    if len(history) < 2:
+        st.info("At least two processed snapshots are needed for historical comparison.")
+    else:
+        latest_timestamp = history["snapshot_timestamp"].max()
+        period_options = {"All available snapshots": history}
+
+        for label, days in (("Last 24 hours", 1), ("Last 3 days", 3), ("Last 7 days", 7)):
+            window = history.loc[
+                history["snapshot_timestamp"] >= latest_timestamp - pd.Timedelta(days=days)
+            ]
+            if len(window) >= 2:
+                period_options[label] = window
+
+        selected_period = st.selectbox(
+            "Comparison period",
+            options=list(period_options),
+        )
+        selected_history = period_options[selected_period].copy()
+        start = selected_history.iloc[0]
+        end = selected_history.iloc[-1]
+
+        price_change_percent = (
+            (end["median_price"] - start["median_price"])
+            / start["median_price"]
+            * 100
+            if start["median_price"]
+            else 0.0
+        )
+        market_change = int(end["priced_markets"] - start["priced_markets"])
+
+        metric_row([
+            ("Snapshots", len(selected_history), None),
+            (
+                "Median Price",
+                f"{end['median_price']:.2f} keys",
+                f"{price_change_percent:+.2f}%",
+            ),
+            (
+                "Priced Markets",
+                f"{int(end['priced_markets']):,}",
+                f"{market_change:+,}",
+            ),
+            ("Period End", end["snapshot_timestamp"].strftime("%d %b %Y"), None),
+        ])
+
+        price_history = selected_history.melt(
+            id_vars="snapshot_timestamp",
+            value_vars=["median_price", "average_price"],
+            var_name="Price measure",
+            value_name="Keys",
+        ).replace({
+            "median_price": "Median price",
+            "average_price": "Average price",
+        })
+        price_chart = px.line(
+            price_history,
+            x="snapshot_timestamp",
+            y="Keys",
+            color="Price measure",
+            markers=True,
+            template="plotly_dark",
+        )
+        price_chart.update_layout(
+            title="Market Price Trend",
+            xaxis_title="Snapshot",
+            yaxis_title="Price (keys)",
+            legend_title="",
+        )
+        st.plotly_chart(price_chart, use_container_width=True)
+
+        market_chart = px.line(
+            selected_history,
+            x="snapshot_timestamp",
+            y="priced_markets",
+            markers=True,
+            template="plotly_dark",
+        )
+        market_chart.update_layout(
+            title="Priced Market Coverage",
+            xaxis_title="Snapshot",
+            yaxis_title="Priced markets",
+            showlegend=False,
+        )
+        st.plotly_chart(market_chart, use_container_width=True)
+
+        movers = compare_snapshots(start["source_file"], end["source_file"])
+        movers = movers.dropna(subset=["percent_change"])
+
+        st.subheader("Largest Movers in This Period")
+        if movers.empty:
+            st.info("No markets had comparable prices at both ends of this period.")
+        else:
+            mover_columns = [
+                "effect_name",
+                "item_name",
+                "average_price_old",
+                "average_price_new",
+                "percent_change",
+            ]
+            gainers = movers.nlargest(5, "percent_change")[mover_columns].copy()
+            losers = movers.nsmallest(5, "percent_change")[mover_columns].copy()
+
+            for table in (gainers, losers):
+                table["average_price_old"] = table["average_price_old"].map(
+                    "{:.2f} keys".format
+                )
+                table["average_price_new"] = table["average_price_new"].map(
+                    "{:.2f} keys".format
+                )
+                table["percent_change"] = table["percent_change"].map(
+                    "{:+.2f}%".format
+                )
+                table.rename(columns={
+                    "effect_name": "Effect",
+                    "item_name": "Item",
+                    "average_price_old": "Start Price",
+                    "average_price_new": "End Price",
+                    "percent_change": "Change",
+                }, inplace=True)
+
+            gainers_column, losers_column = st.columns(2)
+            with gainers_column:
+                st.markdown("#### Top Gainers")
+                show_table(gainers)
+            with losers_column:
+                st.markdown("#### Top Losers")
+                show_table(losers)

@@ -15,6 +15,8 @@ from .effect_details import scrape_effect
 from .effect_index import get_all_effects
 
 from analytics.metadata import save_metadata
+from analytics.snapshot_comparison import main as update_comparison_outputs
+from analytics.utils import get_snapshots
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -113,6 +115,11 @@ def run_scraper(
         total_listings=len(master_dataset),
         scrape_duration=round(scrape_duration, 2),
     )
+
+    # Once two snapshots exist, refresh the latest comparison and append the
+    # timestamped market summary used by historical reporting.
+    if len(get_snapshots()) >= 2:
+        update_comparison_outputs()
 
     return ScrapeResult(
         raw_csv=raw_csv,
