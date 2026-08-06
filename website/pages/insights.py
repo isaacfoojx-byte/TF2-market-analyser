@@ -169,14 +169,16 @@ with st.container(border=True):
         metric_row([
             (
                 "Market Sentiment",
-                f"{sentiment['label']} ({sentiment['score']}/100)",
+                sentiment["label"],
                 None,
             ),
             ("Confidence", sentiment["confidence"], None),
             ("Rising Markets", f"{sentiment['breadth_percent']:.1f}%", None),
             ("Median Movement", f"{sentiment['median_change_keys']:+.2f} keys", None),
         ])
-        st.caption(sentiment["reason"])
+        st.caption(
+            f"Sentiment score: {sentiment['score']}/100. {sentiment['reason']}"
+        )
 
 st.divider()
 
