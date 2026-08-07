@@ -9,7 +9,6 @@ import shutil
 from urllib.parse import urljoin
 
 import pandas as pd
-import requests
 from bs4 import BeautifulSoup
 
 from processing.community_prices import clean_community_prices
@@ -111,28 +110,25 @@ def parse_community_spreadsheet(
     return pd.DataFrame(records)
 
 
+def fetch_community_snapshot(
+    timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
+) -> tuple[str, float]:
+    """Fetch the spreadsheet and the live key price in one browser session."""
+
+    return _fetch_with_browser(timeout_seconds)
+
+
 def fetch_community_spreadsheet(
     timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
 ) -> str:
-    """Fetch the public spreadsheet once, using Chrome if backpack.tf blocks HTTP."""
+    """Return spreadsheet HTML for callers that only need to parse the table."""
 
-    response = requests.get(
-        SPREADSHEET_URL,
-        headers={
-            "User-Agent": "TFAnalytics community-price research tool",
-        },
-        timeout=timeout_seconds,
-    )
-    if response.status_code == 403:
-        print("backpack.tf blocked the direct request; retrying through Chrome.")
-        return _fetch_with_browser(timeout_seconds)
-
-    response.raise_for_status()
-    return response.text
+    html, _ = fetch_community_snapshot(timeout_seconds)
+    return html
 
 
-def _fetch_with_browser(timeout_seconds: int) -> str:
-    """Use the project's Chrome/Cloudflare session for a browser-protected page."""
+def _fetch_with_browser(timeout_seconds: int) -> tuple[str, float]:
+    """Use the project's Chrome session for the guide and its key conversion rate."""
 
     # Import lazily so parsing and unit tests do not need to launch a browser.
     from selenium.webdriver.common.by import By
@@ -140,6 +136,7 @@ def _fetch_with_browser(timeout_seconds: int) -> str:
 
     from . import main as browser_launcher
     from .browser import get_driver
+    from processing.key_price import get_key_market
 
     chrome_process = None
     profile_dir = None
@@ -151,11 +148,16 @@ def _fetch_with_browser(timeout_seconds: int) -> str:
         )
 
         driver = get_driver(browser_launcher.DEBUG_PORT)
+        key_market = get_key_market(driver)
+        key_price_ref = float(key_market["mid_price"])
+        if key_price_ref <= 0:
+            raise ValueError("The captured key price must be greater than zero.")
+
         driver.get(SPREADSHEET_URL)
         WebDriverWait(driver, timeout_seconds).until(
             lambda active_driver: active_driver.find_elements(By.CSS_SELECTOR, "#pricelist")
         )
-        return driver.page_source
+        return driver.page_source, key_price_ref
     finally:
         if chrome_process is not None:
             browser_launcher.stop_chrome(chrome_process)
@@ -186,11 +188,13 @@ def run_scraper(
     """Fetch, save, and clean one community price-guide snapshot."""
 
     capture_time = scraped_at or datetime.now()
-    html = fetch_community_spreadsheet()
+    html, key_price_ref = fetch_community_snapshot()
     rows = parse_community_spreadsheet(html, scraped_at=capture_time)
 
     if rows.empty:
         raise ValueError("The community spreadsheet returned no priced item rows.")
+
+    rows["key_price_ref"] = key_price_ref
 
     raw_file = save_snapshot(
         rows,

@@ -26,6 +26,14 @@ def write_snapshot(directory: Path, timestamp: str, price_ref: float) -> Path:
             "quality": "Unique",
             "craftable": True,
             "price_ref": price_ref,
+            "key_price_ref": 50,
+            "price_keys_equivalent": price_ref / 50,
+            "display_price": price_ref / 50,
+            "display_unit": "keys",
+            "source_price_low": price_ref,
+            "source_price_high": price_ref,
+            "source_price_unit": "ref",
+            "price_is_range": False,
             "price_text": f"{price_ref} ref",
             "usd_price": 1.5,
             "stats_url": "https://backpack.tf/stats/Unique/Team%20Captain",
@@ -40,6 +48,14 @@ def write_snapshot(directory: Path, timestamp: str, price_ref: float) -> Path:
             "quality": "Unique",
             "craftable": False,
             "price_ref": 2,
+            "key_price_ref": 50,
+            "price_keys_equivalent": 0.04,
+            "display_price": 2,
+            "display_unit": "ref",
+            "source_price_low": 2,
+            "source_price_high": 2,
+            "source_price_unit": "ref",
+            "price_is_range": False,
             "price_text": "2 ref",
             "usd_price": 0.1,
             "stats_url": "https://backpack.tf/stats/Unique/Back%20Scratcher",
@@ -65,12 +81,12 @@ class CommunityHistoryTests(unittest.TestCase):
         self.assertEqual(len(history), 2)
         self.assertEqual(len(catalog), 2)
         self.assertEqual(len(trend), 2)
-        self.assertEqual(trend.iloc[-1]["median_price_ref"], 55)
+        self.assertAlmostEqual(trend.iloc[-1]["median_price_keys"], 1.1)
         self.assertAlmostEqual(trend.iloc[-1]["percent_change"], 10)
         team_captain = comparison.loc[
             comparison["item_name"].eq("Team Captain")
         ].iloc[0]
-        self.assertEqual(team_captain["price_change_ref"], 5)
+        self.assertAlmostEqual(team_captain["price_change_keys"], 0.1)
         self.assertAlmostEqual(team_captain["percent_change"], 10)
 
 

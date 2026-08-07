@@ -18,6 +18,14 @@ REQUIRED_COLUMNS = {
     "quality",
     "craftable",
     "price_ref",
+    "key_price_ref",
+    "price_keys_equivalent",
+    "display_price",
+    "display_unit",
+    "source_price_low",
+    "source_price_high",
+    "source_price_unit",
+    "price_is_range",
     "usd_price",
     "stats_url",
 }
@@ -86,11 +94,42 @@ def _load_snapshot(snapshot_file: Path) -> pd.DataFrame:
     for column in ("item_name", "item_type", "quality", "stats_url"):
         dataframe[column] = dataframe[column].astype("string").str.strip()
     dataframe["price_ref"] = pd.to_numeric(dataframe["price_ref"], errors="coerce")
+    dataframe["key_price_ref"] = pd.to_numeric(
+        dataframe["key_price_ref"],
+        errors="coerce",
+    )
+    dataframe["price_keys_equivalent"] = pd.to_numeric(
+        dataframe["price_keys_equivalent"],
+        errors="coerce",
+    )
+    dataframe["display_price"] = pd.to_numeric(
+        dataframe["display_price"],
+        errors="coerce",
+    )
+    dataframe["display_unit"] = dataframe["display_unit"].astype("string").str.strip()
+    dataframe["source_price_low"] = pd.to_numeric(
+        dataframe["source_price_low"],
+        errors="coerce",
+    )
+    dataframe["source_price_high"] = pd.to_numeric(
+        dataframe["source_price_high"],
+        errors="coerce",
+    )
+    dataframe["source_price_unit"] = dataframe["source_price_unit"].astype(
+        "string"
+    ).str.strip()
+    dataframe["price_is_range"] = dataframe["price_is_range"].map(
+        lambda value: str(value).strip().lower() in {"true", "1", "1.0"}
+    )
     dataframe["usd_price"] = pd.to_numeric(dataframe["usd_price"], errors="coerce")
     dataframe["craftable"] = _normalise_craftable(dataframe["craftable"])
 
-    return dataframe.dropna(subset=["item_name", "quality", "price_ref"]).loc[
-        lambda rows: rows["price_ref"] > 0
+    return dataframe.dropna(
+        subset=["item_name", "quality", "price_ref", "key_price_ref", "price_keys_equivalent"]
+    ).loc[
+        lambda rows: (rows["price_ref"] > 0)
+        & (rows["key_price_ref"] > 0)
+        & (rows["price_keys_equivalent"] > 0)
     ].copy()
 
 
@@ -100,7 +139,15 @@ def _aggregate_snapshot(dataframe: pd.DataFrame) -> pd.DataFrame:
         .agg(
             item_type=("item_type", "first"),
             guide_price_ref=("price_ref", "median"),
+            guide_price_keys=("price_keys_equivalent", "median"),
+            key_price_ref=("key_price_ref", "median"),
             guide_price_usd=("usd_price", "median"),
+            display_price=("display_price", "median"),
+            display_unit=("display_unit", "first"),
+            source_price_low=("source_price_low", "first"),
+            source_price_high=("source_price_high", "first"),
+            source_price_unit=("source_price_unit", "first"),
+            price_is_range=("price_is_range", "max"),
             stats_url=("stats_url", "first"),
             source_rows=("item_name", "size"),
         )
@@ -123,8 +170,9 @@ def load_community_history(snapshot_dir: str | Path | None = None) -> pd.DataFra
             "source_file": str(snapshot_file),
             "priced_variants": len(markets),
             "unique_items": dataframe["item_name"].nunique(),
-            "median_price_ref": dataframe["price_ref"].median(),
-            "average_price_ref": dataframe["price_ref"].mean(),
+            "median_price_keys": dataframe["price_keys_equivalent"].median(),
+            "average_price_keys": dataframe["price_keys_equivalent"].mean(),
+            "key_price_ref": dataframe["key_price_ref"].median(),
         })
 
     if not records:
@@ -184,10 +232,21 @@ def load_community_item_trend(
             "item_name": item_name,
             "quality": quality,
             "craftable": craftable,
-            "median_price_ref": matching_rows["price_ref"].median(),
-            "low_price_ref": matching_rows["price_ref"].min(),
-            "high_price_ref": matching_rows["price_ref"].max(),
+            "median_price_keys": matching_rows["price_keys_equivalent"].median(),
+            "low_price_keys": matching_rows["price_keys_equivalent"].min(),
+            "high_price_keys": matching_rows["price_keys_equivalent"].max(),
+            "key_price_ref": matching_rows["key_price_ref"].median(),
             "median_price_usd": matching_rows["usd_price"].median(),
+            "display_price": matching_rows["display_price"].median(),
+            "display_unit": matching_rows["display_unit"].dropna().iloc[0]
+            if matching_rows["display_unit"].notna().any()
+            else None,
+            "source_price_low": matching_rows["source_price_low"].median(),
+            "source_price_high": matching_rows["source_price_high"].median(),
+            "source_price_unit": matching_rows["source_price_unit"].dropna().iloc[0]
+            if matching_rows["source_price_unit"].notna().any()
+            else None,
+            "price_is_range": bool(matching_rows["price_is_range"].any()),
             "stats_url": matching_rows["stats_url"].dropna().iloc[0]
             if matching_rows["stats_url"].notna().any()
             else None,
@@ -200,7 +259,7 @@ def load_community_item_trend(
     trend = pd.DataFrame(records).sort_values("snapshot_timestamp").reset_index(
         drop=True
     )
-    trend["percent_change"] = trend["median_price_ref"].pct_change() * 100
+    trend["percent_change"] = trend["median_price_keys"].pct_change() * 100
     return trend
 
 
@@ -226,10 +285,10 @@ def compare_community_snapshots(
     if comparison.empty:
         return comparison
 
-    comparison["price_change_ref"] = (
-        comparison["guide_price_ref_new"] - comparison["guide_price_ref_old"]
+    comparison["price_change_keys"] = (
+        comparison["guide_price_keys_new"] - comparison["guide_price_keys_old"]
     )
     comparison["percent_change"] = (
-        comparison["price_change_ref"] / comparison["guide_price_ref_old"] * 100
+        comparison["price_change_keys"] / comparison["guide_price_keys_old"] * 100
     ).replace([float("inf"), float("-inf")], pd.NA)
     return comparison

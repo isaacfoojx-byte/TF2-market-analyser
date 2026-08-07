@@ -143,6 +143,14 @@ def community_confidence(snapshot_count: int) -> str:
     return "Low"
 
 
+def format_community_price(value: float, unit: str | None) -> str:
+    """Format one community guide value in backpack.tf-style ref or keys."""
+
+    if pd.isna(value) or not unit:
+        return "Not listed"
+    return f"{value:.2f} {unit}"
+
+
 def spotlight(summary: pd.DataFrame, name_column: str, minimum_markets: int):
     """Choose a positive mover with enough represented markets to be useful."""
 
@@ -615,7 +623,8 @@ with community_overview_tab:
     st.subheader("Community Price Guide")
     st.caption(
         "History from backpack.tf's community price guide. These values are not live "
-        "listing prices, supply, or sales volume."
+        "listing prices, supply, or sales volume. Refined-metal values are converted "
+        "using the key price captured with each snapshot."
     )
 
     community_history = load_community_price_history()
@@ -629,7 +638,8 @@ with community_overview_tab:
         metric_row([
             ("Guide Variants Tracked", f"{int(latest_community['priced_variants']):,}", None),
             ("Unique Items", f"{int(latest_community['unique_items']):,}", None),
-            ("Typical Guide Price", f"{latest_community['median_price_ref']:.2f} ref", None),
+            ("Typical Guide Price", f"{latest_community['median_price_keys']:.2f} keys", None),
+            ("Key Price Used", f"{latest_community['key_price_ref']:.2f} ref", None),
             ("Latest Update", latest_community["snapshot_timestamp"].strftime("%d %b %Y"), None),
         ])
 
@@ -640,10 +650,10 @@ with community_overview_tab:
         else:
             first_community = community_history.iloc[0]
             guide_change_percent = (
-                (latest_community["median_price_ref"] - first_community["median_price_ref"])
-                / first_community["median_price_ref"]
+                (latest_community["median_price_keys"] - first_community["median_price_keys"])
+                / first_community["median_price_keys"]
                 * 100
-                if first_community["median_price_ref"]
+                if first_community["median_price_keys"]
                 else 0.0
             )
             st.caption(
@@ -653,17 +663,17 @@ with community_overview_tab:
 
             guide_prices = community_history.melt(
                 id_vars="snapshot_timestamp",
-                value_vars=["median_price_ref", "average_price_ref"],
+                value_vars=["median_price_keys", "average_price_keys"],
                 var_name="Price measure",
-                value_name="Refined metal",
+                value_name="Keys",
             ).replace({
-                "median_price_ref": "Typical guide price",
-                "average_price_ref": "Average guide price",
+                "median_price_keys": "Typical guide price",
+                "average_price_keys": "Average guide price",
             })
             guide_chart = px.line(
                 guide_prices,
                 x="snapshot_timestamp",
-                y="Refined metal",
+                y="Keys",
                 color="Price measure",
                 markers=True,
                 template="plotly_dark",
@@ -671,7 +681,7 @@ with community_overview_tab:
             guide_chart.update_layout(
                 title="Community Guide Price Trend",
                 xaxis_title="Snapshot",
-                yaxis_title="Refined metal",
+                yaxis_title="Keys",
                 legend_title="",
             )
             st.plotly_chart(guide_chart, use_container_width=True)
@@ -689,24 +699,24 @@ with community_overview_tab:
                         "item_name",
                         "quality",
                         "craftable",
-                        "guide_price_ref_old",
-                        "guide_price_ref_new",
+                        "guide_price_keys_old",
+                        "guide_price_keys_new",
                         "percent_change",
                     ]].copy()
                     table["craftable"] = table["craftable"].map(craftability_label)
-                    table["guide_price_ref_old"] = table["guide_price_ref_old"].map(
-                        "{:.2f} ref".format
+                    table["guide_price_keys_old"] = table["guide_price_keys_old"].map(
+                        "{:.2f} keys".format
                     )
-                    table["guide_price_ref_new"] = table["guide_price_ref_new"].map(
-                        "{:.2f} ref".format
+                    table["guide_price_keys_new"] = table["guide_price_keys_new"].map(
+                        "{:.2f} keys".format
                     )
                     table["percent_change"] = table["percent_change"].map("{:+.2f}%".format)
                     return table.rename(columns={
                         "item_name": "Item",
                         "quality": "Quality",
                         "craftable": "Variant",
-                        "guide_price_ref_old": "Start Guide Price",
-                        "guide_price_ref_new": "Latest Guide Price",
+                        "guide_price_keys_old": "Start Guide Price",
+                        "guide_price_keys_new": "Latest Guide Price",
                         "percent_change": "Guide Price Change",
                     })
 
@@ -823,6 +833,15 @@ with lookup_tab:
                     ("Confidence", confidence, None),
                 ])
 
+                if latest_snapshot["price_is_range"]:
+                    st.warning(
+                        "Range-based guide price: backpack.tf lists "
+                        f"{latest_snapshot['source_price_low']:.2f}"
+                        f"–{latest_snapshot['source_price_high']:.2f} "
+                        f"{latest_snapshot['source_price_unit']}. "
+                        "The displayed value is the midpoint of that range."
+                    )
+
                 if confidence == "Low":
                     st.warning(
                         "Not enough history for a reliable trend. Collect more snapshots "
@@ -871,7 +890,7 @@ with community_lookup_tab:
     st.subheader("Find a Community Item")
     st.caption(
         "Search the backpack.tf community price guide for one exact item variant. "
-        "Guide prices are not current listings or sale prices."
+        "Guide prices are shown in keys and are not current listings or sale prices."
     )
 
     community_catalog = load_community_markets()
@@ -950,10 +969,10 @@ with community_lookup_tab:
                 first_snapshot = community_trend.iloc[0]
                 latest_snapshot = community_trend.iloc[-1]
                 overall_change = (
-                    (latest_snapshot["median_price_ref"] - first_snapshot["median_price_ref"])
-                    / first_snapshot["median_price_ref"]
+                    (latest_snapshot["median_price_keys"] - first_snapshot["median_price_keys"])
+                    / first_snapshot["median_price_keys"]
                     * 100
-                    if first_snapshot["median_price_ref"]
+                    if first_snapshot["median_price_keys"]
                     else 0.0
                 )
                 previous_change = latest_snapshot["percent_change"]
@@ -977,7 +996,14 @@ with community_lookup_tab:
                     f"{len(community_trend)} snapshots."
                 )
                 metric_row([
-                    ("Latest Guide Price", f"{latest_snapshot['median_price_ref']:.2f} ref", None),
+                    (
+                        "Latest Guide Price",
+                        format_community_price(
+                            latest_snapshot["display_price"],
+                            latest_snapshot["display_unit"],
+                        ),
+                        None,
+                    ),
                     ("Approximate USD", usd_label, None),
                     ("Guide Price Movement", movement, f"{previous_change:+.2f}% last update"),
                     ("Confidence", confidence, None),
@@ -997,14 +1023,14 @@ with community_lookup_tab:
                 guide_trend_chart = px.line(
                     community_trend,
                     x="snapshot_timestamp",
-                    y="median_price_ref",
+                    y="median_price_keys",
                     markers=True,
                     template="plotly_dark",
                 )
                 guide_trend_chart.update_layout(
                     title="Community Guide Price Trend",
                     xaxis_title="Snapshot",
-                    yaxis_title="Guide price (refined metal)",
+                    yaxis_title="Guide price (keys)",
                     showlegend=False,
                 )
                 st.plotly_chart(guide_trend_chart, use_container_width=True)
@@ -1016,21 +1042,25 @@ with community_lookup_tab:
                 with st.expander("See saved guide prices"):
                     guide_table = community_trend[[
                         "snapshot_timestamp",
-                        "median_price_ref",
+                        "display_price",
+                        "display_unit",
                         "median_price_usd",
                     ]].copy()
                     guide_table["snapshot_timestamp"] = guide_table[
                         "snapshot_timestamp"
                     ].dt.strftime("%d %b %Y, %H:%M")
-                    guide_table["median_price_ref"] = guide_table[
-                        "median_price_ref"
-                    ].map("{:.2f} ref".format)
+                    guide_table["Guide Price"] = guide_table.apply(
+                        lambda row: format_community_price(
+                            row["display_price"],
+                            row["display_unit"],
+                        ),
+                        axis=1,
+                    )
                     guide_table["median_price_usd"] = guide_table[
                         "median_price_usd"
                     ].map(lambda value: f"${value:.2f}" if not pd.isna(value) else "Not listed")
                     guide_table = guide_table.rename(columns={
                         "snapshot_timestamp": "Snapshot",
-                        "median_price_ref": "Guide Price",
                         "median_price_usd": "Approximate USD",
-                    })
+                    })[["Snapshot", "Guide Price", "Approximate USD"]]
                     show_table(guide_table)

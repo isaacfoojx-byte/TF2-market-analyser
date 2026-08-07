@@ -42,9 +42,9 @@ class CommunitySpreadsheetParserTests(unittest.TestCase):
             "https://backpack.tf/stats/Unique/Team%20Captain",
         )
 
-    @patch("scraper.community_spreadsheet.fetch_community_spreadsheet")
+    @patch("scraper.community_spreadsheet.fetch_community_snapshot")
     def test_scrape_also_creates_a_cleaned_snapshot(self, fetch_spreadsheet):
-        fetch_spreadsheet.return_value = SAMPLE_HTML
+        fetch_spreadsheet.return_value = (SAMPLE_HTML, 50.0)
 
         with TemporaryDirectory() as temporary_directory:
             raw_directory = Path(temporary_directory) / "raw"
