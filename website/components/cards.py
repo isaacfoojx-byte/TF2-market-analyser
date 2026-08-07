@@ -25,7 +25,7 @@ def story_card(card: dict) -> None:
                 f"Confidence: {card['confidence']}",
                 color=confidence_color,
             )
-        if card.get("risk"):
+        if card.get("risk") and card["risk"] != "Low":
             st.badge(
                 f"Risk: {card['risk']}",
                 color=risk_color,

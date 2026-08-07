@@ -6,12 +6,12 @@ from website.components import page_header, show_table, story_card, style_bar_ch
 from website.utils import load_items
 
 
-st.set_page_config(page_title="Item Guide", page_icon="📦", layout="wide")
+st.set_page_config(page_title="Item Guide", layout="wide")
 
 comparison, item_summary = load_items()
 
 page_header(
-    "📦 Item Guide",
+    "Item Guide",
     "A simple view of which unusual items are gaining attention, widely represented, or worth watching.",
 )
 
@@ -22,7 +22,10 @@ item_cards = build_item_cards(item_summary, comparison)
 if not item_cards:
     st.info("Not enough item data is available yet. Collect another priced snapshot and try again.")
 else:
-    for column, card in zip(st.columns(len(item_cards)), item_cards):
+    story_card(item_cards[0])
+
+    st.subheader("What else to notice")
+    for column, card in zip(st.columns(2), item_cards[1:]):
         with column:
             story_card(card)
 

@@ -7,7 +7,7 @@ from website.components import metric_row, page_header, show_table, story_card
 from website.utils import load_dashboard
 
 
-st.set_page_config(page_title="Market Overview", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Market Overview", layout="wide")
 
 comparison, market_summary, effect_summary, item_summary, metadata = load_dashboard()
 
@@ -16,15 +16,15 @@ if metadata is not None and metadata.get("snapshot_timestamp"):
     timestamp = pd.to_datetime(metadata["snapshot_timestamp"], errors="coerce")
     if not pd.isna(timestamp):
         snapshot_caption = (
-            f"A simple read on the latest TF2 unusual market snapshot · "
+            f"A simple read on the latest TF2 unusual market snapshot, "
             f"{timestamp:%d %b %Y, %H:%M}"
         )
 
-page_header("📈 Market Overview", snapshot_caption)
+page_header("Market Overview", snapshot_caption)
 
 story = build_market_story(comparison, market_summary)
 story_card({
-    "category": "Today’s market mood",
+    "category": "Today's market mood",
     "name": story["headline"],
     "headline": story["summary"],
     "confidence": story["confidence"],
@@ -45,21 +45,6 @@ movement_card = {
     "why": "This looks at markets that had a price in both snapshots.",
     "risk_reasons": [],
 }
-typical_change = story.get("median_change_keys", 0)
-movement_text = (
-    f"Prices typically rose by {typical_change:.2f} keys"
-    if typical_change > 0
-    else f"Prices typically fell by {abs(typical_change):.2f} keys"
-)
-typical_card = {
-    "category": "Typical movement",
-    "name": "Small changes overall" if abs(typical_change) < 1 else "Noticeable price movement",
-    "headline": movement_text,
-    "confidence": story["confidence"],
-    "risk": "Low" if abs(typical_change) < 1 else "Medium",
-    "why": "The median is used so one very expensive unusual does not dominate the result.",
-    "risk_reasons": [],
-}
 risk_message = (
     story["risk_reasons"][0]
     if story["risk_reasons"]
@@ -75,7 +60,7 @@ risk_card = {
     "risk_reasons": [],
 }
 
-for column, card in zip(st.columns(3), [movement_card, typical_card, risk_card]):
+for column, card in zip(st.columns(2), [movement_card, risk_card]):
     with column:
         story_card(card)
 

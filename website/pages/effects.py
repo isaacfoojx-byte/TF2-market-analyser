@@ -6,12 +6,12 @@ from website.components import page_header, show_table, story_card, style_bar_ch
 from website.utils import load_effects
 
 
-st.set_page_config(page_title="Effect Guide", page_icon="✨", layout="wide")
+st.set_page_config(page_title="Effect Guide", layout="wide")
 
 comparison, effect_summary = load_effects()
 
 page_header(
-    "✨ Effect Guide",
+    "Effect Guide",
     "A simple view of which unusual effects are gaining attention, widely represented, or worth watching.",
 )
 
@@ -22,7 +22,10 @@ effect_cards = build_effect_cards(effect_summary, comparison)
 if not effect_cards:
     st.info("Not enough effect data is available yet. Collect another priced snapshot and try again.")
 else:
-    for column, card in zip(st.columns(len(effect_cards)), effect_cards):
+    story_card(effect_cards[0])
+
+    st.subheader("What else to notice")
+    for column, card in zip(st.columns(2), effect_cards[1:]):
         with column:
             story_card(card)
 

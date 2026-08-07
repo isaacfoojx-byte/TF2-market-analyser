@@ -9,12 +9,11 @@ from website.components import page_header
 
 st.set_page_config(
     page_title="Downloads",
-    page_icon="📁",
     layout="wide",
 )
 
 page_header(
-    "📁 Downloads",
+    "Downloads",
     "Browse and download historical TF2 market snapshots.",
 )
 
@@ -57,7 +56,7 @@ snapshot = datetime.strptime(
     "%Y-%m-%d_%H-%M-%S",
 )
 
-st.subheader("📌 Latest Snapshot")
+st.subheader("Latest Snapshot")
 
 col1, col2, col3 = st.columns(3)
 
@@ -78,7 +77,7 @@ col3.metric(
 
 with open(latest, "rb") as f:
     st.download_button(
-        "⬇ Download Latest Dataset",
+        "Download Latest Dataset",
         f,
         file_name=latest.name,
         mime="text/csv",
@@ -91,7 +90,7 @@ st.divider()
 # Historical snapshots
 # ------------------------------------------------------------------
 
-st.subheader("📜 Historical Snapshots")
+st.subheader("Historical Snapshots")
 
 for file in files:
 

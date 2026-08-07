@@ -18,37 +18,31 @@ st.set_page_config(
 home = st.Page(
     "website/pages/home.py",
     title="Home",
-    icon="🏠",
 )
 
 dashboard = st.Page(
     "website/pages/dashboard.py",
     title="Dashboard",
-    icon="📈",
 )
 
 insights = st.Page(
     "website/pages/insights.py",
     title="Insights",
-    icon="💡",
 )
 
 effects = st.Page(
     "website/pages/effects.py",
     title="Effects",
-    icon="✨",
 )
 
 items = st.Page(
     "website/pages/items.py",
     title="Items",
-    icon="📦",
 )
 
 downloads = st.Page(
     "website/pages/reports.py",
     title="Downloads",
-    icon="📁",
 )
 
 pg = st.navigation([

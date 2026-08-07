@@ -143,7 +143,7 @@ comparison, market_summary, effect_summary, item_summary, metadata = load_dashbo
 apply_insights_styles()
 
 page_header(
-    "💡 Market Insights",
+    "Market Insights",
     "Explainable market sentiment, risk flags, and opportunity screening from the latest comparison.",
 )
 
@@ -193,7 +193,7 @@ with overview_tab:
     st.subheader("Market Narrative")
 
     for insight in generate_market_insights(comparison, market_summary):
-        st.write(f"• {insight}")
+        st.write(insight)
 
     st.subheader("Risk Detector")
 
@@ -350,7 +350,7 @@ with spotlights_tab:
     effect_column, item_column = st.columns(2)
 
     with effect_column:
-        st.markdown("#### ✨ Effect Spotlight")
+        st.markdown("#### Effect Spotlight")
         if effect_spotlight is None or effect_assessment["confidence"] == "Low":
             st.info(
                 "Not enough supporting markets for a credible effect spotlight. "
@@ -364,10 +364,10 @@ with spotlights_tab:
             )
             render_spotlight_assessment(effect_assessment)
             for insight in generate_effect_insights(spotlight_effects):
-                st.write(f"• {insight}")
+                st.write(insight)
 
     with item_column:
-        st.markdown("#### 📦 Item Spotlight")
+        st.markdown("#### Item Spotlight")
         if item_spotlight is None or item_assessment["confidence"] == "Low":
             st.info(
                 "Not enough supporting markets for a credible item spotlight. "
@@ -381,7 +381,7 @@ with spotlights_tab:
             )
             render_spotlight_assessment(item_assessment)
             for insight in generate_item_insights(spotlight_items):
-                st.write(f"• {insight}")
+                st.write(insight)
 
 with historical_tab:
     st.subheader("Historical Comparison")

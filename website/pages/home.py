@@ -44,10 +44,10 @@ page_header(
 st.subheader("Latest Market Snapshot")
 
 metric_row([
-    ("🎩 Markets", f"{summary['total_unusuals']:,}", None),
-    ("✨ Effects", effect_summary["effect_name"].nunique(), None),
-    ("📦 Items", item_summary["item_name"].nunique(), None),
-    ("🕒 Last Updated", last_updated, None),
+    ("Markets", f"{summary['total_unusuals']:,}", None),
+    ("Effects", effect_summary["effect_name"].nunique(), None),
+    ("Items", item_summary["item_name"].nunique(), None),
+    ("Last Updated", last_updated, None),
 ])
 
 st.divider()
@@ -86,7 +86,7 @@ with col1:
 
     st.info(
         """
-### 📈 Market Overview
+### Market Overview
 
 View the latest market snapshot.
 
@@ -105,7 +105,7 @@ View the latest market snapshot.
 
     st.info(
         """
-### 📦 Item Analytics
+### Item Guide
 
 Analyse TF2 items.
 
@@ -125,7 +125,7 @@ with col2:
 
     st.info(
         """
-### ✨ Effect Analytics
+### Effect Guide
 
 Compare unusual effects.
 
@@ -144,7 +144,7 @@ Compare unusual effects.
 
     st.info(
         """
-### 📄 Reports
+### Downloads
 
 Download generated datasets.
 
@@ -163,6 +163,6 @@ Download generated datasets.
 st.divider()
 
 st.caption(
-    "TFAnalytics • Built with Python, Selenium and Streamlit • "
+    "TFAnalytics | Built with Python, Selenium and Streamlit | "
     "Market data sourced from backpack.tf"
 )
