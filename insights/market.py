@@ -145,6 +145,48 @@ def detect_market_risks(comparison: pd.DataFrame) -> list[str]:
     return risks or ["No broad market risk flags were triggered in this comparison."]
 
 
+def build_market_story(
+    comparison: pd.DataFrame,
+    summary: Mapping[str, int | float],
+) -> dict:
+    """Turn the market summary into a plain-language dashboard takeaway."""
+
+    sentiment = calculate_market_sentiment(comparison)
+    risks = detect_market_risks(comparison)
+
+    if sentiment["score"] is None:
+        return {
+            "headline": "Market update unavailable",
+            "summary": sentiment["reason"],
+            "confidence": sentiment["confidence"],
+            "risk": "High",
+            "risk_reasons": risks,
+        }
+
+    headline_by_label = {
+        "Bullish": "The unusual market is warming up",
+        "Bearish": "The unusual market is cooling down",
+        "Neutral": "The unusual market is staying steady",
+    }
+    risk_level = "Low"
+    if risks and not risks[0].startswith("No broad"):
+        risk_level = "High" if any("Broad market decline" in risk for risk in risks) else "Medium"
+
+    total = int(summary.get("total_unusuals", sentiment["comparable_markets"]))
+    return {
+        "headline": headline_by_label[sentiment["label"]],
+        "summary": (
+            f"{sentiment['breadth_percent']:.1f}% of {total:,} tracked markets rose. "
+            f"Typical movement was {sentiment['median_change_keys']:+.2f} keys."
+        ),
+        "confidence": sentiment["confidence"],
+        "risk": risk_level,
+        "risk_reasons": risks,
+        "rising_markets": sentiment["breadth_percent"],
+        "median_change_keys": sentiment["median_change_keys"],
+    }
+
+
 def find_opportunities(
     comparison: pd.DataFrame,
     minimum_listings: int = 3,

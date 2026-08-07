@@ -134,6 +134,91 @@ def assess_spotlight(
     return assessment
 
 
+def build_entity_story_cards(
+    summary: pd.DataFrame,
+    comparison: pd.DataFrame,
+    entity_column: str,
+) -> list[dict]:
+    """Translate an effect/item summary into three player-friendly cards."""
+
+    required = {entity_column, "average_change", "unusuals"}
+    if summary.empty or not required.issubset(summary.columns):
+        return []
+
+    usable = summary.dropna(subset=list(required)).copy()
+    if usable.empty:
+        return []
+
+    # Prefer well-supported entries, but do not hide the page when a smaller
+    # dataset has not reached the normal confidence threshold yet.
+    supported = usable.loc[usable["unusuals"] >= 25]
+    candidates = supported if not supported.empty else usable
+    minimum_markets = 25 if not supported.empty else 1
+
+    strongest = candidates.loc[candidates["average_change"].idxmax()]
+    most_represented = candidates.loc[candidates["unusuals"].idxmax()]
+    weakest = candidates.loc[candidates["average_change"].idxmin()]
+
+    def card_for(row: pd.Series, category: str, headline: str, reason: str) -> dict:
+        assessment = assess_spotlight(
+            comparison,
+            entity_column=entity_column,
+            entity_name=row[entity_column],
+            represented_markets=int(row["unusuals"]),
+            minimum_markets=minimum_markets,
+            average_change=float(row["average_change"]),
+        )
+        assessment["explanation"] = reason
+
+        return {
+            "category": category,
+            "name": row[entity_column],
+            "headline": headline,
+            "confidence": assessment["confidence"],
+            "risk": assessment["risk_level"],
+            "why": assessment["explanation"],
+            "risk_reasons": assessment["risk_reasons"],
+        }
+
+    strongest_change = float(strongest["average_change"])
+    if strongest_change > 0:
+        strongest_headline = f"Up about {strongest_change:.2f} keys on average"
+        strongest_category = "Gaining attention"
+    else:
+        strongest_headline = f"Holding up best at {strongest_change:+.2f} keys"
+        strongest_category = "Holding up best"
+
+    weakest_change = float(weakest["average_change"])
+    weakest_headline = (
+        f"Down about {abs(weakest_change):.2f} keys on average"
+        if weakest_change < 0
+        else f"Up only {weakest_change:.2f} keys on average"
+    )
+
+    return [
+        card_for(
+            strongest,
+            strongest_category,
+            strongest_headline,
+            "Chosen because it has the strongest average price movement among "
+            f"entries supported by at least {minimum_markets} markets.",
+        ),
+        card_for(
+            most_represented,
+            "Most represented",
+            f"Seen across {int(most_represented['unusuals']):,} market variants",
+            "Chosen because it appears in the largest number of tracked markets.",
+        ),
+        card_for(
+            weakest,
+            "Worth watching",
+            weakest_headline,
+            "Chosen because it has the weakest average price movement among "
+            f"entries supported by at least {minimum_markets} markets.",
+        ),
+    ]
+
+
 def format_direction(change: float) -> str:
     """Return a readable direction."""
 

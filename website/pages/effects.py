@@ -1,115 +1,49 @@
-import streamlit as st
 import plotly.express as px
+import streamlit as st
 
+from insights import build_effect_cards
+from website.components import page_header, show_table, story_card, style_bar_chart
 from website.utils import load_effects
-from website.components import (
-    page_header,
-    metric_row,
-    show_table,
-    style_bar_chart,
-)
-
-st.set_page_config(
-    page_title="Effect Analytics",
-    page_icon="✨",
-    layout="wide",
-)
 
 
-_, effect_summary = load_effects()
+st.set_page_config(page_title="Effect Guide", page_icon="✨", layout="wide")
+
+comparison, effect_summary = load_effects()
 
 page_header(
-    "✨ Effect Analytics",
-    "Market statistics grouped by unusual effect.",
+    "✨ Effect Guide",
+    "A simple view of which unusual effects are gaining attention, widely represented, or worth watching.",
 )
 
-st.subheader("Summary")
+st.subheader("Effects at a glance")
+st.caption("These cards are a starting point for exploration, not investment advice.")
 
-total_effects = effect_summary["effect_name"].nunique()
+effect_cards = build_effect_cards(effect_summary, comparison)
+if not effect_cards:
+    st.info("Not enough effect data is available yet. Collect another priced snapshot and try again.")
+else:
+    for column, card in zip(st.columns(len(effect_cards)), effect_cards):
+        with column:
+            story_card(card)
 
-total_markets = int(
-    effect_summary["unusuals"].sum()
-)
+with st.expander("Want the detailed effect statistics?"):
+    st.caption("Full rankings for players who want the raw numbers.")
 
-average_change = (
-    effect_summary["average_change"].mean()
-)
+    leaderboard = effect_summary.sort_values("unusuals", ascending=False)
+    detailed_leaderboard = leaderboard.rename(columns={
+        "effect_name": "Effect",
+        "unusuals": "Markets Represented",
+        "average_change": "Average Change (keys)",
+        "median_change": "Median Change (keys)",
+        "average_listing_change": "Average Listing Change",
+    })
+    show_table(detailed_leaderboard)
 
-best_effect = effect_summary.loc[
-    effect_summary["average_change"].idxmax(),
-    "effect_name",
-]
-
-metric_row([
-    ("Effects", total_effects, None),
-    ("Markets", total_markets, None),
-    ("Average Change", f"{average_change:.2f}%", None),
-    ("Top Effect", best_effect, None),
-])
-
-st.divider()
-
-st.subheader("🏆 Effect Leaderboard")
-
-leaderboard = (
-    effect_summary
-    .sort_values(
-        "unusuals",
-        ascending=False,
+    chart = px.bar(
+        leaderboard.head(20),
+        x="effect_name",
+        y="unusuals",
+        text="unusuals",
     )
-)
-
-show_table(leaderboard)
-
-st.divider()
-
-st.subheader("📈 Biggest Gainers")
-
-gainers = (
-    effect_summary
-    .sort_values(
-        "average_change",
-        ascending=False,
-    )
-    .head(10)
-)
-
-show_table(gainers)
-
-st.divider()
-
-st.subheader("📉 Biggest Losers")
-
-losers = (
-    effect_summary
-    .sort_values(
-        "average_change",
-        ascending=True,
-    )
-    .head(10)
-)
-
-show_table(losers)
-
-st.divider()
-
-st.subheader("📊 Top 20 Effects by Number of Markets")
-
-st.caption(
-    "The most active unusual effects based on the number of markets."
-)
-
-fig = px.bar(
-    leaderboard.head(20),
-    x="effect_name",
-    y="unusuals",
-    text="unusuals",
-)
-
-fig = style_bar_chart(fig,"Effect","Markets")
-
-st.plotly_chart(
-    fig,
-    use_container_width=True,
-)
-
+    chart = style_bar_chart(chart, "Effect", "Markets represented")
+    st.plotly_chart(chart, use_container_width=True)

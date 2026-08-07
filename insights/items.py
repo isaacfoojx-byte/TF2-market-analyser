@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .common import missing_columns, unavailable_insight
+from .common import build_entity_story_cards, missing_columns, unavailable_insight
 
 
 def generate_item_insights(
@@ -41,3 +41,12 @@ def generate_item_insights(
         f"Largest decline: {worst['item_name']} "
         f"({worst['average_change']:+.2f} keys on average).",
     ]
+
+
+def build_item_cards(
+    item_summary: pd.DataFrame,
+    comparison: pd.DataFrame,
+) -> list[dict]:
+    """Build player-facing item cards from the underlying summary data."""
+
+    return build_entity_story_cards(item_summary, comparison, "item_name")

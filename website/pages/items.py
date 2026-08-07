@@ -1,115 +1,49 @@
-import streamlit as st
 import plotly.express as px
+import streamlit as st
+
+from insights import build_item_cards
+from website.components import page_header, show_table, story_card, style_bar_chart
 from website.utils import load_items
-from website.components import (
-    page_header,
-    metric_row,
-    show_table,
-    style_bar_chart,
-)
-
-st.set_page_config(
-    page_title="Item Analytics",
-    page_icon="📦",
-    layout="wide",
-)
 
 
+st.set_page_config(page_title="Item Guide", page_icon="📦", layout="wide")
 
-
-_, item_summary = load_items()
+comparison, item_summary = load_items()
 
 page_header(
-    "📦 Item Analytics",
-    "Market statistics grouped by TF2 item.",
+    "📦 Item Guide",
+    "A simple view of which unusual items are gaining attention, widely represented, or worth watching.",
 )
 
-st.subheader("Summary")
+st.subheader("Items at a glance")
+st.caption("These cards are a starting point for exploration, not investment advice.")
 
-total_items = item_summary["item_name"].nunique()
+item_cards = build_item_cards(item_summary, comparison)
+if not item_cards:
+    st.info("Not enough item data is available yet. Collect another priced snapshot and try again.")
+else:
+    for column, card in zip(st.columns(len(item_cards)), item_cards):
+        with column:
+            story_card(card)
 
-total_markets = int(
-    item_summary["unusuals"].sum()
-)
+with st.expander("Want the detailed item statistics?"):
+    st.caption("Full rankings for players who want the raw numbers.")
 
-average_change = (
-    item_summary["average_change"].mean()
-)
+    leaderboard = item_summary.sort_values("unusuals", ascending=False)
+    detailed_leaderboard = leaderboard.rename(columns={
+        "item_name": "Item",
+        "unusuals": "Markets Represented",
+        "average_change": "Average Change (keys)",
+        "median_change": "Median Change (keys)",
+        "average_listing_change": "Average Listing Change",
+    })
+    show_table(detailed_leaderboard)
 
-best_item = item_summary.loc[
-    item_summary["average_change"].idxmax(),
-    "item_name",
-]
-
-metric_row([
-    ("Items", total_items, None),
-    ("Markets", total_markets, None),
-    ("Average Change", f"{average_change:.2f}%", None),
-    ("Top Item", best_item, None),
-])
-
-st.divider()
-
-st.subheader("🏆 Item Leaderboard")
-
-leaderboard = (
-    item_summary
-    .sort_values(
-        "unusuals",
-        ascending=False,
+    chart = px.bar(
+        leaderboard.head(20),
+        x="item_name",
+        y="unusuals",
+        text="unusuals",
     )
-)
-
-show_table(leaderboard)
-
-st.divider()
-
-st.subheader("📈 Biggest Gainers")
-
-gainers = (
-    item_summary
-    .sort_values(
-        "average_change",
-        ascending=False,
-    )
-    .head(10)
-)
-
-show_table(gainers)
-
-st.divider()
-
-st.subheader("📉 Biggest Losers")
-
-losers = (
-    item_summary
-    .sort_values(
-        "average_change",
-        ascending=True,
-    )
-    .head(10)
-)
-
-show_table(losers)
-
-st.divider()
-
-st.subheader("📊 Listings by Item")
-
-fig = px.bar(
-    leaderboard.head(20),
-    x="item_name",
-    y="unusuals",
-    text="unusuals",
-)
-
-fig = style_bar_chart(
-    fig,
-    "Item",
-    "Markets",
-)
-
-st.plotly_chart(
-    fig,
-    use_container_width=True,
-)
+    chart = style_bar_chart(chart, "Item", "Markets represented")
+    st.plotly_chart(chart, use_container_width=True)
