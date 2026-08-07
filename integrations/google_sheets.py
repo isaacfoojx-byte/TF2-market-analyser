@@ -26,6 +26,7 @@ DEFAULT_BATCH_ROWS = 2000
 DEFAULT_MAX_ATTEMPTS = 5
 INTEGER_PATTERN = re.compile(r"^-?\d+$")
 FLOAT_PATTERN = re.compile(r"^-?(?:\d+\.\d*|\d*\.\d+)(?:[eE][+-]?\d+)?$")
+DATE_SHEET_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 @dataclass(frozen=True)
@@ -154,15 +155,51 @@ def ensure_sheet_capacity(
         ),
     )
     response = execute_with_retry(request)
+    sheets = response.get("sheets", [])
     properties = next(
         (
             sheet.get("properties", {})
-            for sheet in response.get("sheets", [])
+            for sheet in sheets
             if sheet.get("properties", {}).get("title") == sheet_name
         ),
         None,
     )
     if properties is None:
+        compact_requests = []
+        for sheet in sheets:
+            existing = sheet.get("properties", {})
+            title = str(existing.get("title", ""))
+            grid = existing.get("gridProperties", {})
+            current_columns = int(grid.get("columnCount", 0))
+            if (
+                DATE_SHEET_PATTERN.fullmatch(title)
+                and current_columns > required_columns
+            ):
+                compact_requests.append(
+                    {
+                        "updateSheetProperties": {
+                            "properties": {
+                                "sheetId": existing["sheetId"],
+                                "gridProperties": {
+                                    "columnCount": required_columns,
+                                },
+                            },
+                            "fields": "gridProperties.columnCount",
+                        }
+                    }
+                )
+
+        if compact_requests:
+            compact_request = service.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body={"requests": compact_requests},
+            )
+            execute_with_retry(compact_request)
+            print(
+                f"Compacted {len(compact_requests):,} dated sheets to "
+                f"{required_columns:,} columns"
+            )
+
         add_request = service.spreadsheets().batchUpdate(
             spreadsheetId=spreadsheet_id,
             body={
@@ -172,8 +209,8 @@ def ensure_sheet_capacity(
                             "properties": {
                                 "title": sheet_name,
                                 "gridProperties": {
-                                    "rowCount": max(required_rows, 1000),
-                                    "columnCount": max(required_columns, 26),
+                                    "rowCount": required_rows,
+                                    "columnCount": required_columns,
                                 },
                             }
                         }
