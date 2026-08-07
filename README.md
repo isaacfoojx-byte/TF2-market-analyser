@@ -14,7 +14,9 @@ In Command Prompt:
 
 5) Run python -m scraper.main
 
-6) Chrome will open backpack.tf/effects with remote debugging enabled on localhost:9222, and scraping will begin. Please remember to pass Cloudflare manually in that window if required.
+6) Run python -m scraper.community_spreadsheet
+
+7) Chrome will open backpack.tf/effects and backpack.tf/spreadsheet separately with remote debugging enabled on localhost:9222, and scraping will begin. Please remember to pass Cloudflare manually in that window if required.
 
 In VSCode:
 
@@ -28,7 +30,9 @@ Run the launcher from the project root so its package imports resolve correctly:
 
 4) Input python -m scraper.main
 
-5) Chrome will open backpack.tf/effects and scraping will begin. Please remember to pass Cloudflare manually in that window if required.
+5) Input python -m scraper.community_spreadsheet
+
+6) Chrome will open backpack.tf/effects and backpack.tf/spreadsheet separately and scraping will begin. Please remember to pass Cloudflare manually in that window if required.
 
 The launcher uses a separate temporary Chrome profile because backpack.tf may require a manual Cloudflare check before Selenium can use the page.
 

@@ -6,6 +6,7 @@ import plotly.express as px
 import streamlit as st
 
 from analytics.history import compare_snapshots
+from analytics.community_history import compare_community_snapshots
 from insights import (
     calculate_market_sentiment,
     detect_market_risks,
@@ -17,6 +18,9 @@ from insights import (
 from insights.common import assess_spotlight
 from website.components import metric_row, page_header, show_table
 from website.utils import (
+    load_community_market_trend,
+    load_community_markets,
+    load_community_price_history,
     load_dashboard,
     load_history,
     load_unusual_market_trend,
@@ -121,6 +125,22 @@ def suggest_items(search_text: str, item_names: list[str]) -> list[str]:
     ]
 
     return list(dict.fromkeys(partial_matches + word_matches + close_matches))[:12]
+
+
+def craftability_label(craftable: bool | None) -> str:
+    """Show nullable craftability values as clear player-facing labels."""
+
+    if craftable is None or pd.isna(craftable):
+        return "Craftability not listed"
+    return "Craftable" if bool(craftable) else "Non-craftable"
+
+
+def community_confidence(snapshot_count: int) -> str:
+    if snapshot_count >= 5:
+        return "High"
+    if snapshot_count >= 3:
+        return "Medium"
+    return "Low"
 
 
 def spotlight(summary: pd.DataFrame, name_column: str, minimum_markets: int):
@@ -242,12 +262,22 @@ with st.container(border=True):
 
 st.divider()
 
-overview_tab, opportunities_tab, spotlights_tab, historical_tab, lookup_tab = st.tabs([
+(
+    overview_tab,
+    opportunities_tab,
+    spotlights_tab,
+    historical_tab,
+    community_overview_tab,
+    lookup_tab,
+    community_lookup_tab,
+) = st.tabs([
     "Market Overview",
     "Opportunity Detector",
     "Effect & Item Spotlights",
     "Historical Comparison",
+    "Community Guide",
     "Find an Unusual",
+    "Find a Community Item",
 ])
 
 with overview_tab:
@@ -581,6 +611,113 @@ with historical_tab:
                 st.markdown("#### Top Losers")
                 show_table(losers)
 
+with community_overview_tab:
+    st.subheader("Community Price Guide")
+    st.caption(
+        "History from backpack.tf's community price guide. These values are not live "
+        "listing prices, supply, or sales volume."
+    )
+
+    community_history = load_community_price_history()
+    if community_history.empty:
+        st.info(
+            "No cleaned community price snapshots are available yet. Run the community "
+            "spreadsheet scraper and cleaner first."
+        )
+    else:
+        latest_community = community_history.iloc[-1]
+        metric_row([
+            ("Guide Variants Tracked", f"{int(latest_community['priced_variants']):,}", None),
+            ("Unique Items", f"{int(latest_community['unique_items']):,}", None),
+            ("Typical Guide Price", f"{latest_community['median_price_ref']:.2f} ref", None),
+            ("Latest Update", latest_community["snapshot_timestamp"].strftime("%d %b %Y"), None),
+        ])
+
+        if len(community_history) < 2:
+            st.warning(
+                "One guide snapshot is saved. Collect another snapshot to show price movement."
+            )
+        else:
+            first_community = community_history.iloc[0]
+            guide_change_percent = (
+                (latest_community["median_price_ref"] - first_community["median_price_ref"])
+                / first_community["median_price_ref"]
+                * 100
+                if first_community["median_price_ref"]
+                else 0.0
+            )
+            st.caption(
+                f"The typical guide price changed {guide_change_percent:+.2f}% across "
+                f"{len(community_history)} saved snapshots."
+            )
+
+            guide_prices = community_history.melt(
+                id_vars="snapshot_timestamp",
+                value_vars=["median_price_ref", "average_price_ref"],
+                var_name="Price measure",
+                value_name="Refined metal",
+            ).replace({
+                "median_price_ref": "Typical guide price",
+                "average_price_ref": "Average guide price",
+            })
+            guide_chart = px.line(
+                guide_prices,
+                x="snapshot_timestamp",
+                y="Refined metal",
+                color="Price measure",
+                markers=True,
+                template="plotly_dark",
+            )
+            guide_chart.update_layout(
+                title="Community Guide Price Trend",
+                xaxis_title="Snapshot",
+                yaxis_title="Refined metal",
+                legend_title="",
+            )
+            st.plotly_chart(guide_chart, use_container_width=True)
+
+            movers = compare_community_snapshots(
+                first_community["source_file"],
+                latest_community["source_file"],
+            ).dropna(subset=["percent_change"])
+            st.subheader("Largest Guide Price Changes")
+            if movers.empty:
+                st.info("No item variants have usable prices at both ends of this period.")
+            else:
+                def prepare_community_movers(dataframe: pd.DataFrame) -> pd.DataFrame:
+                    table = dataframe[[
+                        "item_name",
+                        "quality",
+                        "craftable",
+                        "guide_price_ref_old",
+                        "guide_price_ref_new",
+                        "percent_change",
+                    ]].copy()
+                    table["craftable"] = table["craftable"].map(craftability_label)
+                    table["guide_price_ref_old"] = table["guide_price_ref_old"].map(
+                        "{:.2f} ref".format
+                    )
+                    table["guide_price_ref_new"] = table["guide_price_ref_new"].map(
+                        "{:.2f} ref".format
+                    )
+                    table["percent_change"] = table["percent_change"].map("{:+.2f}%".format)
+                    return table.rename(columns={
+                        "item_name": "Item",
+                        "quality": "Quality",
+                        "craftable": "Variant",
+                        "guide_price_ref_old": "Start Guide Price",
+                        "guide_price_ref_new": "Latest Guide Price",
+                        "percent_change": "Guide Price Change",
+                    })
+
+                gainers_column, losers_column = st.columns(2)
+                with gainers_column:
+                    st.markdown("#### Largest Increases")
+                    show_table(prepare_community_movers(movers.nlargest(5, "percent_change")))
+                with losers_column:
+                    st.markdown("#### Largest Decreases")
+                    show_table(prepare_community_movers(movers.nsmallest(5, "percent_change")))
+
 with lookup_tab:
     st.subheader("Find an Unusual")
     st.caption(
@@ -729,3 +866,171 @@ with lookup_tab:
                         "high_price": "Highest Price",
                     })
                     show_table(price_table)
+
+with community_lookup_tab:
+    st.subheader("Find a Community Item")
+    st.caption(
+        "Search the backpack.tf community price guide for one exact item variant. "
+        "Guide prices are not current listings or sale prices."
+    )
+
+    community_catalog = load_community_markets()
+    if community_catalog.empty:
+        st.info(
+            "No cleaned community guide data is available yet. Run a spreadsheet scrape "
+            "and clean its CSV before searching."
+        )
+    else:
+        community_item_options = community_catalog["item_name"].drop_duplicates().tolist()
+        community_search_text = st.text_input(
+            "Search for a community item",
+            placeholder="Type at least two letters, for example 'captain'",
+            help="Search ignores capitalisation, spaces, and punctuation. Choose an exact item before viewing its guide history.",
+            key="community_item_search",
+        )
+        suggested_community_items = suggest_items(
+            community_search_text,
+            community_item_options,
+        )
+        selected_community_item = None
+
+        if len(normalise_search_text(community_search_text)) < 2:
+            st.info("Type at least two letters to search for an item.")
+        elif not suggested_community_items:
+            st.info(
+                "No similar item appears in the latest community guide snapshot. "
+                "Try a shorter word or check the spelling."
+            )
+        else:
+            st.caption("Choose the exact item from the suggestions below.")
+            selected_community_item = st.selectbox(
+                "Matching community items",
+                options=suggested_community_items,
+                index=None,
+                placeholder="Choose an item",
+                key="community_item_choice",
+            )
+
+        if selected_community_item is not None:
+            matching_variants = community_catalog.loc[
+                community_catalog["item_name"].eq(selected_community_item)
+            ].copy()
+            matching_variants["variant_label"] = matching_variants.apply(
+                lambda row: (
+                    f"{row['quality']} - {craftability_label(row['craftable'])}"
+                ),
+                axis=1,
+            )
+            variant_index = st.selectbox(
+                "Choose a quality and variant",
+                options=matching_variants.index.tolist(),
+                format_func=lambda index: matching_variants.loc[index, "variant_label"],
+                key="community_variant_choice",
+            )
+            selected_variant = matching_variants.loc[variant_index]
+            selected_craftable = (
+                None
+                if pd.isna(selected_variant["craftable"])
+                else bool(selected_variant["craftable"])
+            )
+            community_trend = load_community_market_trend(
+                selected_community_item,
+                str(selected_variant["quality"]),
+                selected_craftable,
+            )
+
+            st.info(
+                f"Viewing guide price: {selected_community_item} - "
+                f"{selected_variant['variant_label']}"
+            )
+
+            if community_trend.empty:
+                st.info("This item variant has no usable community guide history yet.")
+            else:
+                first_snapshot = community_trend.iloc[0]
+                latest_snapshot = community_trend.iloc[-1]
+                overall_change = (
+                    (latest_snapshot["median_price_ref"] - first_snapshot["median_price_ref"])
+                    / first_snapshot["median_price_ref"]
+                    * 100
+                    if first_snapshot["median_price_ref"]
+                    else 0.0
+                )
+                previous_change = latest_snapshot["percent_change"]
+                previous_change = 0.0 if pd.isna(previous_change) else previous_change
+                confidence = community_confidence(len(community_trend))
+                volatility = community_trend["percent_change"].dropna().std(ddof=0)
+                movement = (
+                    "Large swings" if not pd.isna(volatility) and volatility >= 15
+                    else "Changing" if not pd.isna(volatility) and volatility >= 5
+                    else "Stable"
+                )
+
+                usd_value = latest_snapshot["median_price_usd"]
+                usd_label = (
+                    f"${usd_value:.2f}"
+                    if not pd.isna(usd_value)
+                    else "Not listed"
+                )
+                st.caption(
+                    f"The saved guide price has changed {overall_change:+.1f}% across "
+                    f"{len(community_trend)} snapshots."
+                )
+                metric_row([
+                    ("Latest Guide Price", f"{latest_snapshot['median_price_ref']:.2f} ref", None),
+                    ("Approximate USD", usd_label, None),
+                    ("Guide Price Movement", movement, f"{previous_change:+.2f}% last update"),
+                    ("Confidence", confidence, None),
+                ])
+
+                if confidence == "Low":
+                    st.warning(
+                        "Not enough saved guide snapshots for a reliable trend. "
+                        "Collect more updates before reading much into this change."
+                    )
+                elif movement == "Large swings":
+                    st.warning(
+                        "Guide values changed sharply between saved snapshots. Check the "
+                        "source page and treat the trend cautiously."
+                    )
+
+                guide_trend_chart = px.line(
+                    community_trend,
+                    x="snapshot_timestamp",
+                    y="median_price_ref",
+                    markers=True,
+                    template="plotly_dark",
+                )
+                guide_trend_chart.update_layout(
+                    title="Community Guide Price Trend",
+                    xaxis_title="Snapshot",
+                    yaxis_title="Guide price (refined metal)",
+                    showlegend=False,
+                )
+                st.plotly_chart(guide_trend_chart, use_container_width=True)
+
+                stats_url = latest_snapshot["stats_url"]
+                if isinstance(stats_url, str) and stats_url:
+                    st.link_button("Open this item on backpack.tf", stats_url)
+
+                with st.expander("See saved guide prices"):
+                    guide_table = community_trend[[
+                        "snapshot_timestamp",
+                        "median_price_ref",
+                        "median_price_usd",
+                    ]].copy()
+                    guide_table["snapshot_timestamp"] = guide_table[
+                        "snapshot_timestamp"
+                    ].dt.strftime("%d %b %Y, %H:%M")
+                    guide_table["median_price_ref"] = guide_table[
+                        "median_price_ref"
+                    ].map("{:.2f} ref".format)
+                    guide_table["median_price_usd"] = guide_table[
+                        "median_price_usd"
+                    ].map(lambda value: f"${value:.2f}" if not pd.isna(value) else "Not listed")
+                    guide_table = guide_table.rename(columns={
+                        "snapshot_timestamp": "Snapshot",
+                        "median_price_ref": "Guide Price",
+                        "median_price_usd": "Approximate USD",
+                    })
+                    show_table(guide_table)

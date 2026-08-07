@@ -1,5 +1,11 @@
 import streamlit as st
 
+from analytics.community_history import (
+    community_history_signature,
+    load_community_catalog,
+    load_community_history,
+    load_community_item_trend,
+)
 from analytics.history import (
     history_signature,
     load_market_history,
@@ -98,3 +104,50 @@ def load_unusual_market_trend(effect_id: int, defindex: int):
     """Load the trend for one exact unusual market across all snapshots."""
 
     return _load_unusual_trend(effect_id, defindex, history_signature())
+
+
+@st.cache_data
+def _load_community_history(_: tuple[tuple[str, int, int], ...]):
+    return load_community_history()
+
+
+def load_community_price_history():
+    """Load guide-price history and refresh the cache after a cleaned scrape."""
+
+    return _load_community_history(community_history_signature())
+
+
+@st.cache_data
+def _load_community_catalog(_: tuple[tuple[str, int, int], ...]):
+    return load_community_catalog()
+
+
+def load_community_markets():
+    """Load latest item/quality/craftability selectors from guide snapshots."""
+
+    return _load_community_catalog(community_history_signature())
+
+
+@st.cache_data
+def _load_community_item_trend(
+    item_name: str,
+    quality: str,
+    craftable: bool | None,
+    _: tuple[tuple[str, int, int], ...],
+):
+    return load_community_item_trend(item_name, quality, craftable)
+
+
+def load_community_market_trend(
+    item_name: str,
+    quality: str,
+    craftable: bool | None,
+):
+    """Load guide-price history for one exact non-Unusual item variant."""
+
+    return _load_community_item_trend(
+        item_name,
+        quality,
+        craftable,
+        community_history_signature(),
+    )
