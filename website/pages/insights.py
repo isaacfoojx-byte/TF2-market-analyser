@@ -196,6 +196,15 @@ def column_maximum(
     return max(fallback, int(values.max()))
 
 
+def missing_required_columns(
+    dataframe: pd.DataFrame,
+    required_columns: set[str],
+) -> list[str]:
+    """Return missing columns instead of letting an older dataset crash the page."""
+
+    return sorted(required_columns.difference(dataframe.columns))
+
+
 def render_spotlight_assessment(assessment: dict) -> None:
     """Render the evidence and cautions attached to a spotlight selection."""
 
@@ -628,18 +637,37 @@ with community_overview_tab:
     )
 
     community_history = load_community_price_history()
+    required_history_columns = {
+        "snapshot_timestamp",
+        "source_file",
+        "priced_variants",
+        "unique_items",
+        "median_price_keys",
+        "average_price_keys",
+        "key_price_ref",
+    }
+    missing_history_columns = missing_required_columns(
+        community_history,
+        required_history_columns,
+    )
     if community_history.empty:
         st.info(
             "No cleaned community price snapshots are available yet. Run the community "
             "spreadsheet scraper and cleaner first."
         )
+    elif missing_history_columns:
+        st.warning(
+            "Community guide data uses an older format and cannot be shown safely. "
+            "Re-run the community cleaner (or collect a new community scrape) after "
+            "deploying the current code."
+        )
     else:
         latest_community = community_history.iloc[-1]
         metric_row([
-            ("Guide Variants Tracked", f"{int(latest_community['priced_variants']):,}", None),
-            ("Unique Items", f"{int(latest_community['unique_items']):,}", None),
-            ("Typical Guide Price", f"{latest_community['median_price_keys']:.2f} keys", None),
-            ("Key Price Used", f"{latest_community['key_price_ref']:.2f} ref", None),
+            ("Price Guide Entries", f"{int(latest_community['priced_variants']):,}", None),
+            ("Different Items", f"{int(latest_community['unique_items']):,}", None),
+            ("Median Item Value", f"{latest_community['median_price_keys']:.2f} keys", None),
+            ("Conversion Rate", f"{latest_community['key_price_ref']:.2f} ref", None),
             ("Latest Update", latest_community["snapshot_timestamp"].strftime("%d %b %Y"), None),
         ])
 
@@ -965,6 +993,26 @@ with community_lookup_tab:
 
             if community_trend.empty:
                 st.info("This item variant has no usable community guide history yet.")
+            elif missing_required_columns(
+                community_trend,
+                {
+                    "snapshot_timestamp",
+                    "median_price_keys",
+                    "median_price_usd",
+                    "display_price",
+                    "display_unit",
+                    "percent_change",
+                    "stats_url",
+                    "price_is_range",
+                    "source_price_low",
+                    "source_price_high",
+                    "source_price_unit",
+                },
+            ):
+                st.warning(
+                    "This community snapshot uses an older format. Re-run the community "
+                    "cleaner after deploying the current code, then refresh this page."
+                )
             else:
                 first_snapshot = community_trend.iloc[0]
                 latest_snapshot = community_trend.iloc[-1]
