@@ -6,7 +6,7 @@ from website.components import (
     metric_row,
 )
 
-from website.utils import load_dashboard
+from website.utils import load_community_price_history, load_dashboard
 
 
 st.markdown(
@@ -41,7 +41,7 @@ page_header(
 # Snapshot Metrics
 # --------------------------------------------------------------------
 
-st.subheader("Latest Market Snapshot")
+st.subheader("Latest Unusual Market Snapshot")
 
 metric_row([
     ("Markets", f"{summary['total_unusuals']:,}", None),
@@ -49,6 +49,33 @@ metric_row([
     ("Items", item_summary["item_name"].nunique(), None),
     ("Last Updated", last_updated, None),
 ])
+
+st.subheader("Latest Community Price Guide Snapshot")
+
+community_history = load_community_price_history()
+required_community_columns = {
+    "snapshot_timestamp",
+    "priced_variants",
+    "unique_items",
+    "median_price_keys",
+}
+
+if community_history.empty:
+    st.info("No cleaned community price-guide snapshot is available yet.")
+elif not required_community_columns.issubset(community_history.columns):
+    st.warning(
+        "The community price-guide snapshot uses an older format. Re-run the "
+        "community cleaner to update it."
+    )
+else:
+    latest_community = community_history.iloc[-1]
+    community_updated = latest_community["snapshot_timestamp"].strftime("%d %b %Y")
+    metric_row([
+        ("Price Guide Entries", f"{int(latest_community['priced_variants']):,}", None),
+        ("Different Items", f"{int(latest_community['unique_items']):,}", None),
+        ("Median Item Value", f"{latest_community['median_price_keys']:.2f} keys", None),
+        ("Last Updated", community_updated, None),
+    ])
 
 st.divider()
 
