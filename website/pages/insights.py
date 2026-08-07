@@ -13,7 +13,12 @@ from insights import (
 )
 from insights.common import assess_spotlight
 from website.components import metric_row, page_header, show_table
-from website.utils import load_dashboard, load_history
+from website.utils import (
+    load_dashboard,
+    load_history,
+    load_unusual_market_trend,
+    load_unusual_markets,
+)
 
 
 def apply_insights_styles() -> None:
@@ -182,11 +187,12 @@ with st.container(border=True):
 
 st.divider()
 
-overview_tab, opportunities_tab, spotlights_tab, historical_tab = st.tabs([
+overview_tab, opportunities_tab, spotlights_tab, historical_tab, lookup_tab = st.tabs([
     "Market Overview",
     "Opportunity Detector",
     "Effect & Item Spotlights",
     "Historical Comparison",
+    "Find an Unusual",
 ])
 
 with overview_tab:
@@ -519,3 +525,129 @@ with historical_tab:
             with losers_column:
                 st.markdown("#### Top Losers")
                 show_table(losers)
+
+with lookup_tab:
+    st.subheader("Find an Unusual")
+    st.caption(
+        "Choose an item and effect to see the price trend for that exact unusual market."
+    )
+
+    unusual_catalog = load_unusual_markets()
+
+    if unusual_catalog.empty:
+        st.info("No priced unusual markets are available to search yet.")
+    else:
+        item_options = unusual_catalog["item_name"].drop_duplicates().tolist()
+        selected_item = st.selectbox(
+            "Search for an item",
+            options=item_options,
+            index=None,
+            placeholder="Type an item name",
+        )
+
+        if selected_item is None:
+            st.info("Start by choosing an item. You can type to search the list.")
+        else:
+            matching_unusuals = unusual_catalog.loc[
+                unusual_catalog["item_name"].eq(selected_item)
+            ].sort_values("effect_name")
+            effect_options = matching_unusuals["effect_name"].tolist()
+            selected_effect = st.selectbox(
+                "Choose an unusual effect",
+                options=effect_options,
+            )
+            selected_market = matching_unusuals.loc[
+                matching_unusuals["effect_name"].eq(selected_effect)
+            ].iloc[0]
+
+            unusual_trend = load_unusual_market_trend(
+                int(selected_market["effect_id"]),
+                int(selected_market["defindex"]),
+            )
+
+            if unusual_trend.empty:
+                st.info("This unusual market has no usable price history yet.")
+            else:
+                first_snapshot = unusual_trend.iloc[0]
+                latest_snapshot = unusual_trend.iloc[-1]
+                overall_change = (
+                    (latest_snapshot["median_price"] - first_snapshot["median_price"])
+                    / first_snapshot["median_price"]
+                    * 100
+                    if first_snapshot["median_price"]
+                    else 0.0
+                )
+                previous_change = latest_snapshot["percent_change"]
+                previous_change = 0.0 if pd.isna(previous_change) else previous_change
+
+                if len(unusual_trend) >= 5:
+                    confidence = "High"
+                elif len(unusual_trend) >= 3:
+                    confidence = "Medium"
+                else:
+                    confidence = "Low"
+
+                volatility = unusual_trend["percent_change"].dropna().std(ddof=0)
+                risk = (
+                    "High" if confidence == "Low" or (not pd.isna(volatility) and volatility >= 25)
+                    else "Medium" if not pd.isna(volatility) and volatility >= 10
+                    else "Low"
+                )
+                trend_description = (
+                    f"has risen {overall_change:+.1f}% across the saved snapshots"
+                    if overall_change > 0
+                    else f"has fallen {overall_change:+.1f}% across the saved snapshots"
+                    if overall_change < 0
+                    else "is unchanged across the saved snapshots"
+                )
+
+                st.subheader(f"{selected_effect} {selected_item}")
+                st.caption(
+                    f"This unusual {trend_description}. "
+                    "Prices are shown in keys."
+                )
+                metric_row([
+                    ("Latest Price", f"{latest_snapshot['median_price']:.2f} keys", None),
+                    ("Change Since Previous", f"{previous_change:+.2f}%", None),
+                    ("Snapshots Found", len(unusual_trend), None),
+                    ("Confidence", confidence, None),
+                ])
+
+                if risk != "Low":
+                    st.warning(
+                        f"{risk} risk: this trend has limited history or large price swings."
+                    )
+
+                unusual_chart = px.line(
+                    unusual_trend,
+                    x="snapshot_timestamp",
+                    y="median_price",
+                    markers=True,
+                    template="plotly_dark",
+                )
+                unusual_chart.update_layout(
+                    title="Price Trend",
+                    xaxis_title="Snapshot",
+                    yaxis_title="Median price (keys)",
+                    showlegend=False,
+                )
+                st.plotly_chart(unusual_chart, use_container_width=True)
+
+                with st.expander("See snapshot-by-snapshot prices"):
+                    price_table = unusual_trend[
+                        ["snapshot_timestamp", "median_price", "low_price", "high_price"]
+                    ].copy()
+                    price_table["snapshot_timestamp"] = price_table[
+                        "snapshot_timestamp"
+                    ].dt.strftime("%d %b %Y, %H:%M")
+                    for column in ("median_price", "low_price", "high_price"):
+                        price_table[column] = price_table[column].map(
+                            "{:.2f} keys".format
+                        )
+                    price_table = price_table.rename(columns={
+                        "snapshot_timestamp": "Snapshot",
+                        "median_price": "Median Price",
+                        "low_price": "Lowest Price",
+                        "high_price": "Highest Price",
+                    })
+                    show_table(price_table)

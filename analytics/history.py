@@ -79,6 +79,62 @@ def load_market_history() -> pd.DataFrame:
     )
 
 
+def load_unusual_catalog() -> pd.DataFrame:
+    """Return searchable unusual markets from the latest processed snapshot."""
+
+    snapshots = get_snapshots()
+    if not snapshots:
+        return pd.DataFrame()
+
+    _, priced = load_data(snapshots[-1])
+    required = ["effect_id", "effect_name", "defindex", "item_name"]
+    if priced.empty or not set(required).issubset(priced.columns):
+        return pd.DataFrame()
+
+    return (
+        priced[required]
+        .drop_duplicates()
+        .sort_values(["item_name", "effect_name"])
+        .reset_index(drop=True)
+    )
+
+
+def load_unusual_trend(effect_id: int, defindex: int) -> pd.DataFrame:
+    """Return the price history for one exact effect/item market."""
+
+    records: list[dict] = []
+
+    for snapshot_file in get_snapshots():
+        dataframe, priced = load_data(snapshot_file)
+        matching_rows = priced.loc[
+            (priced["effect_id"] == effect_id)
+            & (priced["defindex"] == defindex)
+        ]
+
+        if matching_rows.empty:
+            continue
+
+        records.append({
+            "snapshot_timestamp": _snapshot_timestamp(snapshot_file, dataframe),
+            "effect_name": matching_rows["effect_name"].iloc[0],
+            "item_name": matching_rows["item_name"].iloc[0],
+            "average_price": matching_rows[PRICE_COL].mean(),
+            "median_price": matching_rows[PRICE_COL].median(),
+            "low_price": matching_rows[PRICE_COL].min(),
+            "high_price": matching_rows[PRICE_COL].max(),
+            "market_rows": len(matching_rows),
+        })
+
+    if not records:
+        return pd.DataFrame()
+
+    trend = pd.DataFrame(records).sort_values("snapshot_timestamp").reset_index(
+        drop=True
+    )
+    trend["percent_change"] = trend["median_price"].pct_change() * 100
+    return trend
+
+
 def compare_snapshots(
     old_snapshot: str | Path,
     new_snapshot: str | Path,

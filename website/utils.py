@@ -1,6 +1,11 @@
 import streamlit as st
 
-from analytics.history import history_signature, load_market_history
+from analytics.history import (
+    history_signature,
+    load_market_history,
+    load_unusual_catalog,
+    load_unusual_trend,
+)
 
 from analytics.snapshot_comparison import (
     build_comparison,
@@ -67,3 +72,29 @@ def load_history():
     """Load history and refresh the cache whenever processed snapshots change."""
 
     return _load_history(history_signature())
+
+
+@st.cache_data
+def _load_unusual_catalog(_: tuple[tuple[str, int, int], ...]):
+    return load_unusual_catalog()
+
+
+def load_unusual_markets():
+    """Load item/effect selectors from the latest snapshot."""
+
+    return _load_unusual_catalog(history_signature())
+
+
+@st.cache_data
+def _load_unusual_trend(
+    effect_id: int,
+    defindex: int,
+    _: tuple[tuple[str, int, int], ...],
+):
+    return load_unusual_trend(effect_id, defindex)
+
+
+def load_unusual_market_trend(effect_id: int, defindex: int):
+    """Load the trend for one exact unusual market across all snapshots."""
+
+    return _load_unusual_trend(effect_id, defindex, history_signature())
