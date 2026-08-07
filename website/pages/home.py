@@ -71,8 +71,21 @@ else:
     latest_community = community_history.iloc[-1]
     community_updated = latest_community["snapshot_timestamp"].strftime("%d %b %Y")
     metric_row([
-        ("Price Guide Entries", f"{int(latest_community['priced_variants']):,}", None),
-        ("Different Items", f"{int(latest_community['unique_items']):,}", None),
+        (
+            "Price Guide Entries",
+            f"{int(latest_community['priced_variants']):,}",
+            None,
+            "Each separately priced version of an item. Quality and craftability "
+            "make separate entries—for example, Unique and Strange versions of the "
+            "same item count separately.",
+        ),
+        (
+            "Different Items",
+            f"{int(latest_community['unique_items']):,}",
+            None,
+            "Unique base item names only. An item such as Team Captain counts once "
+            "even when it has several quality or craftability variants.",
+        ),
         ("Median Item Value", f"{latest_community['median_price_keys']:.2f} keys", None),
         ("Last Updated", community_updated, None),
     ])
