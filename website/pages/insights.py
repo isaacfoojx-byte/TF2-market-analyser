@@ -1,3 +1,6 @@
+from difflib import get_close_matches
+import re
+
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -66,6 +69,58 @@ def format_snapshot_timestamp(timestamp: str) -> str:
         return timestamp
 
     return parsed_timestamp.strftime("%d %b %Y, %H:%M")
+
+
+def normalise_search_text(value: str) -> str:
+    """Make item searches tolerant of case, spacing, and punctuation differences."""
+
+    return re.sub(r"[^a-z0-9]", "", value.lower())
+
+
+def suggest_items(search_text: str, item_names: list[str]) -> list[str]:
+    """Return exact, partial, and close item-name matches without auto-selecting."""
+
+    query = normalise_search_text(search_text)
+    if len(query) < 2:
+        return []
+
+    normalised_names: dict[str, list[str]] = {}
+    word_index: dict[str, list[str]] = {}
+    for item_name in item_names:
+        normalised_names.setdefault(normalise_search_text(item_name), []).append(item_name)
+        for word in re.findall(r"[a-z0-9]+", item_name.lower()):
+            word_index.setdefault(word, []).append(item_name)
+
+    partial_matches = [
+        item_name
+        for normalised_name, names in normalised_names.items()
+        if query in normalised_name
+        for item_name in names
+    ]
+    close_words = get_close_matches(
+        query,
+        list(word_index),
+        n=8,
+        cutoff=0.6,
+    )
+    word_matches = [
+        item_name
+        for close_word in close_words
+        for item_name in word_index[close_word]
+    ]
+    close_keys = get_close_matches(
+        query,
+        list(normalised_names),
+        n=8,
+        cutoff=0.55,
+    )
+    close_matches = [
+        item_name
+        for close_key in close_keys
+        for item_name in normalised_names[close_key]
+    ]
+
+    return list(dict.fromkeys(partial_matches + word_matches + close_matches))[:12]
 
 
 def spotlight(summary: pd.DataFrame, name_column: str, minimum_markets: int):
@@ -538,16 +593,32 @@ with lookup_tab:
         st.info("No priced unusual markets are available to search yet.")
     else:
         item_options = unusual_catalog["item_name"].drop_duplicates().tolist()
-        selected_item = st.selectbox(
+        search_text = st.text_input(
             "Search for an item",
-            options=item_options,
-            index=None,
-            placeholder="Type an item name",
+            placeholder="Type at least two letters, for example 'handy'",
+            help="Search ignores capitalisation, spaces, and punctuation. Similar names are suggested, but you must choose the exact item.",
         )
+        suggested_items = suggest_items(search_text, item_options)
+        selected_item = None
 
-        if selected_item is None:
-            st.info("Start by choosing an item. You can type to search the list.")
+        if len(normalise_search_text(search_text)) < 2:
+            st.info("Type at least two letters to search for an item.")
+        elif not suggested_items:
+            st.info(
+                "No item with a similar name appears in the latest snapshot. "
+                "Try a shorter word or check the spelling."
+            )
         else:
+            st.caption("Choose the exact item from the suggestions below.")
+            selected_item = st.selectbox(
+                "Matching items",
+                options=suggested_items,
+                index=None,
+                placeholder="Choose an item",
+                key="unusual_item_choice",
+            )
+
+        if selected_item is not None:
             matching_unusuals = unusual_catalog.loc[
                 unusual_catalog["item_name"].eq(selected_item)
             ].sort_values("effect_name")
@@ -559,6 +630,8 @@ with lookup_tab:
             selected_market = matching_unusuals.loc[
                 matching_unusuals["effect_name"].eq(selected_effect)
             ].iloc[0]
+
+            st.info(f"Viewing: {selected_effect} - {selected_item}")
 
             unusual_trend = load_unusual_market_trend(
                 int(selected_market["effect_id"]),
@@ -613,9 +686,14 @@ with lookup_tab:
                     ("Confidence", confidence, None),
                 ])
 
-                if risk != "Low":
+                if confidence == "Low":
                     st.warning(
-                        f"{risk} risk: this trend has limited history or large price swings."
+                        "Not enough history for a reliable trend. Collect more snapshots "
+                        "before treating this movement as meaningful."
+                    )
+                elif risk != "Low":
+                    st.warning(
+                        f"{risk} risk: this trend has large price swings between snapshots."
                     )
 
                 unusual_chart = px.line(
