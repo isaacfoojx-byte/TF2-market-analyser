@@ -16,7 +16,7 @@ from insights import (
     generate_market_insights,
 )
 from insights.common import assess_spotlight
-from website.components import metric_row, page_header, show_table
+from website.components import confidence_badge, metric_row, page_header, show_table
 from website.utils import (
     load_community_market_trend,
     load_community_markets,
@@ -143,6 +143,16 @@ def community_confidence(snapshot_count: int) -> str:
     return "Low"
 
 
+def snapshot_confidence_reason(snapshot_count: int) -> str:
+    """Explain the common confidence thresholds used by item trend lookups."""
+
+    return (
+        f"This trend has {snapshot_count} saved snapshot"
+        f"{'s' if snapshot_count != 1 else ''}. High confidence needs at least 5 "
+        "snapshots; medium confidence needs at least 3."
+    )
+
+
 def format_community_price(value: float, unit: str | None) -> str:
     """Format one community guide value in backpack.tf-style ref or keys."""
 
@@ -208,20 +218,15 @@ def missing_required_columns(
 def render_spotlight_assessment(assessment: dict) -> None:
     """Render the evidence and cautions attached to a spotlight selection."""
 
-    confidence_color = {
-        "High": "green",
-        "Medium": "orange",
-        "Low": "red",
-    }[assessment["confidence"]]
     risk_color = {
         "Low": "green",
         "Medium": "orange",
         "High": "red",
     }[assessment["risk_level"]]
 
-    st.badge(
-        f"Confidence: {assessment['confidence']}",
-        color=confidence_color,
+    confidence_badge(
+        assessment["confidence"],
+        assessment["confidence_reason"],
     )
     st.badge(
         f"Risk: {assessment['risk_level']}",
@@ -262,6 +267,7 @@ with st.container(border=True):
             ("Confidence", sentiment["confidence"], None),
         ])
         st.warning(sentiment["reason"])
+        confidence_badge(sentiment["confidence"], sentiment["reason"])
     else:
         metric_row([
             (
@@ -275,6 +281,12 @@ with st.container(border=True):
         ])
         st.caption(
             f"Sentiment score: {sentiment['score']}/100. {sentiment['reason']}"
+        )
+        confidence_badge(
+            sentiment["confidence"],
+            f"{sentiment['comparable_markets']:,} markets had usable prices in both "
+            "snapshots. High confidence needs at least 100 comparable markets; "
+            "medium confidence needs at least 25.",
         )
 
 st.divider()
@@ -861,7 +873,12 @@ with lookup_tab:
                     ("Confidence", confidence, None),
                 ])
 
-                if latest_snapshot["price_is_range"]:
+                confidence_badge(
+                    confidence,
+                    snapshot_confidence_reason(len(unusual_trend)),
+                )
+
+                if latest_snapshot.get("price_is_range", False):
                     st.warning(
                         "Range-based guide price: backpack.tf lists "
                         f"{latest_snapshot['source_price_low']:.2f}"
@@ -1056,6 +1073,20 @@ with community_lookup_tab:
                     ("Guide Price Movement", movement, f"{previous_change:+.2f}% last update"),
                     ("Confidence", confidence, None),
                 ])
+
+                confidence_badge(
+                    confidence,
+                    snapshot_confidence_reason(len(community_trend)),
+                )
+
+                if latest_snapshot["price_is_range"]:
+                    st.warning(
+                        "Range-based guide price: backpack.tf lists "
+                        f"{latest_snapshot['source_price_low']:.2f} to "
+                        f"{latest_snapshot['source_price_high']:.2f} "
+                        f"{latest_snapshot['source_price_unit']}. "
+                        "The displayed value is the midpoint of that range."
+                    )
 
                 if confidence == "Low":
                     st.warning(

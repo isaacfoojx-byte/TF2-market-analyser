@@ -53,6 +53,10 @@ def assess_spotlight(
     )
     assessment = {
         "confidence": confidence,
+        "confidence_reason": (
+            f"This spotlight represents {represented_markets:,} markets. High confidence "
+            "requires at least 100 represented markets; medium confidence requires at least 25."
+        ),
         "risk_level": "Low",
         "risk_reasons": [],
         "explanation": (
@@ -175,6 +179,7 @@ def build_entity_story_cards(
             "name": row[entity_column],
             "headline": headline,
             "confidence": assessment["confidence"],
+            "confidence_reason": assessment["confidence_reason"],
             "risk": assessment["risk_level"],
             "why": assessment["explanation"],
             "risk_reasons": assessment["risk_reasons"],

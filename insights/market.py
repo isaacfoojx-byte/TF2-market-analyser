@@ -159,6 +159,7 @@ def build_market_story(
             "headline": "Market update unavailable",
             "summary": sentiment["reason"],
             "confidence": sentiment["confidence"],
+            "confidence_reason": sentiment["reason"],
             "risk": "High",
             "risk_reasons": risks,
         }
@@ -180,6 +181,11 @@ def build_market_story(
             f"Typical movement was {sentiment['median_change_keys']:+.2f} keys."
         ),
         "confidence": sentiment["confidence"],
+        "confidence_reason": (
+            f"{sentiment['comparable_markets']:,} markets had usable prices in both "
+            "snapshots. High confidence needs at least 100 comparable markets; "
+            "medium needs at least 25."
+        ),
         "risk": risk_level,
         "risk_reasons": risks,
         "rising_markets": sentiment["breadth_percent"],

@@ -1,6 +1,23 @@
 import streamlit as st
 
 
+def confidence_badge(confidence: str, explanation: str) -> None:
+    """Render a confidence badge with a compact, expandable explanation."""
+
+    color = {
+        "High": "green",
+        "Medium": "orange",
+        "Low": "red",
+    }.get(confidence, "gray")
+    st.badge(f"Confidence: {confidence}", color=color)
+    with st.popover(
+        ":material/visibility:",
+        help="Why this confidence level?",
+    ):
+        st.caption("Why this confidence level")
+        st.write(explanation)
+
+
 def story_card(card: dict) -> None:
     """Render a compact, player-facing insight card."""
 
@@ -21,9 +38,13 @@ def story_card(card: dict) -> None:
         st.write(f"**{card['headline']}**")
 
         if card.get("confidence"):
-            st.badge(
-                f"Confidence: {card['confidence']}",
-                color=confidence_color,
+            confidence_badge(
+                card["confidence"],
+                card.get(
+                    "confidence_reason",
+                    "This confidence level reflects the amount and consistency of "
+                    "the comparable market data behind this card.",
+                ),
             )
         if card.get("risk") and card["risk"] != "Low":
             st.badge(
