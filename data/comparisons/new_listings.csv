@@ -1,0 +1,171 @@
+effect_id,effect_name,defindex,item_name,listings_old,average_price_old,median_price_old,listings_new,average_price_new,median_price_new,_merge,price_change,percent_change,listing_change,status
+62,Disco Beat Down,31494,Dapper Noel,,,,1,25.19060818522746,25.19060818522746,right_only,,,,New Listing
+86,Haunted Phantasm Jr,94,Texas Ten Gallon,,,,1,95.16451981085928,95.16451981085928,right_only,,,,New Listing
+86,Haunted Phantasm Jr,95,Engineer's Cap,,,,1,233.24637208543945,233.24637208543945,right_only,,,,New Listing
+86,Haunted Phantasm Jr,98,Stainless Pot,,,,1,172.6023153432252,172.6023153432252,right_only,,,,New Listing
+86,Haunted Phantasm Jr,99,Tyrant's Helm,,,,1,1259.5304092613728,1259.5304092613728,right_only,,,,New Listing
+86,Haunted Phantasm Jr,100,Glengarry Bonnet,,,,1,132.4839393445296,132.4839393445296,right_only,,,,New Listing
+86,Haunted Phantasm Jr,105,Brigade Helm,,,,1,433.8382520789173,433.8382520789173,right_only,,,,New Listing
+86,Haunted Phantasm Jr,110,Master's Yellow Belt,,,,1,2052.568074351867,2052.568074351867,right_only,,,,New Listing
+86,Haunted Phantasm Jr,139,Modest Pile of Hat,,,,1,99.3629545083972,99.3629545083972,right_only,,,,New Listing
+86,Haunted Phantasm Jr,147,Magistrate's Mullet,,,,1,30.788521115278005,30.788521115278005,right_only,,,,New Listing
+86,Haunted Phantasm Jr,148,Hotrod,,,,1,65.30898418392304,65.30898418392304,right_only,,,,New Listing
+86,Haunted Phantasm Jr,150,Troublemaker's Tossle Cap,,,,1,303.22028371107126,303.22028371107126,right_only,,,,New Listing
+86,Haunted Phantasm Jr,152,Killer's Kabuto,,,,1,135.28289580955487,135.28289580955487,right_only,,,,New Listing
+86,Haunted Phantasm Jr,158,Shooter's Sola Topi,,,,1,25.19060818522746,25.19060818522746,right_only,,,,New Listing
+86,Haunted Phantasm Jr,174,Whoopee Cap,,,,1,298.5553562693625,298.5553562693625,right_only,,,,New Listing
+86,Haunted Phantasm Jr,177,Ze Goggles,,,,1,74.63883906734063,74.63883906734063,right_only,,,,New Listing
+86,Haunted Phantasm Jr,179,Tippler's Tricorne,,,,1,37.31941953367031,37.31941953367031,right_only,,,,New Listing
+86,Haunted Phantasm Jr,184,Gentleman's Gatsby,,,,1,54.57965106799283,54.57965106799283,right_only,,,,New Listing
+86,Haunted Phantasm Jr,219,Milkman,,,,1,51.31420185879667,51.31420185879667,right_only,,,,New Listing
+86,Haunted Phantasm Jr,227,Grenadier's Softcap,,,,1,214.58666231860428,214.58666231860428,right_only,,,,New Listing
+86,Haunted Phantasm Jr,247,Old Guadalajara,,,,1,207.12277841187023,207.12277841187023,right_only,,,,New Listing
+86,Haunted Phantasm Jr,249,Bombing Run,,,,1,223.91651720202185,223.91651720202185,right_only,,,,New Listing
+86,Haunted Phantasm Jr,250,Chieftain's Challenge,,,,1,349.8695581281592,349.8695581281592,right_only,,,,New Listing
+86,Haunted Phantasm Jr,251,Stout Shako,,,,1,34.986955812815914,34.986955812815914,right_only,,,,New Listing
+86,Haunted Phantasm Jr,253,Handyman's Handle,,,,1,180.06619924995923,180.06619924995923,right_only,,,,New Listing
+86,Haunted Phantasm Jr,254,Hard Counter,,,,1,23.324637208543944,23.324637208543944,right_only,,,,New Listing
+86,Haunted Phantasm Jr,290,Cadaver's Cranium,,,,1,167.9373879015164,167.9373879015164,right_only,,,,New Listing
+86,Haunted Phantasm Jr,303,Berliner's Bucket Helm,,,,1,92.365563345834,92.365563345834,right_only,,,,New Listing
+86,Haunted Phantasm Jr,313,Magnificent Mongolian,,,,1,149.27767813468125,149.27767813468125,right_only,,,,New Listing
+86,Haunted Phantasm Jr,315,Blighted Beak,,,,1,559.7912930050546,559.7912930050546,right_only,,,,New Listing
+86,Haunted Phantasm Jr,318,Prancer's Pride,,,,1,107.29333115930214,107.29333115930214,right_only,,,,New Listing
+86,Haunted Phantasm Jr,319,Détective Noir,,,,1,298.5553562693625,298.5553562693625,right_only,,,,New Listing
+86,Haunted Phantasm Jr,321,Madame Dixie,,,,1,37.31941953367031,37.31941953367031,right_only,,,,New Listing
+86,Haunted Phantasm Jr,322,Buckaroo's Hat,,,,1,223.91651720202185,223.91651720202185,right_only,,,,New Listing
+86,Haunted Phantasm Jr,337,Le Party Phantom,,,,1,1119.5825860101093,1119.5825860101093,right_only,,,,New Listing
+86,Haunted Phantasm Jr,340,Defiant Spartan,,,,1,93.29854883417578,93.29854883417578,right_only,,,,New Listing
+86,Haunted Phantasm Jr,341,A Rather Festive Tree,,,,1,396.5188325452471,396.5188325452471,right_only,,,,New Listing
+86,Haunted Phantasm Jr,344,Crocleather Slouch,,,,1,746.3883906734062,746.3883906734062,right_only,,,,New Listing
+86,Haunted Phantasm Jr,358,Dread Knot,,,,1,49.44823088211316,49.44823088211316,right_only,,,,New Listing
+86,Haunted Phantasm Jr,378,Team Captain,,,,1,373.1941953367031,373.1941953367031,right_only,,,,New Listing
+86,Haunted Phantasm Jr,379,Western Wear,,,,1,41.9843469753791,41.9843469753791,right_only,,,,New Listing
+86,Haunted Phantasm Jr,382,Big Country,,,,1,23.324637208543944,23.324637208543944,right_only,,,,New Listing
+86,Haunted Phantasm Jr,388,Private Eye,,,,1,97.96347627588456,97.96347627588456,right_only,,,,New Listing
+86,Haunted Phantasm Jr,391,Honcho's Headgear,,,,1,88.63362139246698,88.63362139246698,right_only,,,,New Listing
+86,Haunted Phantasm Jr,398,Doctor's Sack,,,,1,60.177563998043375,60.177563998043375,right_only,,,,New Listing
+86,Haunted Phantasm Jr,417,Jumper's Jeepcap,,,,1,26.123593673569214,26.123593673569214,right_only,,,,New Listing
+86,Haunted Phantasm Jr,427,Capo's Capper,,,,1,27.98956465025273,27.98956465025273,right_only,,,,New Listing
+86,Haunted Phantasm Jr,434,Brain Bucket,,,,1,26.123593673569214,26.123593673569214,right_only,,,,New Listing
+86,Haunted Phantasm Jr,436,Hetman's Headpiece,,,,1,93.29854883417578,93.29854883417578,right_only,,,,New Listing
+86,Haunted Phantasm Jr,439,Lord Cockswain's Pith Helmet,,,,1,41.9843469753791,41.9843469753791,right_only,,,,New Listing
+86,Haunted Phantasm Jr,451,Bonk Boy,,,,1,4030.497309636393,4030.497309636393,right_only,,,,New Listing
+86,Haunted Phantasm Jr,459,Cosa Nostra Cap,,,,1,54.11315832382195,54.11315832382195,right_only,,,,New Listing
+86,Haunted Phantasm Jr,465,Conjurer's Cowl,,,,1,83.9686939507582,83.9686939507582,right_only,,,,New Listing
+86,Haunted Phantasm Jr,478,Copper's Hard Top,,,,1,27.98956465025273,27.98956465025273,right_only,,,,New Listing
+86,Haunted Phantasm Jr,517,Dragonborn Helmet,,,,1,261.2359367356922,261.2359367356922,right_only,,,,New Listing
+86,Haunted Phantasm Jr,521,Nanobalaclava,,,,1,59.7110712538725,59.7110712538725,right_only,,,,New Listing
+86,Haunted Phantasm Jr,538,Killer Exclusive,,,,1,718.3988260231534,718.3988260231534,right_only,,,,New Listing
+86,Haunted Phantasm Jr,539,El Jefe,,,,1,79.30376650904941,79.30376650904941,right_only,,,,New Listing
+86,Haunted Phantasm Jr,602,Counterfeit Billycock,,,,1,32.65449209196152,32.65449209196152,right_only,,,,New Listing
+86,Haunted Phantasm Jr,605,Pencil Pusher,,,,1,65.30898418392304,65.30898418392304,right_only,,,,New Listing
+86,Haunted Phantasm Jr,607,Buccaneer's Bicorne,,,,1,419.843469753791,419.843469753791,right_only,,,,New Listing
+86,Haunted Phantasm Jr,611,Salty Dog,,,,1,24.2576226968857,24.2576226968857,right_only,,,,New Listing
+86,Haunted Phantasm Jr,612,Little Buddy,,,,1,26.590086417740096,26.590086417740096,right_only,,,,New Listing
+86,Haunted Phantasm Jr,614,Hot Dogger,,,,1,419.843469753791,419.843469753791,right_only,,,,New Listing
+86,Haunted Phantasm Jr,616,Surgeon's Stahlhelm,,,,1,335.8747758030328,335.8747758030328,right_only,,,,New Listing
+86,Haunted Phantasm Jr,617,Backwards Ballcap,,,,1,69.97391162563183,69.97391162563183,right_only,,,,New Listing
+86,Haunted Phantasm Jr,626,Swagman's Swatter,,,,1,699.7391162563183,699.7391162563183,right_only,,,,New Listing
+86,Haunted Phantasm Jr,628,Virtual Reality Headset,,,,1,55.97912930050546,55.97912930050546,right_only,,,,New Listing
+86,Haunted Phantasm Jr,652,Big Elfin Deal,,,,1,116.62318604271972,116.62318604271972,right_only,,,,New Listing
+86,Haunted Phantasm Jr,701,Lucky Shot,,,,1,96.09750529920105,96.09750529920105,right_only,,,,New Listing
+86,Haunted Phantasm Jr,721,Conquistador,,,,1,33.58747758030328,33.58747758030328,right_only,,,,New Listing
+86,Haunted Phantasm Jr,753,Waxy Wayfinder,,,,1,37.31941953367031,37.31941953367031,right_only,,,,New Listing
+86,Haunted Phantasm Jr,759,Fruit Shoot,,,,1,46.64927441708789,46.64927441708789,right_only,,,,New Listing
+86,Haunted Phantasm Jr,760,Front Runner,,,,1,326.5449209196152,326.5449209196152,right_only,,,,New Listing
+86,Haunted Phantasm Jr,821,Soviet Gentleman,,,,1,307.88521115278,307.88521115278,right_only,,,,New Listing
+86,Haunted Phantasm Jr,825,Hat of Cards,,,,1,149.27767813468125,149.27767813468125,right_only,,,,New Listing
+86,Haunted Phantasm Jr,829,War Pig,,,,1,186.59709766835155,186.59709766835155,right_only,,,,New Listing
+86,Haunted Phantasm Jr,935,Voodoo JuJu (Slight Return),,,,1,74.63883906734063,74.63883906734063,right_only,,,,New Listing
+86,Haunted Phantasm Jr,937,Wraith Wrap,,,,1,886.3362139246699,886.3362139246699,right_only,,,,New Listing
+86,Haunted Phantasm Jr,980,Soldier's Slope Scopers,,,,1,51.31420185879667,51.31420185879667,right_only,,,,New Listing
+86,Haunted Phantasm Jr,981,Cold Killer,,,,1,88.63362139246698,88.63362139246698,right_only,,,,New Listing
+86,Haunted Phantasm Jr,984,Tough Stuff Muffs,,,,1,699.7391162563183,699.7391162563183,right_only,,,,New Listing
+86,Haunted Phantasm Jr,1093,Gilded Guard,,,,1,52.24718734713844,52.24718734713844,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30001,Modest Metal Pile of Scrap,,,,1,158.60753301809882,158.60753301809882,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30002,Letch's LED,,,,1,149.27767813468125,149.27767813468125,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30005,Shooter's Tin Topi,,,,1,27.05657916191097,27.05657916191097,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30006,Noble Nickel Amassment of Hats,,,,1,28.922550138594488,28.922550138594488,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30013,Gridiron Guardian,,,,1,16.32724604598076,16.32724604598076,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30014,Tyrantium Helmet,,,,1,163.2724604598076,163.2724604598076,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30016,FR-0,,,,1,171.66932985488342,171.66932985488342,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30018,Bot Dogger,,,,1,46.64927441708789,46.64927441708789,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30019,Ye Oiled Baker Boy,,,,1,153.94260557639,153.94260557639,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30024,Cyborg Stunt Helmet,,,,1,104.96086743844776,104.96086743844776,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30025,Electric Escorter,,,,1,27.98956465025273,27.98956465025273,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30026,Full Metal Drill Hat,,,,1,214.58666231860428,214.58666231860428,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30030,Bonk Leadwear,,,,1,51.31420185879667,51.31420185879667,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30031,Plug-In Prospector,,,,1,69.04092613729007,69.04092613729007,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30034,Bolted Bicorne,,,,1,23.324637208543944,23.324637208543944,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30035,Timeless Topper,,,,1,30.788521115278005,30.788521115278005,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30041,Halogen Head Lamp,,,,1,186.59709766835155,186.59709766835155,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30044,Texas Tin-Gallon,,,,1,27.98956465025273,27.98956465025273,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30049,Tungsten Toque,,,,1,29.38904288276537,29.38904288276537,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30054,Bunsen Brave,,,,1,354.5344855698679,354.5344855698679,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30057,Bolted Birdcage,,,,1,26.123593673569214,26.123593673569214,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30067,Well-Rounded Rifleman,,,,1,134.34991032121312,134.34991032121312,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30071,Cloud Crasher,,,,1,303.22028371107126,303.22028371107126,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30081,Tsarboosh,,,,1,23.324637208543944,23.324637208543944,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30082,Glasgow Great Helm,,,,1,55.97912930050546,55.97912930050546,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30093,Hive Minder,,,,1,186.59709766835155,186.59709766835155,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30095,Das Hazmattenhatten,,,,1,1819.321702266428,1819.321702266428,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30109,Das Naggenvatcher,,,,1,223.91651720202185,223.91651720202185,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30112,Stormin' Norman,,,,1,251.90608185227455,251.90608185227455,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30114,Valley Forge,,,,1,230.44741562041412,230.44741562041412,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30116,Caribbean Conqueror,,,,1,373.1941953367031,373.1941953367031,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30118,Whirly Warrior,,,,1,2798.956465025273,2798.956465025273,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30120,Rebel Rouser,,,,1,125.95304092613728,125.95304092613728,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30121,Das Maddendoktor,,,,1,71.83988260231534,71.83988260231534,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30122,Bear Necessities,,,,1,114.7572150660362,114.7572150660362,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30123,Harmburg,,,,1,345.2046306864504,345.2046306864504,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30128,Belgian Detective,,,,1,53.18017283548019,53.18017283548019,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30140,Virtual Viewfinder,,,,1,2038.5732920267403,2038.5732920267403,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30162,Bone Dome,,,,1,68.10794064894831,68.10794064894831,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30173,Brim-Full of Bullets,,,,1,228.58144464373063,228.58144464373063,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30177,Hong Kong Cone,,,,1,359.1994130115767,359.1994130115767,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30180,Pirate Bandana,,,,1,75.57182455568237,75.57182455568237,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30182,L'homme Burglerre,,,,1,46.64927441708789,46.64927441708789,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30187,Slick Cut,,,,1,163.2724604598076,163.2724604598076,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30307,Neckwear Headwear,,,,1,368.5292678949944,368.5292678949944,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30313,Kiss King,,,,1,136.21588129789663,136.21588129789663,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30315,Minnesota Slick,,,,1,60.644056742214254,60.644056742214254,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30316,Toy Soldier,,,,1,191.26202511006036,191.26202511006036,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30326,Scout Shako,,,,1,37.31941953367031,37.31941953367031,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30327,Toy Tailor,,,,1,186.59709766835155,186.59709766835155,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30334,Tartan Tyrolean,,,,1,195.92695255176915,195.92695255176915,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30336,Trencher's Topper,,,,1,186.59709766835155,186.59709766835155,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30338,Ground Control,,,,1,62.04353497472689,62.04353497472689,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30344,Bullet Buzz,,,,1,37.31941953367031,37.31941953367031,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30346,Trash Man,,,,1,130.6179683678461,130.6179683678461,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30357,Dark Falkirk Helm,,,,1,1166.2318604271973,1166.2318604271973,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30362,Law,,,,1,1236.205772052829,1236.205772052829,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30375,Deep Cover Operator,,,,1,513.1420185879667,513.1420185879667,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30390,Spook Specs,,,,1,349.8695581281592,349.8695581281592,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30393,Razor Cut,,,,1,373.1941953367031,373.1941953367031,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30394,Frickin' Sweet Ninja Hood,,,,1,243.5092124571988,243.5092124571988,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30404,Aviator Assassin,,,,1,100.29593999673897,100.29593999673897,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30416,Employee of the Mmmph,,,,1,111.95825860101093,111.95825860101093,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30418,Combustible Kabuto,,,,1,60.644056742214254,60.644056742214254,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30420,Danger,,,,1,111.95825860101093,111.95825860101093,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30425,Tipped Lid,,,,1,307.88521115278,307.88521115278,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30428,Pomade Prince,,,,1,289.2255013859449,289.2255013859449,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30625,Physician's Protector,,,,1,307.88521115278,307.88521115278,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30627,Bruce's Bonnet,,,,1,86.76765041578346,86.76765041578346,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30628,Outta Sight,,,,1,71.37338985814446,71.37338985814446,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30644,White Russian,,,,1,279.8956465025273,279.8956465025273,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30682,Smokey Sombrero,,,,1,32.65449209196152,32.65449209196152,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30700,Duck Billed Hatypus,,,,1,1632.724604598076,1632.724604598076,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30704,Prehistoric Pullover,,,,1,1632.724604598076,1632.724604598076,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30748,Chill Chullo,,,,1,172.6023153432252,172.6023153432252,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30807,Spirit of the Bombing Past,,,,1,65.30898418392304,65.30898418392304,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30911,Fat Man's Field Cap,,,,1,53.18017283548019,53.18017283548019,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30912,Commando Elite,,,,1,144.61275069297244,144.61275069297244,right_only,,,,New Listing
+86,Haunted Phantasm Jr,30915,Pithy Professional,,,,1,144.61275069297244,144.61275069297244,right_only,,,,New Listing
+162,Gourdian Angel,30682,Smokey Sombrero,,,,1,25.19060818522746,25.19060818522746,right_only,,,,New Listing
+192,Shrieking Shades,30769,Herald's Helm,,,,1,408.6476438936899,408.6476438936899,right_only,,,,New Listing
+264,Cursed Forever!,30786,Gauzed Gaze,,,,1,1019.7531387575413,1019.7531387575413,right_only,,,,New Listing
+283,Jellyfish Hunter,31003,Vampire Vanquisher,,,,1,38.25240502201207,38.25240502201207,right_only,,,,New Listing
+373,Drunkard,31200,Thousand-Yard Stare,,,,1,82.10272297407468,82.10272297407468,right_only,,,,New Listing
+394,Frostfire,30984,Sky High Fly Guy,,,,1,48.5152453937714,48.5152453937714,right_only,,,,New Listing
+394,Frostfire,31536,Mann of the Hour,,,,1,151.14364911136474,151.14364911136474,right_only,,,,New Listing
+3167,Luxurious Lover,1111,Taunt: Skullcracker,,,,1,10.262840371759337,10.262840371759337,right_only,,,,New Listing
