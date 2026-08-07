@@ -34,7 +34,7 @@ last_updated = snapshot_time.strftime("%d %b %Y")
 
 page_header(
     "Team Fortress 2 Market Intelligence",
-    "Analytics platform for the TF2 unusual economy powered by data collected from backpack.tf.",
+    "Market intelligence for the wider Team Fortress 2 economy, using Unusual market data and backpack.tf community price-guide data.",
 )
 
 # --------------------------------------------------------------------
@@ -44,9 +44,21 @@ page_header(
 st.subheader("Latest Unusual Market Snapshot")
 
 metric_row([
-    ("Markets", f"{summary['total_unusuals']:,}", None),
-    ("Effects", effect_summary["effect_name"].nunique(), None),
-    ("Items", item_summary["item_name"].nunique(), None),
+    (
+        "Unique Unusual Markets",
+        f"{summary['total_unusuals']:,}",
+        None,
+        "Each exact Unusual market: one effect paired with one item. The same hat "
+        "with different effects counts as separate markets.",
+    ),
+    ("Distinct Effects", effect_summary["effect_name"].nunique(), None),
+    (
+        "Distinct Hats",
+        item_summary["item_name"].nunique(),
+        None,
+        "Unique hat and item names regardless of their Unusual effect. A hat counts "
+        "once even when it appears with many effects.",
+    ),
     ("Last Updated", last_updated, None),
 ])
 
@@ -100,15 +112,15 @@ st.header("Welcome to TFAnalytics")
 
 st.write(
     """
-TFAnalytics is an analytics platform built for the **Team Fortress 2
-unusual economy**.
+TFAnalytics is an analytics platform built for the **wider Team Fortress 2
+market**.
 
-Using market data collected from **backpack.tf**, TFAnalytics transforms
-thousands of market listings into interactive dashboards, summaries,
-historical comparisons and downloadable reports.
+Using Unusual market data and community price-guide data collected from
+**backpack.tf**, TFAnalytics transforms thousands of item values into
+interactive dashboards, summaries, historical comparisons and downloadable reports.
 
-Whether you're a trader, collector or simply interested in the TF2
-economy, the platform helps you understand market movements at a glance.
+Whether you're a trader, collector or simply interested in the TF2 economy,
+the platform helps you understand Unusual and non-Unusual item values at a glance.
 """
 )
 
