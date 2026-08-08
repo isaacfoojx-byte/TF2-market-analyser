@@ -27,19 +27,13 @@ print(df.groupby("effect_name").size().sort_values(ascending=False))
 print("Rows with missing 'slot':")
 print(df[df["slot"].isna()])
 
-print("Maximum existence:")
-print(df.loc[df["exist"].idxmax()])
-
 print("Missing price count by item type:")
 print(df[df[PRICE_COL].isna()]["item_type"].value_counts())
-
-print("Number of items with 0 recorded items in existence:")
-print("Items with exist == 0:", (df["exist"] == 0).sum())
 
 print("Sample rows with missing prices:")
 print(
     df[df[PRICE_COL].isna()][
-        ["effect_name", "item_name", "exist", "item_type"]
+        ["effect_name", "item_name", "item_type"]
     ].head(30)
 )
 

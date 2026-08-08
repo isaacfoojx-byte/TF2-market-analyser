@@ -36,7 +36,6 @@ def scrape_effect(driver, effect_name, scrape_timestamp):
             "bp_price_keys": effect.get("data-p_bptf"),
             "bp_price_all": effect.get("data-p_bptf_all"),
 
-            "exist": effect.get("data-exist"),
             "slot": effect.get("data-slot"),
             "summary": effect.get("data-summary"),
             "defindex": effect.get("data-defindex"),

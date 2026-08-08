@@ -88,8 +88,6 @@ CREATE TABLE IF NOT EXISTS market_history (
 
     key_mid REAL,
 
-    exist INTEGER,
-
     UNIQUE(snapshot_id, item_id),
 
     FOREIGN KEY(snapshot_id)
@@ -99,6 +97,15 @@ CREATE TABLE IF NOT EXISTS market_history (
         REFERENCES items(item_id)
 )
 """)
+
+# Older local databases stored Backpack.tf's unreliable existence count in
+# market_history. New snapshots no longer collect or use that value, so remove
+# the legacy column while preserving the existing price history.
+market_history_columns = {
+    row[1] for row in cursor.execute("PRAGMA table_info(market_history)")
+}
+if "exist" in market_history_columns:
+    cursor.execute("ALTER TABLE market_history DROP COLUMN exist")
 
 # ==========================================================
 # Optional indexes

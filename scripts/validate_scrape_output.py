@@ -10,7 +10,6 @@ REQUIRED_RAW_COLUMNS = {
     "effect_name",
     "item_name",
     "bp_price_ref",
-    "exist",
     "scrape_timestamp",
 }
 
@@ -48,10 +47,13 @@ def validate_csv(path: Path, required_columns: set[str]) -> int:
 
 def validate_output(output_dir: Path) -> tuple[Path, Path, int]:
     raw_csv = latest_csv(output_dir / "raw", "unusuals_*.csv")
-    processed_csv = latest_csv(
-        output_dir / "processed" / "archive",
-        "cleaned_*.csv",
-    )
+    timestamp = raw_csv.stem.removeprefix("unusuals_")
+    processed_csv = output_dir / "processed" / f"cleaned_{timestamp}.csv"
+    if not processed_csv.is_file():
+        raise FileNotFoundError(
+            "Missing processed CSV for the latest raw snapshot: "
+            f"expected {processed_csv}"
+        )
 
     raw_rows = validate_csv(raw_csv, REQUIRED_RAW_COLUMNS)
     processed_rows = validate_csv(processed_csv, REQUIRED_PROCESSED_COLUMNS)

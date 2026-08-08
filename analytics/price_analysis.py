@@ -20,8 +20,7 @@ print(priced.nlargest(
 )[[
     "effect_name",
     "item_name",
-    PRICE_COL,
-    "exist"
+    PRICE_COL
 ]])
 
 #--------------------------------------
@@ -58,8 +57,7 @@ print(priced[priced["item_type"] == "taunt"].nlargest(
 )[[
     "effect_name",
     "item_name",
-    PRICE_COL,
-    "exist"
+    PRICE_COL
 ]])
 
 

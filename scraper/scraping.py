@@ -52,7 +52,7 @@ def build_output_paths(
     data_dir = Path(configured_dir) if configured_dir else BASE_DIR / "data"
     return (
         data_dir / "raw" / f"unusuals_{timestamp}.csv",
-        data_dir / "processed" / "archive" / f"cleaned_{timestamp}.csv",
+        data_dir / "processed" / f"cleaned_{timestamp}.csv",
     )
 
 
@@ -304,7 +304,6 @@ def build_rows(
                     "bp_price_ref": round(ref_price, 6),
                     "bp_price_keys": format_key_range(key_low, key_high),
                     "bp_price_all": f"{ref_price:,.2f} ref",
-                    "exist": 0,
                     "slot": slot,
                     "summary": summary,
                     "defindex": defindex,

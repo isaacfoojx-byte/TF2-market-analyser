@@ -39,30 +39,7 @@ plt.show()
 
 
 # -------------------------------------------------------
-# 2. Rarity vs Price
-# -------------------------------------------------------
-
-plt.figure()
-
-plt.scatter(
-    priced["exist"],
-    priced[PRICE_COL],
-    alpha=0.3
-)
-
-plt.title("Rarity vs Price")
-plt.xlabel("Existence")
-plt.ylabel(f"Price ({PRICE_UNIT})")
-
-save_plot("rarity_vs_price.png")
-
-
-plt.show()
-
-
-
-# -------------------------------------------------------
-# 3. Top 20 Effects by Average Price
+# 2. Top 20 Effects by Average Price
 # -------------------------------------------------------
 
 effect_avg = (

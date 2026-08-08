@@ -54,26 +54,26 @@ jobs:
       - name: Validate generated snapshots
         run: python scripts/validate_scrape_output.py "$OUTPUT_DIR"
 
-      - name: Commit snapshots to repository archive
+      - name: Commit snapshots to repository
         shell: bash
         run: |
-          mkdir -p data/raw data/processed/archive
+          mkdir -p data/raw data/processed
           cp "$OUTPUT_DIR"/raw/*.csv data/raw/
-          cp "$OUTPUT_DIR"/processed/archive/*.csv data/processed/archive/
+          cp "$OUTPUT_DIR"/processed/*.csv data/processed/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- data/raw/*.csv data/processed/archive/*.csv
+          git add -- data/raw/*.csv data/processed/*.csv
           if git diff --cached --quiet; then
             exit 0
           fi
-          git commit -m "archive market snapshot ${{ github.run_id }}"
+          git commit -m "market snapshot ${{ github.run_id }}"
           git pull --rebase --autostash origin main
           git push origin HEAD:main
 
       - name: Upload daily snapshot to Google Sheets
         shell: bash
         run: |
-          processed_csv="$(find "$OUTPUT_DIR/processed/archive" -maxdepth 1 -type f -name 'cleaned_*.csv' | sort | tail -n 1)"
+          processed_csv="$(find "$OUTPUT_DIR/processed" -maxdepth 1 -type f -name 'cleaned_*.csv' | sort | tail -n 1)"
           test -n "$processed_csv"
           python -m integrations.google_sheets "$processed_csv"
 
@@ -84,7 +84,7 @@ jobs:
           name: tf2-market-update-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/tf2-market-output/raw/*.csv
-            ${{ runner.temp }}/tf2-market-output/processed/archive/*.csv
+            ${{ runner.temp }}/tf2-market-output/processed/*.csv
             ${{ runner.temp }}/tf2-market-output/diagnostics/*
             ${{ runner.temp }}/scraper.log
             chromedriver.log

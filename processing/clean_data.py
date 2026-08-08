@@ -33,8 +33,6 @@ def clean_data(raw_csv,processed_csv,current_key_price):
 
     df["bp_price_ref"] = df["bp_price_ref"].astype(float)
 
-    df["exist"] = df["exist"].astype(int)
-
     df["defindex"] = df["defindex"].astype(int)
 
     df["effect_id"] = df["effect_id"].astype(int)

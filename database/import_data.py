@@ -149,10 +149,9 @@ for _, row in df.iterrows():
             usd_price,
             key_low,
             key_high,
-            key_mid,
-            exist
+            key_mid
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             snapshot_id,
@@ -163,8 +162,7 @@ for _, row in df.iterrows():
             row["usd_price"],
             row["key_low"],
             row["key_high"],
-            row["key_mid"],
-            row["exist"]
+            row["key_mid"]
         )
 )
 
