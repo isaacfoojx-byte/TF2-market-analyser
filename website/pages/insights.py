@@ -1,5 +1,6 @@
 from difflib import get_close_matches
 import re
+from urllib.parse import quote
 
 import pandas as pd
 import plotly.express as px
@@ -7,7 +8,6 @@ import streamlit as st
 
 from analytics.history import compare_snapshots
 from analytics.community_history import compare_community_snapshots
-from scraper.existence_lookup import ExistenceLookupError, fetch_existence_count
 from insights import (
     calculate_market_sentiment,
     detect_market_risks,
@@ -74,13 +74,6 @@ def format_snapshot_timestamp(timestamp: str) -> str:
         return timestamp
 
     return parsed_timestamp.strftime("%d %b %Y, %H:%M")
-
-
-@st.cache_data(ttl=6 * 60 * 60, show_spinner=False)
-def load_existence_estimate(item_name: str, effect_name: str) -> dict[str, str | int]:
-    """Cache one user-requested estimate without storing it in market snapshots."""
-
-    return fetch_existence_count(item_name, effect_name)
 
 
 def normalise_search_text(value: str) -> str:
@@ -886,47 +879,22 @@ with lookup_tab:
                     snapshot_confidence_reason(len(unusual_trend)),
                 )
 
-                lookup_key = (
-                    f"existence_estimate_{int(selected_market['effect_id'])}_"
-                    f"{int(selected_market['defindex'])}"
-                )
                 with st.container(border=True):
                     st.markdown("#### Current existence estimate")
                     st.caption(
-                        "Optional, on-demand backpack.tf lookup. This approximate "
-                        "count is not saved in your market datasets or used in trends."
+                        "backpack.tf shows an approximate count for this hat and "
+                        "effect. It is not stored in your datasets or used in trends."
                     )
-                    if st.button(
-                        "Fetch current estimate",
-                        key=f"fetch_{lookup_key}",
+                    st.link_button(
+                        "View approximate count on backpack.tf",
+                        "https://backpack.tf/unusual/"
+                        f"{quote(selected_item, safe='')}?view=list",
                         use_container_width=True,
-                    ):
-                        try:
-                            with st.spinner("Checking backpack.tf for this one market..."):
-                                st.session_state[lookup_key] = load_existence_estimate(
-                                    selected_item,
-                                    selected_effect,
-                                )
-                        except ExistenceLookupError as error:
-                            st.session_state[lookup_key] = {"error": str(error)}
-
-                    estimate = st.session_state.get(lookup_key)
-                    if estimate:
-                        if "error" in estimate:
-                            st.warning(str(estimate["error"]))
-                        else:
-                            st.metric(
-                                "Known to backpack.tf",
-                                f"~{int(estimate['count']):,} in existence",
-                            )
-                            st.caption(
-                                "Approximate count retrieved "
-                                f"{format_snapshot_timestamp(str(estimate['retrieved_at']))}."
-                            )
-                            st.link_button(
-                                "Open the backpack.tf price page",
-                                str(estimate["source_url"]),
-                            )
+                    )
+                    st.caption(
+                        f"On the backpack.tf page, find the {selected_effect} row "
+                        "and look under Count in Existence."
+                    )
 
                 if latest_snapshot.get("price_is_range", False):
                     st.warning(
