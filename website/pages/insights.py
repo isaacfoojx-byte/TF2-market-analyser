@@ -18,6 +18,7 @@ from insights import (
 )
 from insights.common import assess_spotlight
 from website.components import confidence_badge, metric_row, page_header, show_table
+from website.item_images import effect_icon, item_image
 from website.utils import (
     load_community_market_trend,
     load_community_markets,
@@ -819,6 +820,13 @@ with lookup_tab:
                 matching_unusuals["effect_name"].eq(selected_effect)
             ].iloc[0]
 
+            item_preview = item_image(selected_market["defindex"], selected_item)
+            preview_col, _ = st.columns([1, 6])
+            with preview_col:
+                if item_preview:
+                    st.image(item_preview, caption=selected_item)
+                st.image(effect_icon(selected_market["effect_id"]), caption=selected_effect, width=72)
+
             st.info(f"Viewing: {selected_effect} - {selected_item}")
 
             unusual_trend = load_unusual_market_trend(
@@ -1016,6 +1024,9 @@ with community_lookup_tab:
                 if pd.isna(selected_variant["craftable"])
                 else bool(selected_variant["craftable"])
             )
+            community_preview = item_image(item_name=selected_community_item)
+            if community_preview:
+                st.image(community_preview, caption=selected_community_item, width=120)
             community_trend = load_community_market_trend(
                 selected_community_item,
                 str(selected_variant["quality"]),
