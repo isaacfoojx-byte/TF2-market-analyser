@@ -886,14 +886,15 @@ with lookup_tab:
                         "effect. It is not stored in your datasets or used in trends."
                     )
                     st.link_button(
-                        "View approximate count on backpack.tf",
-                        "https://backpack.tf/unusual/"
-                        f"{quote(selected_item, safe='')}?view=list",
+                        "View this effect on backpack.tf",
+                        "https://backpack.tf/stats/Unusual/"
+                        f"{quote(selected_item, safe='')}/Tradable/Craftable/"
+                        f"{int(selected_market['effect_id'])}",
                         use_container_width=True,
                     )
                     st.caption(
-                        f"On the backpack.tf page, find the {selected_effect} row "
-                        "and look under Count in Existence."
+                        "The linked stats page is for this exact item and effect. "
+                        "Its count is an approximate backpack.tf estimate."
                     )
 
                 if latest_snapshot.get("price_is_range", False):
