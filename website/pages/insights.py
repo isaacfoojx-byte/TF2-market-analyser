@@ -825,13 +825,14 @@ with lookup_tab:
             with preview_col:
                 if item_preview:
                     st.image(item_preview, caption=selected_item)
-                st.markdown(
-                    effect_icon_html(
-                        selected_market["effect_id"],
-                        selected_effect,
-                    ),
-                    unsafe_allow_html=True,
+                effect_preview = effect_icon_html(
+                    selected_market["effect_id"],
+                    selected_effect,
                 )
+                if effect_preview:
+                    st.markdown(effect_preview, unsafe_allow_html=True)
+                else:
+                    st.caption("Official effect preview unavailable")
                 st.caption(selected_effect)
 
             st.info(f"Viewing: {selected_effect} - {selected_item}")

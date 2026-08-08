@@ -38,11 +38,13 @@ else:
     for card in effect_cards:
         effect_id = effect_ids.get(card["name"])
         if effect_id is not None:
-            card["image_html"] = effect_icon_html(
+            preview = effect_icon_html(
                 int(effect_id),
                 card["name"],
                 width=56,
             )
+            if preview:
+                card["image_html"] = preview
 
     story_card(effect_cards[0])
 
