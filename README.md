@@ -46,6 +46,19 @@ Our project aims to inform TF2 players of which hats to invest in. We will retri
 - [TF2 Analysis — Sheet 1](https://docs.google.com/spreadsheets/d/1R_gXJRX8stscCKpitq7pSceQWhtFM2ZwoEY-kSZlD_8/edit)
 - [TF2 Analysis — Sheet 2](https://docs.google.com/spreadsheets/d/19PjHGJh1Wtb1gjfmQfL1LoL0y6FhggBBC95FbGet8Jg/edit?gid=1061679333#gid=1061679333)
 
+# Community Price Guide Google Sheet
+
+The automated community price-guide workflow writes to a separate spreadsheet
+because its columns differ from the Unusual market dataset.
+
+1. Create a blank Google Sheet for community price-guide snapshots.
+2. Share it as an editor with the service-account email in
+   `GOOGLE_SERVICE_ACCOUNT_JSON`.
+3. Copy the spreadsheet ID from its URL and save it in the repository's GitHub
+   Actions secrets as `COMMUNITY_GOOGLE_SPREADSHEET_ID`.
+4. Run **Daily community price-guide update** from the Actions tab once to
+   confirm the connection. Each snapshot is stored in a date-named tab.
+
 # Collaborators
 
 Coded by Isaac Foo, Koh Min Xuan, and Low Zong Xuan for the Build Beyond Hackathon

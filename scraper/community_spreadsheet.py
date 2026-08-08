@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -16,6 +17,7 @@ from processing.community_prices import clean_community_prices
 
 SPREADSHEET_URL = "https://backpack.tf/spreadsheet"
 BASE_DIR = Path(__file__).resolve().parent.parent
+DEFAULT_RAW_OUTPUT_DIR = BASE_DIR / "data/community/raw"
 DEFAULT_TIMEOUT_SECONDS = 30
 
 
@@ -173,7 +175,7 @@ def save_snapshot(
     """Save one parsed spreadsheet snapshot without overwriting prior history."""
 
     timestamp = (scraped_at or datetime.now()).strftime("%Y-%m-%d_%H-%M-%S")
-    destination = Path(output_dir) if output_dir else BASE_DIR / "data/community/raw"
+    destination = Path(output_dir) if output_dir else DEFAULT_RAW_OUTPUT_DIR
     destination.mkdir(parents=True, exist_ok=True)
 
     output_file = destination / f"community_prices_{timestamp}.csv"
@@ -211,5 +213,21 @@ def run_scraper(
     )
 
 
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Scrape and clean backpack.tf community price-guide data."
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        help=(
+            "Directory for the raw snapshot. The cleaned snapshot is saved in "
+            "a sibling processed directory. Defaults to data/community/raw."
+        ),
+    )
+    args = parser.parse_args()
+    run_scraper(output_dir=args.output_dir)
+
+
 if __name__ == "__main__":
-    run_scraper()
+    main()

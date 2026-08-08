@@ -3,6 +3,7 @@ import pandas as pd
 
 from pathlib import Path
 from datetime import datetime
+from dataclasses import dataclass
 
 from website.components import page_header
 
@@ -18,24 +19,54 @@ page_header(
 )
 
 # ------------------------------------------------------------------
-# Choose dataset type
+# Choose dataset
 # ------------------------------------------------------------------
 
+@dataclass(frozen=True)
+class DatasetLocation:
+    data_dir: Path
+    pattern: str
+    timestamp_prefix: str
+
+
+MARKETS = {
+    "Unusual Market": {
+        "Processed": DatasetLocation(
+            Path("data/processed"), "cleaned_*.csv", "cleaned_"
+        ),
+        "Raw": DatasetLocation(
+            Path("data/raw"), "unusuals_*.csv", "unusuals_"
+        ),
+    },
+    "Community Price Guide": {
+        "Processed": DatasetLocation(
+            Path("data/community/processed"),
+            "community_prices_*.csv",
+            "community_prices_",
+        ),
+        "Raw": DatasetLocation(
+            Path("data/community/raw"),
+            "community_prices_*.csv",
+            "community_prices_",
+        ),
+    },
+}
+
+market_name = st.radio(
+    "Market",
+    list(MARKETS),
+    horizontal=True,
+)
 dataset_type = st.radio(
     "Dataset",
     ["Processed", "Raw"],
     horizontal=True,
 )
 
-if dataset_type == "Processed":
-    DATA_DIR = Path("data/processed")
-    pattern = "cleaned_*.csv"
-else:
-    DATA_DIR = Path("data/raw")
-    pattern = "unusuals_*.csv"
+dataset = MARKETS[market_name][dataset_type]
 
 files = sorted(
-    DATA_DIR.glob(pattern),
+    dataset.data_dir.glob(dataset.pattern),
     reverse=True,
 )
 
@@ -50,13 +81,13 @@ if not files:
 latest = files[0]
 latest_df = pd.read_csv(latest)
 
-timestamp = latest.stem.split("_", 1)[1]
+timestamp = latest.stem.removeprefix(dataset.timestamp_prefix)
 snapshot = datetime.strptime(
     timestamp,
     "%Y-%m-%d_%H-%M-%S",
 )
 
-st.subheader("Latest Snapshot")
+st.subheader(f"Latest {market_name} Snapshot")
 
 col1, col2, col3 = st.columns(3)
 
@@ -81,6 +112,7 @@ with open(latest, "rb") as f:
         f,
         file_name=latest.name,
         mime="text/csv",
+        key=f"latest-{market_name}-{dataset_type}-{latest.name}",
         use_container_width=True,
     )
 
@@ -96,7 +128,7 @@ for file in files:
 
     df = pd.read_csv(file)
 
-    timestamp = file.stem.split("_", 1)[1]
+    timestamp = file.stem.removeprefix(dataset.timestamp_prefix)
 
     snapshot = datetime.strptime(
         timestamp,
@@ -130,6 +162,6 @@ for file in files:
                     f,
                     file_name=file.name,
                     mime="text/csv",
-                    key=file.name,
+                    key=f"{market_name}-{dataset_type}-{file.name}",
                     use_container_width=True,
                 )

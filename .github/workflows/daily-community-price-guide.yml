@@ -1,0 +1,90 @@
+name: Daily community price-guide update
+
+on:
+  schedule:
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-community-price-guide-update
+  cancel-in-progress: false
+
+jobs:
+  scrape-community-guide:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PYTHONUNBUFFERED: "1"
+      GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+      COMMUNITY_GOOGLE_SPREADSHEET_ID: ${{ secrets.COMMUNITY_GOOGLE_SPREADSHEET_ID }}
+
+    steps:
+      - name: Configure output directory
+        run: echo "OUTPUT_DIR=$RUNNER_TEMP/tf2-community-output" >> "$GITHUB_ENV"
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Verify Chrome and Google Sheets configuration
+        shell: bash
+        run: |
+          google-chrome --version
+          test -n "$GOOGLE_SERVICE_ACCOUNT_JSON"
+          test -n "$COMMUNITY_GOOGLE_SPREADSHEET_ID"
+
+      - name: Scrape and clean community price-guide data
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m scraper.community_spreadsheet --output-dir "$OUTPUT_DIR/raw" 2>&1 | tee "$RUNNER_TEMP/community-scraper.log"
+
+      - name: Validate generated community snapshots
+        run: python scripts/validate_community_scrape_output.py "$OUTPUT_DIR"
+
+      - name: Commit community snapshots to repository
+        shell: bash
+        run: |
+          mkdir -p data/community/raw data/community/processed
+          cp "$OUTPUT_DIR"/raw/*.csv data/community/raw/
+          cp "$OUTPUT_DIR"/processed/*.csv data/community/processed/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- data/community/raw/*.csv data/community/processed/*.csv
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "community price-guide snapshot ${{ github.run_id }}"
+          git pull --rebase --autostash origin main
+          git push origin HEAD:main
+
+      - name: Upload community snapshot to Google Sheets
+        shell: bash
+        run: |
+          processed_csv="$(find "$OUTPUT_DIR/processed" -maxdepth 1 -type f -name 'community_prices_*.csv' | sort | tail -n 1)"
+          test -n "$processed_csv"
+          python -m integrations.google_sheets "$processed_csv" --schema community --spreadsheet-id-env COMMUNITY_GOOGLE_SPREADSHEET_ID
+
+      - name: Archive community snapshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tf2-community-price-guide-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/tf2-community-output/raw/*.csv
+            ${{ runner.temp }}/tf2-community-output/processed/*.csv
+            ${{ runner.temp }}/community-scraper.log
+            chromedriver.log
+          if-no-files-found: warn
+          retention-days: 14

@@ -17,6 +17,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from processing.community_prices import COLUMN_ORDER as COMMUNITY_PROCESSED_COLUMNS
 from scripts.validate_scrape_output import REQUIRED_PROCESSED_COLUMNS
 
 
@@ -27,6 +28,10 @@ DEFAULT_MAX_ATTEMPTS = 5
 INTEGER_PATTERN = re.compile(r"^-?\d+$")
 FLOAT_PATTERN = re.compile(r"^-?(?:\d+\.\d*|\d*\.\d+)(?:[eE][+-]?\d+)?$")
 DATE_SHEET_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+SCHEMA_REQUIRED_COLUMNS = {
+    "unusual": REQUIRED_PROCESSED_COLUMNS,
+    "community": set(COMMUNITY_PROCESSED_COLUMNS),
+}
 
 
 @dataclass(frozen=True)
@@ -76,11 +81,15 @@ def coerce_value(value: str) -> Any:
     return value
 
 
-def load_processed_csv(csv_path: Path) -> tuple[list[str], list[list[Any]], str]:
+def load_processed_csv(
+    csv_path: Path,
+    required_columns: set[str] | None = None,
+) -> tuple[list[str], list[list[Any]], str]:
     with csv_path.open(encoding="utf-8", newline="") as file:
         reader = csv.DictReader(file)
         headers = reader.fieldnames or []
-        missing = REQUIRED_PROCESSED_COLUMNS - set(headers)
+        expected_columns = required_columns or REQUIRED_PROCESSED_COLUMNS
+        missing = expected_columns - set(headers)
         if missing:
             raise ValueError(
                 f"{csv_path} is missing required columns: {', '.join(sorted(missing))}"
@@ -263,21 +272,26 @@ def upload_csv_to_latest(
     csv_path: str | Path,
     service=None,
     spreadsheet_id: str | None = None,
+    spreadsheet_id_env: str = "GOOGLE_SPREADSHEET_ID",
+    schema: str = "unusual",
     sheet_name: str | None = None,
     batch_rows: int | None = None,
     max_rows: int | None = None,
 ) -> UploadResult:
     path = Path(csv_path)
-    headers, rows, scrape_timestamp = load_processed_csv(path)
+    required_columns = SCHEMA_REQUIRED_COLUMNS.get(schema)
+    if required_columns is None:
+        supported = ", ".join(sorted(SCHEMA_REQUIRED_COLUMNS))
+        raise ValueError(f"Unsupported CSV schema {schema!r}. Choose one of: {supported}")
+
+    headers, rows, scrape_timestamp = load_processed_csv(path, required_columns)
 
     if max_rows is not None:
         if max_rows < 1:
             raise ValueError("Maximum row count must be positive")
         rows = rows[:max_rows]
 
-    target_spreadsheet = spreadsheet_id or required_environment(
-        "GOOGLE_SPREADSHEET_ID"
-    )
+    target_spreadsheet = spreadsheet_id or required_environment(spreadsheet_id_env)
     target_sheet = (
         sheet_name
         or os.environ.get("GOOGLE_SHEET_NAME")
@@ -360,12 +374,25 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("csv_path", type=Path)
     parser.add_argument("--sheet-name")
+    parser.add_argument(
+        "--schema",
+        choices=sorted(SCHEMA_REQUIRED_COLUMNS),
+        default="unusual",
+        help="CSV schema to validate before upload.",
+    )
+    parser.add_argument(
+        "--spreadsheet-id-env",
+        default="GOOGLE_SPREADSHEET_ID",
+        help="Environment variable containing the target spreadsheet ID.",
+    )
     parser.add_argument("--batch-rows", type=int)
     parser.add_argument("--max-rows", type=int)
     args = parser.parse_args()
 
     result = upload_csv_to_latest(
         args.csv_path,
+        spreadsheet_id_env=args.spreadsheet_id_env,
+        schema=args.schema,
         sheet_name=args.sheet_name,
         batch_rows=args.batch_rows,
         max_rows=args.max_rows,
