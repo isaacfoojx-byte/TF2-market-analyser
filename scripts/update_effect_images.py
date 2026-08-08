@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 import json
 from pathlib import Path
+import re
 
 import requests
 
@@ -35,37 +36,46 @@ def tracked_effect_names() -> list[str]:
 def fetch_preview_url(effect_name: str) -> str | None:
     """Find the best matching official Wiki image for one unusual effect."""
 
-    response = requests.get(
-        API_URL,
-        params={
-            "action": "query",
-            "format": "json",
-            "formatversion": 2,
-            "generator": "search",
-            "gsrsearch": f"Unusual {effect_name}",
-            "gsrnamespace": 6,
-            "gsrlimit": 10,
-            "prop": "imageinfo",
-            "iiprop": "url",
-            "iiurlwidth": 128,
-        },
-        headers={"User-Agent": USER_AGENT},
-        timeout=30,
-    )
-    response.raise_for_status()
+    expected_words = set(re.findall(r"[a-z0-9]+", effect_name.casefold()))
+    pages_by_title: dict[str, dict] = {}
+    for query in (f'"{effect_name}"', f"Unusual {effect_name}", effect_name):
+        response = requests.get(
+            API_URL,
+            params={
+                "action": "query",
+                "format": "json",
+                "formatversion": 2,
+                "generator": "search",
+                "gsrsearch": query,
+                "gsrnamespace": 6,
+                "gsrlimit": 20,
+                "prop": "imageinfo",
+                "iiprop": "url",
+                "iiurlwidth": 128,
+            },
+            headers={"User-Agent": USER_AGENT},
+            timeout=30,
+        )
+        response.raise_for_status()
+        pages = response.json().get("query", {}).get("pages", [])
+        if isinstance(pages, dict):
+            pages = pages.values()
+        for page in pages:
+            pages_by_title[str(page.get("title", ""))] = page
 
-    pages = response.json().get("query", {}).get("pages", [])
-    expected_title = f"unusual {effect_name}".casefold()
-
-    def score(page: dict) -> tuple[int, str]:
+    def score(page: dict) -> tuple[int, int, str]:
         title = str(page.get("title", "")).removeprefix("File:").casefold()
-        if title.startswith(expected_title):
-            return (2, title)
-        if expected_title in title:
-            return (1, title)
-        return (0, title)
+        title_words = set(re.findall(r"[a-z0-9]+", title))
+        if not expected_words.issubset(title_words):
+            return (0, 0, title)
 
-    for page in sorted(pages, key=score, reverse=True):
+        # Prefer images that explicitly identify themselves as Unusual previews,
+        # then those that show either team colour rather than unrelated artwork.
+        unusual = int("unusual" in title_words)
+        team_preview = int(bool({"red", "blu"}.intersection(title_words)))
+        return (1 + unusual + team_preview, -len(title_words), title)
+
+    for page in sorted(pages_by_title.values(), key=score, reverse=True):
         if score(page)[0] == 0:
             continue
         image_info = page.get("imageinfo") or []
