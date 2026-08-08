@@ -3,6 +3,7 @@ import streamlit as st
 
 from insights import build_effect_cards
 from website.components import page_header, show_table, story_card, style_bar_chart
+from website.item_images import effect_icon_html
 from website.utils import load_effects
 
 
@@ -22,6 +23,27 @@ effect_cards = build_effect_cards(effect_summary, comparison)
 if not effect_cards:
     st.info("Not enough effect data is available yet. Collect another priced snapshot and try again.")
 else:
+    # The cards summarise one effect across many hats, so show the effect's
+    # particle icon instead of suggesting that a particular hat is featured.
+    effect_ids = {}
+    if {"effect_name", "effect_id"}.issubset(comparison.columns):
+        effect_ids = (
+            comparison[["effect_name", "effect_id"]]
+            .dropna()
+            .drop_duplicates("effect_name")
+            .set_index("effect_name")["effect_id"]
+            .to_dict()
+        )
+
+    for card in effect_cards:
+        effect_id = effect_ids.get(card["name"])
+        if effect_id is not None:
+            card["image_html"] = effect_icon_html(
+                int(effect_id),
+                card["name"],
+                width=56,
+            )
+
     story_card(effect_cards[0])
 
     st.subheader("What else to notice")

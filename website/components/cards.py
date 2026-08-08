@@ -34,7 +34,14 @@ def story_card(card: dict) -> None:
 
     with st.container(border=True):
         st.caption(card["category"])
-        st.subheader(card["name"])
+        if card.get("image_html"):
+            image_column, title_column = st.columns([1, 7])
+            with image_column:
+                st.markdown(card["image_html"], unsafe_allow_html=True)
+            with title_column:
+                st.subheader(card["name"])
+        else:
+            st.subheader(card["name"])
         st.write(f"**{card['headline']}**")
 
         if card.get("confidence"):

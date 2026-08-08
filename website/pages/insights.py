@@ -18,7 +18,7 @@ from insights import (
 )
 from insights.common import assess_spotlight
 from website.components import confidence_badge, metric_row, page_header, show_table
-from website.item_images import effect_icon, item_image
+from website.item_images import effect_icon_html, item_image
 from website.utils import (
     load_community_market_trend,
     load_community_markets,
@@ -825,7 +825,14 @@ with lookup_tab:
             with preview_col:
                 if item_preview:
                     st.image(item_preview, caption=selected_item)
-                st.image(effect_icon(selected_market["effect_id"]), caption=selected_effect, width=72)
+                st.markdown(
+                    effect_icon_html(
+                        selected_market["effect_id"],
+                        selected_effect,
+                    ),
+                    unsafe_allow_html=True,
+                )
+                st.caption(selected_effect)
 
             st.info(f"Viewing: {selected_effect} - {selected_item}")
 
