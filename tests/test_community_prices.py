@@ -4,10 +4,22 @@ from pathlib import Path
 
 import pandas as pd
 
-from processing.community_prices import backfill_key_price, clean_community_prices
+from processing.community_prices import (
+    backfill_key_price,
+    clean_community_prices,
+    default_processed_path,
+)
 
 
 class CommunityPriceCleaningTests(unittest.TestCase):
+    def test_routes_non_unusual_archives_to_the_processed_folder(self):
+        raw_path = Path("data/raw/non_unusual/community_prices_test.csv")
+
+        self.assertEqual(
+            default_processed_path(raw_path),
+            Path("data/processed/non_unusual/community_prices_test.csv"),
+        )
+
     def test_removes_invalid_rows_and_normalises_a_snapshot(self):
         rows = pd.DataFrame(
             [

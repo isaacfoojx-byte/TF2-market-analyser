@@ -47,6 +47,16 @@ def default_processed_path(raw_csv: str | Path) -> Path:
     """Put cleaned community data beside, not inside, the Unusual datasets."""
 
     raw_path = Path(raw_csv)
+    if (
+        raw_path.parent.name == "non_unusual"
+        and raw_path.parent.parent.name == "raw"
+    ):
+        return (
+            raw_path.parents[2]
+            / "processed"
+            / "non_unusual"
+            / raw_path.name
+        )
     return raw_path.parent.parent / "processed" / raw_path.name
 
 

@@ -17,7 +17,7 @@ from processing.community_prices import clean_community_prices
 
 SPREADSHEET_URL = "https://backpack.tf/spreadsheet"
 BASE_DIR = Path(__file__).resolve().parent.parent
-DEFAULT_RAW_OUTPUT_DIR = BASE_DIR / "data/community/raw"
+DEFAULT_RAW_OUTPUT_DIR = BASE_DIR / "data/raw/non_unusual"
 DEFAULT_TIMEOUT_SECONDS = 30
 
 
@@ -222,7 +222,7 @@ def main() -> None:
         type=Path,
         help=(
             "Directory for the raw snapshot. The cleaned snapshot is saved in "
-            "a sibling processed directory. Defaults to data/community/raw."
+            "a sibling processed directory. Defaults to data/raw/non_unusual."
         ),
     )
     args = parser.parse_args()

@@ -40,12 +40,12 @@ MARKETS = {
     },
     "Community Price Guide": {
         "Processed": DatasetLocation(
-            Path("data/community/processed"),
+            Path("data/processed/non_unusual"),
             "community_prices_*.csv",
             "community_prices_",
         ),
         "Raw": DatasetLocation(
-            Path("data/community/raw"),
+            Path("data/raw/non_unusual"),
             "community_prices_*.csv",
             "community_prices_",
         ),

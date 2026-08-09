@@ -18,6 +18,7 @@ jobs:
     timeout-minutes: 45
     env:
       PYTHONUNBUFFERED: "1"
+      BACKPACK_TF_API_KEY: ${{ secrets.BACKPACK_TF_API_KEY }}
       GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
       COMMUNITY_GOOGLE_SPREADSHEET_ID: ${{ secrets.COMMUNITY_GOOGLE_SPREADSHEET_ID }}
 
@@ -37,10 +38,10 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
 
-      - name: Verify Chrome and Google Sheets configuration
+      - name: Verify API and Google Sheets configuration
         shell: bash
         run: |
-          google-chrome --version
+          test -n "$BACKPACK_TF_API_KEY"
           test -n "$GOOGLE_SERVICE_ACCOUNT_JSON"
           test -n "$COMMUNITY_GOOGLE_SPREADSHEET_ID"
 
@@ -48,7 +49,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          python -m scraper.community_spreadsheet --output-dir "$OUTPUT_DIR/raw" 2>&1 | tee "$RUNNER_TEMP/community-scraper.log"
+          python -m scraper.community_api --output-dir "$OUTPUT_DIR/raw" 2>&1 | tee "$RUNNER_TEMP/community-scraper.log"
 
       - name: Validate generated community snapshots
         run: python scripts/validate_community_scrape_output.py "$OUTPUT_DIR"
@@ -56,12 +57,12 @@ jobs:
       - name: Commit community snapshots to repository
         shell: bash
         run: |
-          mkdir -p data/community/raw data/community/processed
-          cp "$OUTPUT_DIR"/raw/*.csv data/community/raw/
-          cp "$OUTPUT_DIR"/processed/*.csv data/community/processed/
+          mkdir -p data/raw/non_unusual data/processed/non_unusual
+          cp "$OUTPUT_DIR"/raw/*.csv data/raw/non_unusual/
+          cp "$OUTPUT_DIR"/processed/*.csv data/processed/non_unusual/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- data/community/raw/*.csv data/community/processed/*.csv
+          git add -- data/raw/non_unusual/*.csv data/processed/non_unusual/*.csv
           if git diff --cached --quiet; then
             exit 0
           fi
