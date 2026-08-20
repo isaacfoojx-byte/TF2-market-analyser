@@ -120,7 +120,7 @@ market**.
 
 Using Unusual market data and community price-guide data collected from
 **backpack.tf**, TFAnalytics transforms thousands of item values into
-interactive dashboards, summaries, historical comparisons and downloadable reports.
+interactive dashboards, summaries, historical comparisons and downloadable datasets.
 
 Whether you're a trader, collector or simply interested in the TF2 economy,
 the platform helps you understand Unusual and non-Unusual item values at a glance.
