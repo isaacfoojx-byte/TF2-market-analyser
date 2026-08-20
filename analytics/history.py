@@ -79,6 +79,25 @@ def load_market_history() -> pd.DataFrame:
     )
 
 
+def load_latest_market_snapshot() -> dict | None:
+    """Return headline statistics from the newest processed snapshot."""
+
+    snapshots = get_snapshots()
+    if not snapshots:
+        return None
+
+    snapshot_file = snapshots[-1]
+    dataframe, priced = load_data(snapshot_file)
+
+    return {
+        "snapshot_timestamp": _snapshot_timestamp(snapshot_file, dataframe),
+        "source_file": str(snapshot_file),
+        "priced_markets": _aggregate_snapshot(priced).shape[0],
+        "unique_effects": priced["effect_name"].nunique(),
+        "unique_items": priced["item_name"].nunique(),
+    }
+
+
 def load_unusual_catalog() -> pd.DataFrame:
     """Return searchable unusual markets from the latest processed snapshot."""
 

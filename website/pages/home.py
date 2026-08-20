@@ -6,7 +6,10 @@ from website.components import (
     metric_row,
 )
 
-from website.utils import load_community_price_history, load_dashboard
+from website.utils import (
+    load_community_price_history,
+    load_latest_unusual_snapshot,
+)
 
 
 st.markdown(
@@ -22,13 +25,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-comparison, market_summary, effect_summary, item_summary, metadata = load_dashboard()
+latest_snapshot = load_latest_unusual_snapshot()
 
-summary = market_summary
+if latest_snapshot is None:
+    st.error("No processed Unusual market snapshot is available.")
+    st.stop()
 
-snapshot_time = pd.to_datetime(
-    metadata["snapshot_timestamp"]
-)
+snapshot_time = pd.to_datetime(latest_snapshot["snapshot_timestamp"])
 
 last_updated = snapshot_time.strftime("%d %b %Y")
 
@@ -46,15 +49,15 @@ st.subheader("Latest Unusual Market Snapshot")
 metric_row([
     (
         "Unique Unusual Markets",
-        f"{summary['total_unusuals']:,}",
+        f"{latest_snapshot['priced_markets']:,}",
         None,
         "Each exact Unusual market: one effect paired with one item. The same hat "
         "with different effects counts as separate markets.",
     ),
-    ("Distinct Effects", effect_summary["effect_name"].nunique(), None),
+    ("Distinct Effects", latest_snapshot["unique_effects"], None),
     (
         "Distinct Hats",
-        item_summary["item_name"].nunique(),
+        latest_snapshot["unique_items"],
         None,
         "Unique hat and item names regardless of their Unusual effect. A hat counts "
         "once even when it appears with many effects.",
