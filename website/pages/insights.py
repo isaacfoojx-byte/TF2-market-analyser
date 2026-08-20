@@ -18,7 +18,7 @@ from insights import (
 )
 from insights.common import assess_spotlight
 from website.components import confidence_badge, metric_row, page_header, show_table
-from website.item_images import effect_icon_html, item_image
+from website.item_images import item_image
 from website.utils import (
     load_community_market_trend,
     load_community_markets,
@@ -825,14 +825,6 @@ with lookup_tab:
             with preview_col:
                 if item_preview:
                     st.image(item_preview, caption=selected_item)
-                effect_preview = effect_icon_html(
-                    selected_market["effect_id"],
-                    selected_effect,
-                )
-                if effect_preview:
-                    st.markdown(effect_preview, unsafe_allow_html=True)
-                else:
-                    st.caption("Official effect preview unavailable")
                 st.caption(selected_effect)
 
             st.info(f"Viewing: {selected_effect} - {selected_item}")
