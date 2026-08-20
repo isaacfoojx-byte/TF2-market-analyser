@@ -7,7 +7,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: manual-market-scrape
+  group: repository-content-writes
   cancel-in-progress: false
 
 jobs:

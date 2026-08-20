@@ -1,6 +1,8 @@
 import streamlit as st
 from pathlib import Path
 
+from website.freshness import data_freshness_notice
+
 
 LOGO = Path(__file__).parent.parent / "assets" / "logo_transparent_2.png"
 
@@ -18,3 +20,4 @@ def page_header(title: str, caption: str) -> None:
         st.caption(caption)
 
     st.divider()
+    data_freshness_notice()

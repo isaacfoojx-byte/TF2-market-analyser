@@ -9,7 +9,7 @@ import pandas as pd
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-COMMUNITY_DATA_DIR = BASE_DIR / "data" / "community" / "processed"
+COMMUNITY_DATA_DIR = BASE_DIR / "data" / "processed" / "non_unusual"
 MARKET_KEYS = ["item_name", "quality", "craftable"]
 REQUIRED_COLUMNS = {
     "scrape_timestamp",
