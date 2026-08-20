@@ -203,14 +203,14 @@ Compare unusual effects.
 
 Download generated datasets.
 
-- Comparison reports
+- Historical snapshots
 - CSV exports
 - Processed market data
 """
     )
 
     if st.button(
-    "Open Reports",
+    "Open Downloads",
     use_container_width=True,
 ):
         st.switch_page("website/pages/reports.py")
