@@ -76,6 +76,10 @@ Historical comparisons now separate matched price movement from coverage changes
 with source-age and currency-attribution details where supported. See
 [Historical comparisons](docs/historical-comparisons.md) for the calculation rules.
 
+Cleaned snapshots can also be imported idempotently into a normalized SQLite
+database for faster historical queries. See
+[Historical database](docs/historical-database.md) for the schema and commands.
+
 ## Technology stack
 
 | Area | Technology | Purpose |

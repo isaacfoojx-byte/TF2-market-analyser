@@ -3,3 +3,6 @@ __pycache__/
 .venv/
 .vscode/
 *.log
+database/market_v2.db
+database/market_v2.db-shm
+database/market_v2.db-wal
