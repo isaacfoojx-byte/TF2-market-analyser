@@ -12,7 +12,7 @@ comparison, item_summary = load_items()
 
 page_header(
     "Item Guide",
-    "A simple view of which unusual items are gaining attention, widely represented, or worth watching.",
+    "A simple view of which unusual items are showing guide-price increases, widely represented, or worth watching.",
 )
 
 st.subheader("Items at a glance")
@@ -35,10 +35,9 @@ with st.expander("Want the detailed item statistics?"):
     leaderboard = item_summary.sort_values("unusuals", ascending=False)
     detailed_leaderboard = leaderboard.rename(columns={
         "item_name": "Item",
-        "unusuals": "Markets Represented",
+        "unusuals": "Comparable Markets",
         "average_change": "Average Change (keys)",
         "median_change": "Median Change (keys)",
-        "average_listing_change": "Average Listing Change",
     })
     show_table(detailed_leaderboard)
 

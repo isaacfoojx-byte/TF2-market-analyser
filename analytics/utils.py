@@ -1,6 +1,7 @@
 from pathlib import Path
 import re
 import pandas as pd
+import numpy as np
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data" / "processed"
@@ -11,7 +12,12 @@ def load_data(csv_path):
 
     df = pd.read_csv(csv_path)
 
-    priced = df[df["has_price"]].copy()
+    values = pd.to_numeric(df[PRICE_COL], errors="coerce")
+    df[PRICE_COL] = values
+    valid = values.gt(0) & np.isfinite(values)
+    if "has_price" in df:
+        valid &= df["has_price"].astype(str).str.lower().isin(["true", "1", "1.0"])
+    priced = df.loc[valid].copy()
 
     return df, priced
 

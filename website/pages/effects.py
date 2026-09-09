@@ -12,7 +12,7 @@ comparison, effect_summary = load_effects()
 
 page_header(
     "Effect Guide",
-    "A simple view of which unusual effects are gaining attention, widely represented, or worth watching.",
+    "A simple view of which unusual effects are showing guide-price increases, widely represented, or worth watching.",
 )
 
 st.subheader("Effects at a glance")
@@ -35,10 +35,9 @@ with st.expander("Want the detailed effect statistics?"):
     leaderboard = effect_summary.sort_values("unusuals", ascending=False)
     detailed_leaderboard = leaderboard.rename(columns={
         "effect_name": "Effect",
-        "unusuals": "Markets Represented",
+        "unusuals": "Comparable Markets",
         "average_change": "Average Change (keys)",
         "median_change": "Median Change (keys)",
-        "average_listing_change": "Average Listing Change",
     })
     show_table(detailed_leaderboard)
 

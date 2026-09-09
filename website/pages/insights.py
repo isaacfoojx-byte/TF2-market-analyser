@@ -7,11 +7,12 @@ import plotly.express as px
 import streamlit as st
 
 from analytics.history import compare_snapshots
+from website.components.history_evidence import comparison_evidence, trend_evidence, change_label, trend_confidence
 from analytics.community_history import compare_community_snapshots
 from insights import (
     calculate_market_sentiment,
     detect_market_risks,
-    find_opportunities,
+    find_price_movers,
     generate_effect_insights,
     generate_item_insights,
     generate_market_insights,
@@ -149,9 +150,9 @@ def snapshot_confidence_reason(snapshot_count: int) -> str:
     """Explain the common confidence thresholds used by item trend lookups."""
 
     return (
-        f"This trend has {snapshot_count} saved snapshot"
-        f"{'s' if snapshot_count != 1 else ''}. High confidence needs at least 5 "
-        "snapshots; medium confidence needs at least 3."
+        f"{snapshot_count} usable captures. High evidence coverage also requires five distinct "
+        "known source updates, no missing captures, and at least 80% of source ages within 30 days. "
+        "Repeated captures alone do not establish independent valuations or predictive confidence."
     )
 
 
@@ -248,7 +249,7 @@ apply_insights_styles()
 
 page_header(
     "Market Insights",
-    "Explainable market sentiment, risk flags, and opportunity screening from the latest comparison.",
+    "Guide-price direction, evidence quality, and historical comparisons.",
 )
 
 if metadata is not None and metadata.get("snapshot_timestamp"):
@@ -286,9 +287,7 @@ with st.container(border=True):
         )
         confidence_badge(
             sentiment["confidence"],
-            f"{sentiment['comparable_markets']:,} markets had usable prices in both "
-            "snapshots. High confidence needs at least 100 comparable markets; "
-            "medium confidence needs at least 25.",
+            sentiment["confidence_reason"],
         )
 
 st.divider()
@@ -326,84 +325,22 @@ with overview_tab:
             st.warning(risk)
 
 with opportunities_tab:
-    st.subheader("Opportunity Detector")
-    st.caption(
-        "Candidates must be rising in price, have stable or falling listing supply, "
-        "and meet the selected liquidity threshold. Longer periods screen for momentum "
-        "instead of a single snapshot movement. This is not investment advice."
-    )
-
+    st.subheader("Rising Guide Prices")
+    st.caption("Ranks matched guide-price increases. These snapshots do not measure liquidity, listing supply, sales volume, or executable opportunities.")
     opportunity_history = load_history()
     opportunity_comparison = comparison
-
     if len(opportunity_history) >= 2:
-        period_choice = st.selectbox(
-            "Opportunity comparison period",
-            options=["Latest snapshot pair", "All available snapshots"],
-        )
-
-        if period_choice == "All available snapshots":
-            opportunity_comparison = compare_snapshots(
-                opportunity_history.iloc[0]["source_file"],
-                opportunity_history.iloc[-1]["source_file"],
-            )
-
-    maximum_listings = column_maximum(
-        opportunity_comparison,
-        "listings_new",
-        fallback=3,
-    )
-
-    if maximum_listings > 3:
-        minimum_listings = st.slider(
-            "Minimum current listings",
-            min_value=3,
-            max_value=maximum_listings,
-            value=min(5, maximum_listings),
-            help="Higher thresholds reduce the chance that a signal comes from a thin market.",
-        )
+        period_choice = st.selectbox("Price comparison period", ["Latest snapshot pair", "First and latest snapshots"])
+        if period_choice == "First and latest snapshots":
+            opportunity_comparison = compare_snapshots(opportunity_history.iloc[0]["source_file"], opportunity_history.iloc[-1]["source_file"])
+    movers = find_price_movers(opportunity_comparison)
+    if movers.empty:
+        st.info("No matched guide prices rose over the selected endpoints.")
     else:
-        minimum_listings = 3
-        st.caption(
-            "The available comparison has no markets with more than three current listings, "
-            "so the liquidity threshold is fixed at three."
-        )
-
-    opportunities = find_opportunities(
-        opportunity_comparison,
-        minimum_listings=minimum_listings,
-    )
-
-    if opportunities.empty:
-        st.info(
-            "No markets increased in price over the selected period while meeting "
-            "the liquidity and listing-supply conditions."
-        )
-    else:
-        opportunity_columns = [
-            "effect_name",
-            "item_name",
-            "percent_change",
-            "listing_change",
-            "listings_new",
-            "opportunity_score",
-        ]
-        opportunities = opportunities[opportunity_columns].copy()
-        opportunities["percent_change"] = opportunities["percent_change"].map(
-            "{:+.2f}%".format
-        )
-        opportunities["listing_change"] = opportunities["listing_change"].map(
-            "{:+.0f}".format
-        )
-        opportunities = opportunities.rename(columns={
-            "effect_name": "Effect",
-            "item_name": "Item",
-            "percent_change": "Price Change",
-            "listing_change": "Listing Change",
-            "listings_new": "Current Listings",
-            "opportunity_score": "Opportunity Score",
-        })
-        show_table(opportunities)
+        show_table(movers[["effect_name", "item_name", "average_price_old", "average_price_new", "percent_change"]].rename(columns={
+            "effect_name": "Effect", "item_name": "Item", "average_price_old": "Start (keys)",
+            "average_price_new": "End (keys)", "percent_change": "Change (%)",
+        }))
 
 with spotlights_tab:
     st.subheader("Effect Spotlight")
@@ -535,21 +472,16 @@ with historical_tab:
         start = selected_history.iloc[0]
         end = selected_history.iloc[-1]
 
-        price_change_percent = (
-            (end["median_price"] - start["median_price"])
-            / start["median_price"]
-            * 100
-            if start["median_price"]
-            else 0.0
-        )
+        period_comparison = compare_snapshots(start["source_file"], end["source_file"])
+        comparison_evidence(period_comparison)
         market_change = int(end["priced_markets"] - start["priced_markets"])
 
         metric_row([
             ("Snapshots", len(selected_history), None),
             (
-                "Median Price",
+                "Catalog Median Price",
                 f"{end['median_price']:.2f} keys",
-                f"{price_change_percent:+.2f}%",
+                None,
             ),
             (
                 "Priced Markets",
@@ -559,6 +491,7 @@ with historical_tab:
             ("Period End", end["snapshot_timestamp"].strftime("%d %b %Y"), None),
         ])
 
+        st.caption("Catalog averages below include different markets on different dates. Use the matched-change metrics above to compare the same markets.")
         price_history = selected_history.melt(
             id_vars="snapshot_timestamp",
             value_vars=["median_price", "average_price"],
@@ -599,7 +532,7 @@ with historical_tab:
         )
         st.plotly_chart(market_chart, use_container_width=True)
 
-        movers = compare_snapshots(start["source_file"], end["source_file"])
+        movers = period_comparison
         movers = movers.dropna(subset=["percent_change"])
 
         st.subheader("Largest Movers in This Period")
@@ -613,8 +546,8 @@ with historical_tab:
                 "average_price_new",
                 "percent_change",
             ]
-            gainers = movers.nlargest(5, "percent_change")[mover_columns].copy()
-            losers = movers.nsmallest(5, "percent_change")[mover_columns].copy()
+            gainers = movers.loc[movers.percent_change > 0].nlargest(5, "percent_change")[mover_columns].copy()
+            losers = movers.loc[movers.percent_change < 0].nsmallest(5, "percent_change")[mover_columns].copy()
 
             for table in (gainers, losers):
                 table["average_price_old"] = table["average_price_old"].map(
@@ -691,17 +624,9 @@ with community_overview_tab:
             )
         else:
             first_community = community_history.iloc[0]
-            guide_change_percent = (
-                (latest_community["median_price_keys"] - first_community["median_price_keys"])
-                / first_community["median_price_keys"]
-                * 100
-                if first_community["median_price_keys"]
-                else 0.0
-            )
-            st.caption(
-                f"The typical guide price changed {guide_change_percent:+.2f}% across "
-                f"{len(community_history)} saved snapshots."
-            )
+            community_comparison = compare_community_snapshots(first_community["source_file"], latest_community["source_file"])
+            comparison_evidence(community_comparison)
+            st.caption("The catalog averages below can change when the mix of covered items changes; matched endpoint changes are shown above.")
 
             guide_prices = community_history.melt(
                 id_vars="snapshot_timestamp",
@@ -765,10 +690,10 @@ with community_overview_tab:
                 gainers_column, losers_column = st.columns(2)
                 with gainers_column:
                     st.markdown("#### Largest Increases")
-                    show_table(prepare_community_movers(movers.nlargest(5, "percent_change")))
+                    show_table(prepare_community_movers(movers.loc[movers.percent_change > 0].nlargest(5, "percent_change")))
                 with losers_column:
                     st.markdown("#### Largest Decreases")
-                    show_table(prepare_community_movers(movers.nsmallest(5, "percent_change")))
+                    show_table(prepare_community_movers(movers.loc[movers.percent_change < 0].nsmallest(5, "percent_change")))
 
 with lookup_tab:
     st.subheader("Find an Unusual")
@@ -837,6 +762,7 @@ with lookup_tab:
             if unusual_trend.empty:
                 st.info("This unusual market has no usable price history yet.")
             else:
+                trend_evidence(unusual_trend, "median_price")
                 first_snapshot = unusual_trend.iloc[0]
                 latest_snapshot = unusual_trend.iloc[-1]
                 overall_change = (
@@ -847,15 +773,8 @@ with lookup_tab:
                     else 0.0
                 )
                 previous_change = latest_snapshot["percent_change"]
-                previous_change = 0.0 if pd.isna(previous_change) else previous_change
 
-                if len(unusual_trend) >= 5:
-                    confidence = "High"
-                elif len(unusual_trend) >= 3:
-                    confidence = "Medium"
-                else:
-                    confidence = "Low"
-
+                confidence = trend_confidence(unusual_trend, "median_price")
                 volatility = unusual_trend["percent_change"].dropna().std(ddof=0)
                 risk = (
                     "High" if confidence == "Low" or (not pd.isna(volatility) and volatility >= 25)
@@ -863,6 +782,7 @@ with lookup_tab:
                     else "Low"
                 )
                 trend_description = (
+                    "has no comparable price at one endpoint" if pd.isna(overall_change) else
                     f"has risen {overall_change:+.1f}% across the saved snapshots"
                     if overall_change > 0
                     else f"has fallen {overall_change:+.1f}% across the saved snapshots"
@@ -877,14 +797,14 @@ with lookup_tab:
                 )
                 metric_row([
                     ("Latest Price", f"{latest_snapshot['median_price']:.2f} keys", None),
-                    ("Change Since Previous", f"{previous_change:+.2f}%", None),
-                    ("Snapshots Found", len(unusual_trend), None),
+                    ("Change Since Previous", change_label(previous_change), None),
+                    ("Priced Snapshots", int(unusual_trend["median_price"].notna().sum()), None),
                     ("Confidence", confidence, None),
                 ])
 
                 confidence_badge(
                     confidence,
-                    snapshot_confidence_reason(len(unusual_trend)),
+                    snapshot_confidence_reason(int(unusual_trend["median_price"].notna().sum())),
                 )
 
                 with st.container(border=True):
@@ -931,6 +851,7 @@ with lookup_tab:
                     markers=True,
                     template="plotly_dark",
                 )
+                unusual_chart.update_traces(connectgaps=False)
                 unusual_chart.update_layout(
                     title="Price Trend",
                     xaxis_title="Snapshot",
@@ -1061,6 +982,7 @@ with community_lookup_tab:
                     "cleaner after deploying the current code, then refresh this page."
                 )
             else:
+                trend_evidence(community_trend, "median_price_keys")
                 first_snapshot = community_trend.iloc[0]
                 latest_snapshot = community_trend.iloc[-1]
                 overall_change = (
@@ -1071,13 +993,12 @@ with community_lookup_tab:
                     else 0.0
                 )
                 previous_change = latest_snapshot["percent_change"]
-                previous_change = 0.0 if pd.isna(previous_change) else previous_change
-                confidence = community_confidence(len(community_trend))
+                confidence = trend_confidence(community_trend, "median_price_keys")
                 volatility = community_trend["percent_change"].dropna().std(ddof=0)
                 movement = (
                     "Large swings" if not pd.isna(volatility) and volatility >= 15
                     else "Changing" if not pd.isna(volatility) and volatility >= 5
-                    else "Stable"
+                    else "Insufficient adjacent observations" if pd.isna(volatility) else "Little observed variation"
                 )
 
                 usd_value = latest_snapshot["median_price_usd"]
@@ -1087,7 +1008,7 @@ with community_lookup_tab:
                     else "Not listed"
                 )
                 st.caption(
-                    f"The saved guide price has changed {overall_change:+.1f}% across "
+                    f"Matched endpoint guide-price change: {change_label(overall_change)} across "
                     f"{len(community_trend)} snapshots."
                 )
                 metric_row([
@@ -1100,13 +1021,13 @@ with community_lookup_tab:
                         None,
                     ),
                     ("Approximate USD", usd_label, None),
-                    ("Guide Price Movement", movement, f"{previous_change:+.2f}% last update"),
+                    ("Guide Price Movement", movement, change_label(previous_change) + " since previous capture"),
                     ("Confidence", confidence, None),
                 ])
 
                 confidence_badge(
                     confidence,
-                    snapshot_confidence_reason(len(community_trend)),
+                    snapshot_confidence_reason(int(community_trend["median_price_keys"].notna().sum())),
                 )
 
                 if latest_snapshot["price_is_range"]:

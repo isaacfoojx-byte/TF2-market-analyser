@@ -2,7 +2,7 @@ from .market import (
     build_market_story,
     calculate_market_sentiment,
     detect_market_risks,
-    find_opportunities,
+    find_price_movers,
     generate_market_insights,
 )
 from .common import assess_spotlight

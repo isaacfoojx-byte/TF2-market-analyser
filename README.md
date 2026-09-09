@@ -34,7 +34,7 @@ decision support rather than guaranteed price predictions or financial advice.
   publishes new market snapshots without requiring a personal computer to stay on.
 - **Interactive market overview:** see price movement, market activity, leading
   items, and leading effects through Streamlit and Plotly.
-- **Explainable insights:** market sentiment, risk flags, opportunity screening,
+- **Explainable insights:** guide-price direction, evidence warnings, price movers,
   confidence labels, and the evidence behind each result.
 - **Historical exploration:** compare snapshots over custom periods and inspect the
   price history of an exact Unusual market or community item variant.
@@ -71,6 +71,10 @@ flowchart LR
 Cleaning now preserves raw inputs, records conversion/source provenance, and emits
 per-snapshot quality reports with a row-level audit. See
 [Snapshot cleaning](docs/snapshot-cleaning.md) for rejection rules and reprocessing.
+
+Historical comparisons now separate matched price movement from coverage changes,
+with source-age and currency-attribution details where supported. See
+[Historical comparisons](docs/historical-comparisons.md) for the calculation rules.
 
 ## Technology stack
 

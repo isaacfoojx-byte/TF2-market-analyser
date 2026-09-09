@@ -54,14 +54,14 @@ def assess_spotlight(
     assessment = {
         "confidence": confidence,
         "confidence_reason": (
-            f"This spotlight represents {represented_markets:,} markets. High confidence "
-            "requires at least 100 represented markets; medium confidence requires at least 25."
+            f"This spotlight represents {represented_markets:,} comparable markets. High confidence "
+            "requires at least 100 comparable markets and at least 80% known source ages within 30 days; medium evidence coverage requires at least 25."
         ),
         "risk_level": "Low",
         "risk_reasons": [],
         "explanation": (
             f"Selected for the highest average price change ({average_change:+.2f} keys) "
-            f"among entries with at least {minimum_markets} represented markets."
+            f"among entries with at least {minimum_markets} comparable markets."
         ),
     }
 
@@ -75,6 +75,12 @@ def assess_spotlight(
     entity_rows = comparison.loc[
         comparison[entity_column].eq(entity_name)
     ].copy()
+
+    ages = entity_rows.get("source_age_days_new", pd.Series(index=entity_rows.index, dtype=float))
+    if not len(ages) or ages.between(0, 30).mean() < .8:
+        if assessment["confidence"] == "High":
+            assessment["confidence"] = "Medium"
+        assessment["risk_reasons"].append("Source valuations are old or their ages are unknown; capture counts alone do not establish price freshness.")
 
     if represented_markets < 25:
         assessment["risk_reasons"].append(
@@ -106,19 +112,8 @@ def assess_spotlight(
 
             if volatility >= 25:
                 assessment["risk_reasons"].append(
-                    "Price movements vary widely across represented markets."
+                    "Price movements vary widely across comparable markets."
                 )
-
-    if "listing_change" in entity_rows.columns:
-        listing_changes = pd.to_numeric(
-            entity_rows["listing_change"],
-            errors="coerce",
-        ).dropna()
-
-        if not listing_changes.empty and listing_changes.sum() > 0:
-            assessment["risk_reasons"].append(
-                "Listing supply increased across the represented markets."
-            )
 
     high_risk = (
         represented_markets < 5
@@ -188,7 +183,7 @@ def build_entity_story_cards(
     strongest_change = float(strongest["average_change"])
     if strongest_change > 0:
         strongest_headline = f"Up about {strongest_change:.2f} keys on average"
-        strongest_category = "Gaining attention"
+        strongest_category = "Guide prices rising"
     else:
         strongest_headline = f"Holding up best at {strongest_change:+.2f} keys"
         strongest_category = "Holding up best"

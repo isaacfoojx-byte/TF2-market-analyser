@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from analytics.utils import PRICE_COL, get_snapshots, load_data
+from analytics.comparison import compare_files, prepare_markets
 
 
 MARKET_KEYS = ["effect_id", "effect_name", "defindex", "item_name"]
@@ -23,7 +24,7 @@ def _snapshot_timestamp(snapshot_file: Path, dataframe: pd.DataFrame) -> pd.Time
     """Read the scrape timestamp, falling back to the timestamp in the filename."""
 
     if "scrape_timestamp" in dataframe.columns:
-        timestamps = pd.to_datetime(dataframe["scrape_timestamp"], errors="coerce")
+        timestamps = pd.to_datetime(dataframe["scrape_timestamp"], errors="coerce", utc=True, format="mixed").dt.tz_localize(None)
         if timestamps.notna().any():
             return timestamps.dropna().iloc[0]
 
@@ -36,16 +37,7 @@ def _snapshot_timestamp(snapshot_file: Path, dataframe: pd.DataFrame) -> pd.Time
 def _aggregate_snapshot(priced: pd.DataFrame) -> pd.DataFrame:
     """Aggregate individual rows into comparable effect/item markets."""
 
-    return (
-        priced
-        .groupby(MARKET_KEYS)
-        .agg(
-            listings=("effect_id", "count"),
-            average_price=(PRICE_COL, "mean"),
-            median_price=(PRICE_COL, "median"),
-        )
-        .reset_index()
-    )
+    return prepare_markets(priced, "unusual").dropna(subset=["average_price"])
 
 
 def load_market_history() -> pd.DataFrame:
@@ -59,7 +51,8 @@ def load_market_history() -> pd.DataFrame:
         if priced.empty:
             continue
 
-        market_count = _aggregate_snapshot(priced).shape[0]
+        markets = _aggregate_snapshot(priced)
+        market_count = len(markets)
         records.append({
             "snapshot_timestamp": _snapshot_timestamp(snapshot_file, dataframe),
             "source_file": str(snapshot_file),
@@ -67,8 +60,8 @@ def load_market_history() -> pd.DataFrame:
             "priced_rows": len(priced),
             "unique_effects": priced["effect_name"].nunique(),
             "unique_items": priced["item_name"].nunique(),
-            "average_price": priced[PRICE_COL].mean(),
-            "median_price": priced[PRICE_COL].median(),
+            "average_price": markets["average_price"].mean(),
+            "median_price": markets["average_price"].median(),
         })
 
     if not records:
@@ -131,17 +124,25 @@ def load_unusual_trend(effect_id: int, defindex: int) -> pd.DataFrame:
         ]
 
         if matching_rows.empty:
+            records.append({"snapshot_timestamp": _snapshot_timestamp(snapshot_file, dataframe),
+                            "median_price": float("nan"), "average_price": float("nan"),
+                            "low_price": float("nan"), "high_price": float("nan"),
+                            "market_rows": 0, "source_updated_at": None})
             continue
+        prepared = prepare_markets(matching_rows, "unusual")
+        price = prepared["average_price"].iloc[0]
 
         records.append({
             "snapshot_timestamp": _snapshot_timestamp(snapshot_file, dataframe),
             "effect_name": matching_rows["effect_name"].iloc[0],
             "item_name": matching_rows["item_name"].iloc[0],
-            "average_price": matching_rows[PRICE_COL].mean(),
-            "median_price": matching_rows[PRICE_COL].median(),
+            "average_price": price,
+            "median_price": price,
             "low_price": matching_rows[PRICE_COL].min(),
             "high_price": matching_rows[PRICE_COL].max(),
             "market_rows": len(matching_rows),
+            "source_updated_at": prepared["source_updated_at"].iloc[0],
+            "source_age_days": prepared["source_age_days"].iloc[0],
         })
 
     if not records:
@@ -150,43 +151,10 @@ def load_unusual_trend(effect_id: int, defindex: int) -> pd.DataFrame:
     trend = pd.DataFrame(records).sort_values("snapshot_timestamp").reset_index(
         drop=True
     )
-    trend["percent_change"] = trend["median_price"].pct_change() * 100
+    trend["percent_change"] = trend["median_price"].pct_change(fill_method=None) * 100
     return trend
 
 
-def compare_snapshots(
-    old_snapshot: str | Path,
-    new_snapshot: str | Path,
-) -> pd.DataFrame:
-    """Compare two snapshots, retaining markets that have a price in both."""
-
-    _, old_priced = load_data(Path(old_snapshot))
-    _, new_priced = load_data(Path(new_snapshot))
-
-    old_market = _aggregate_snapshot(old_priced)
-    new_market = _aggregate_snapshot(new_priced)
-
-    comparison = old_market.merge(
-        new_market,
-        on=MARKET_KEYS,
-        how="inner",
-        suffixes=("_old", "_new"),
-    )
-
-    if comparison.empty:
-        return comparison
-
-    comparison["price_change"] = (
-        comparison["average_price_new"] - comparison["average_price_old"]
-    )
-    comparison["percent_change"] = (
-        comparison["price_change"] / comparison["average_price_old"] * 100
-    ).replace([float("inf"), float("-inf")], pd.NA)
-    comparison["listing_change"] = (
-        comparison["listings_new"] - comparison["listings_old"]
-    )
-    comparison["status"] = "Unchanged"
-    comparison.loc[comparison["price_change"] > 0, "status"] = "Price Increased"
-    comparison.loc[comparison["price_change"] < 0, "status"] = "Price Decreased"
-
-    return comparison
+def compare_snapshots(old_snapshot, new_snapshot):
+    """Outer coverage comparison; only matched usable prices have changes."""
+    return compare_files(old_snapshot, new_snapshot)

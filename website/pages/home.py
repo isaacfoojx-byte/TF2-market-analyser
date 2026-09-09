@@ -147,8 +147,8 @@ View the latest market snapshot.
 
 - Price increases
 - Price decreases
-- New listings
-- Market activity
+- Coverage additions
+- Guide-price changes
 """
     )
 

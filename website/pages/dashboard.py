@@ -21,6 +21,7 @@ if metadata is not None and metadata.get("snapshot_timestamp"):
         )
 
 page_header("Market Overview", snapshot_caption)
+st.caption("Counts describe price-guide coverage, not listings, sales volume, or liquidity.")
 
 story = build_market_story(comparison, market_summary)
 story_card({
@@ -36,11 +37,11 @@ story_card({
 
 st.subheader("What players should notice")
 
-falling_share = 100 - story.get("rising_markets", 0)
+falling_share = story.get("falling_markets", 0)
 movement_card = {
     "category": "Price direction",
-    "name": "Most markets are moving down" if falling_share >= 50 else "More markets are moving up",
-    "headline": f"{max(falling_share, story.get('rising_markets', 0)):.1f}% moved in that direction",
+    "name": "Guide-price changes among comparable markets",
+    "headline": f"{story.get('rising_markets', 0):.1f}% rose; {falling_share:.1f}% fell; {story.get('unchanged_markets', 0):.1f}% were unchanged",
     "confidence": story["confidence"],
     "confidence_reason": story["confidence_reason"],
     "risk": story["risk"],
@@ -72,24 +73,24 @@ with st.expander("Want the detailed market statistics?"):
 
     metric_row([
         ("Tracked Markets", f"{market_summary['total_unusuals']:,}", None),
-        ("New Markets", int(market_summary["new_listings"]), None),
+        ("Entered Coverage", int(market_summary["entered_coverage"]), None),
         ("Price Increases", int(market_summary["price_up"]), None),
         ("Price Decreases", int(market_summary["price_down"]), None),
     ])
 
     activity = pd.DataFrame({
-        "Category": ["Price Up", "Price Down", "New", "Removed"],
+        "Category": ["Price Up", "Price Down", "Entered Coverage", "Left Coverage"],
         "Count": [
             market_summary["price_up"],
             market_summary["price_down"],
-            market_summary["new_listings"],
-            market_summary["removed"],
+            market_summary["entered_coverage"],
+            market_summary["left_coverage"],
         ],
     })
     activity_chart = px.bar(activity, x="Category", y="Count", text="Count")
     activity_chart.update_traces(textposition="outside")
     activity_chart.update_layout(
-        title="Detailed Market Activity",
+        title="Guide-Price Direction and Coverage",
         xaxis_title="",
         yaxis_title="Markets",
         showlegend=False,
@@ -103,7 +104,7 @@ with st.expander("Want the detailed market statistics?"):
         .assign(abs_change=lambda frame: frame["price_change"].abs())
         .sort_values("abs_change", ascending=False)
         .head(10)
-        [["item_name", "effect_name", "price_change", "listing_change", "status"]]
+        [["item_name", "effect_name", "price_change", "status"]]
         .copy()
     )
     if top_movers.empty:
@@ -112,14 +113,10 @@ with st.expander("Want the detailed market statistics?"):
         top_movers["price_change"] = top_movers["price_change"].map(
             "{:+.2f} keys".format
         )
-        top_movers["listing_change"] = top_movers["listing_change"].fillna(0).map(
-            "{:+.0f}".format
-        )
         top_movers = top_movers.rename(columns={
             "item_name": "Item",
             "effect_name": "Effect",
             "price_change": "Price Change",
-            "listing_change": "Listing Change",
             "status": "Status",
         })
         show_table(top_movers)

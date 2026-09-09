@@ -6,6 +6,8 @@ import re
 from pathlib import Path
 
 import pandas as pd
+import numpy as np
+from analytics.comparison import compare_files, prepare_markets
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -72,7 +74,7 @@ def _normalise_craftable(values: pd.Series) -> pd.Series:
 
 
 def _snapshot_timestamp(snapshot_file: Path, dataframe: pd.DataFrame) -> pd.Timestamp:
-    timestamps = pd.to_datetime(dataframe["scrape_timestamp"], errors="coerce")
+    timestamps = pd.to_datetime(dataframe["scrape_timestamp"], errors="coerce", utc=True, format="mixed").dt.tz_localize(None)
     if timestamps.notna().any():
         return timestamps.dropna().iloc[0]
 
@@ -130,29 +132,17 @@ def _load_snapshot(snapshot_file: Path) -> pd.DataFrame:
         lambda rows: (rows["price_ref"] > 0)
         & (rows["key_price_ref"] > 0)
         & (rows["price_keys_equivalent"] > 0)
+        & np.isfinite(rows["price_keys_equivalent"])
+        & np.isfinite(rows["price_ref"])
+        & np.isfinite(rows["key_price_ref"])
     ].copy()
 
 
 def _aggregate_snapshot(dataframe: pd.DataFrame) -> pd.DataFrame:
-    return (
-        dataframe.groupby(MARKET_KEYS, dropna=False)
-        .agg(
-            item_type=("item_type", "first"),
-            guide_price_ref=("price_ref", "median"),
-            guide_price_keys=("price_keys_equivalent", "median"),
-            key_price_ref=("key_price_ref", "median"),
-            guide_price_usd=("usd_price", "median"),
-            display_price=("display_price", "median"),
-            display_unit=("display_unit", "first"),
-            source_price_low=("source_price_low", "first"),
-            source_price_high=("source_price_high", "first"),
-            source_price_unit=("source_price_unit", "first"),
-            price_is_range=("price_is_range", "max"),
-            stats_url=("stats_url", "first"),
-            source_rows=("item_name", "size"),
-        )
-        .reset_index()
-    )
+    markets = prepare_markets(dataframe, "community").dropna(subset=["average_price"])
+    markets["guide_price_usd"] = markets["usd_price"]
+    markets["source_rows"] = markets["observation_count"]
+    return markets
 
 
 def load_community_history(snapshot_dir: str | Path | None = None) -> pd.DataFrame:
@@ -170,8 +160,8 @@ def load_community_history(snapshot_dir: str | Path | None = None) -> pd.DataFra
             "source_file": str(snapshot_file),
             "priced_variants": len(markets),
             "unique_items": dataframe["item_name"].nunique(),
-            "median_price_keys": dataframe["price_keys_equivalent"].median(),
-            "average_price_keys": dataframe["price_keys_equivalent"].mean(),
+            "median_price_keys": markets["guide_price_keys"].median(),
+            "average_price_keys": markets["guide_price_keys"].mean(),
             "key_price_ref": dataframe["key_price_ref"].median(),
         })
 
@@ -217,22 +207,27 @@ def load_community_item_trend(
     for snapshot_file in get_community_snapshots(snapshot_dir):
         dataframe = _load_snapshot(snapshot_file)
         if dataframe.empty:
-            continue
-
+            dataframe = pd.DataFrame(columns=list(REQUIRED_COLUMNS))
         matching_rows = dataframe.loc[
             dataframe["item_name"].eq(item_name)
             & dataframe["quality"].eq(quality)
             & _craftable_mask(dataframe["craftable"], craftable)
         ]
         if matching_rows.empty:
+            records.append({"snapshot_timestamp": _snapshot_timestamp(snapshot_file, pd.read_csv(snapshot_file)),
+                            "median_price_keys": float("nan"), "source_rows": 0,
+                            "display_price": float("nan"), "display_unit": None,
+                            "source_updated_at": None})
             continue
 
+        prepared = prepare_markets(matching_rows, "community")
+        comparable_price = prepared["average_price"].iloc[0]
         records.append({
             "snapshot_timestamp": _snapshot_timestamp(snapshot_file, dataframe),
             "item_name": item_name,
             "quality": quality,
             "craftable": craftable,
-            "median_price_keys": matching_rows["price_keys_equivalent"].median(),
+            "median_price_keys": comparable_price,
             "low_price_keys": matching_rows["price_keys_equivalent"].min(),
             "high_price_keys": matching_rows["price_keys_equivalent"].max(),
             "key_price_ref": matching_rows["key_price_ref"].median(),
@@ -251,6 +246,8 @@ def load_community_item_trend(
             if matching_rows["stats_url"].notna().any()
             else None,
             "source_rows": len(matching_rows),
+            "source_updated_at": prepared["source_updated_at"].iloc[0],
+            "source_age_days": prepared["source_age_days"].iloc[0],
         })
 
     if not records:
@@ -259,36 +256,10 @@ def load_community_item_trend(
     trend = pd.DataFrame(records).sort_values("snapshot_timestamp").reset_index(
         drop=True
     )
-    trend["percent_change"] = trend["median_price_keys"].pct_change() * 100
+    trend["percent_change"] = trend["median_price_keys"].pct_change(fill_method=None) * 100
     return trend
 
 
-def compare_community_snapshots(
-    old_snapshot: str | Path,
-    new_snapshot: str | Path,
-) -> pd.DataFrame:
-    """Compare guide-price variants shared by two snapshots."""
-
-    old_data = _load_snapshot(Path(old_snapshot))
-    new_data = _load_snapshot(Path(new_snapshot))
-    if old_data.empty or new_data.empty:
-        return pd.DataFrame()
-
-    old_markets = _aggregate_snapshot(old_data)
-    new_markets = _aggregate_snapshot(new_data)
-    comparison = old_markets.merge(
-        new_markets,
-        on=MARKET_KEYS,
-        how="inner",
-        suffixes=("_old", "_new"),
-    )
-    if comparison.empty:
-        return comparison
-
-    comparison["price_change_keys"] = (
-        comparison["guide_price_keys_new"] - comparison["guide_price_keys_old"]
-    )
-    comparison["percent_change"] = (
-        comparison["price_change_keys"] / comparison["guide_price_keys_old"] * 100
-    ).replace([float("inf"), float("-inf")], pd.NA)
-    return comparison
+def compare_community_snapshots(old_snapshot, new_snapshot):
+    """Include coverage changes without treating missing prices as zero."""
+    return compare_files(old_snapshot, new_snapshot, "community")
