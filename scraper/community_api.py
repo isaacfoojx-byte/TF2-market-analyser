@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -83,7 +83,7 @@ def build_community_rows(
     payload: dict[str, Any],
     scraped_at: datetime | None = None,
 ) -> pd.DataFrame:
-    timestamp = (scraped_at or datetime.now()).isoformat(timespec="seconds")
+    timestamp = (scraped_at or datetime.now(timezone.utc)).isoformat(timespec="seconds")
     key_price_ref = key_price_from_payload(payload)
     records: list[dict[str, Any]] = []
 
@@ -124,6 +124,10 @@ def build_community_rows(
                     )
                     records.append(
                         {
+                            "source_value": entry.get("value"),
+                            "source_value_high": entry.get("value_high") if entry.get("value_high") is not None else entry.get("value"),
+                            "source_currency": entry.get("currency"),
+                            "source_last_update": entry.get("last_update"),
                             "scrape_timestamp": timestamp,
                             "source_url": PRICES_URL,
                             "item_name": indexed_item_name,
@@ -151,7 +155,7 @@ def run_scraper(
     scraped_at: datetime | None = None,
     api_key: str | None = None,
 ) -> CommunityScrapeResult:
-    capture_time = scraped_at or datetime.now()
+    capture_time = scraped_at or datetime.now(timezone.utc)
     resolved_api_key = api_key or os.environ.get("BACKPACK_TF_API_KEY")
     if not resolved_api_key:
         raise RuntimeError("Missing required environment variable: BACKPACK_TF_API_KEY")
@@ -161,7 +165,9 @@ def run_scraper(
         raise ValueError("The backpack.tf API returned no non-Unusual price rows")
 
     raw_file = save_snapshot(rows, output_dir=output_dir, scraped_at=capture_time)
-    cleaned, processed_file = clean_community_prices(raw_file)
+    cleaned, processed_file = clean_community_prices(
+        raw_file, previous_processed_dir=Path(__file__).resolve().parents[1] / "data" / "processed" / "non_unusual",
+    )
     print(f"Saved {len(rows):,} raw non-Unusual price rows to {raw_file}")
     print(f"Saved {len(cleaned):,} cleaned non-Unusual price rows to {processed_file}")
     return CommunityScrapeResult(raw_file, processed_file, len(cleaned))

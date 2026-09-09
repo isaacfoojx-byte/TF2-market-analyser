@@ -63,6 +63,9 @@ jobs:
           mkdir -p data/raw/non_unusual data/processed/non_unusual
           cp "$OUTPUT_DIR"/raw/*.csv data/raw/non_unusual/
           cp "$OUTPUT_DIR"/processed/*.csv data/processed/non_unusual/
+          mkdir -p data/processed/non_unusual/quality
+          cp "$OUTPUT_DIR"/processed/quality/*.quality.json data/processed/non_unusual/quality/
+          git add -- data/processed/non_unusual/quality/*.quality.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -- data/raw/non_unusual/*.csv data/processed/non_unusual/*.csv
@@ -81,7 +84,7 @@ jobs:
         run: |
           processed_csv="$(find "$OUTPUT_DIR/processed" -maxdepth 1 -type f -name 'community_prices_*.csv' | sort | tail -n 1)"
           test -n "$processed_csv"
-          python -m integrations.google_sheets "$processed_csv" --schema community --spreadsheet-id-env COMMUNITY_GOOGLE_SPREADSHEET_ID
+          python -m integrations.google_sheets "$processed_csv" --daily-history --schema community --spreadsheet-id-env COMMUNITY_GOOGLE_SPREADSHEET_ID
 
       - name: Archive community snapshots and logs
         if: always()
@@ -91,6 +94,7 @@ jobs:
           path: |
             ${{ runner.temp }}/tf2-community-output/raw/*.csv
             ${{ runner.temp }}/tf2-community-output/processed/*.csv
+            ${{ runner.temp }}/tf2-community-output/processed/quality/*
             ${{ runner.temp }}/community-scraper.log
             chromedriver.log
           if-no-files-found: warn

@@ -4,7 +4,7 @@ import csv
 import os
 import time
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -47,7 +47,7 @@ def build_output_paths(
     output_dir: str | Path | None = None,
     scrape_datetime: datetime | None = None,
 ) -> tuple[Path, Path]:
-    timestamp = (scrape_datetime or datetime.now()).strftime("%Y-%m-%d_%H-%M-%S")
+    timestamp = (scrape_datetime or datetime.now(timezone.utc)).strftime("%Y-%m-%d_%H-%M-%S")
     configured_dir = output_dir or os.environ.get("OUTPUT_DIR")
     data_dir = Path(configured_dir) if configured_dir else BASE_DIR / "data"
     return (
@@ -295,6 +295,10 @@ def build_rows(
 
             rows.append(
                 {
+                    "source_value": entry.get("value"),
+                    "source_value_high": entry.get("value_high") if entry.get("value_high") is not None else entry.get("value"),
+                    "source_currency": entry.get("currency"),
+                    "source_last_update": entry.get("last_update"),
                     "effect_id": effect_id,
                     "effect_name": catalog.effect_names.get(
                         effect_id,
@@ -324,7 +328,7 @@ def run_scraper(
     api_key: str | None = None,
     catalog_path: Path | None = None,
 ) -> ScrapeResult:
-    started_at = scrape_datetime or datetime.now()
+    started_at = scrape_datetime or datetime.now(timezone.utc)
     started_timer = time.perf_counter()
     scrape_timestamp = started_at.isoformat(timespec="seconds")
     raw_csv, processed_csv = build_output_paths(output_dir, started_at)
@@ -338,7 +342,9 @@ def run_scraper(
             load_catalog(catalog_path),
         )
         save_csv(rows, raw_csv)
-        clean_data(raw_csv, processed_csv, key_price)
+        clean_data(raw_csv, processed_csv, key_price,
+                   previous_processed_dir=BASE_DIR / "data" / "processed",
+                   key_rate_source="backpack_tf_api")
         duration = time.perf_counter() - started_timer
         save_metadata(
             snapshot_timestamp=scrape_timestamp,
@@ -353,7 +359,7 @@ def run_scraper(
         duration = time.perf_counter() - started_timer
         print(
             f"API scrape stopped at "
-            f"{datetime.now().astimezone().isoformat(timespec='seconds')}"
+            f"{datetime.now(timezone.utc).astimezone().isoformat(timespec='seconds')}"
         )
         print(f"API scrape elapsed time: {duration:.1f} seconds")
 

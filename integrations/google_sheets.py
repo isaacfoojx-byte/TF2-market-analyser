@@ -7,9 +7,10 @@ import math
 import os
 import random
 import re
+import statistics
 import time
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
@@ -27,7 +28,6 @@ DEFAULT_BATCH_ROWS = 2000
 DEFAULT_MAX_ATTEMPTS = 5
 INTEGER_PATTERN = re.compile(r"^-?\d+$")
 FLOAT_PATTERN = re.compile(r"^-?(?:\d+\.\d*|\d*\.\d+)(?:[eE][+-]?\d+)?$")
-DATE_SHEET_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 SCHEMA_REQUIRED_COLUMNS = {
     "unusual": REQUIRED_PROCESSED_COLUMNS,
     "community": set(COMMUNITY_PROCESSED_COLUMNS),
@@ -173,99 +173,58 @@ def ensure_sheet_capacity(
         ),
         None,
     )
-    if properties is None:
-        compact_requests = []
-        for sheet in sheets:
-            existing = sheet.get("properties", {})
-            title = str(existing.get("title", ""))
-            grid = existing.get("gridProperties", {})
-            current_columns = int(grid.get("columnCount", 0))
-            if (
-                DATE_SHEET_PATTERN.fullmatch(title)
-                and current_columns > required_columns
-            ):
-                compact_requests.append(
-                    {
-                        "updateSheetProperties": {
-                            "properties": {
-                                "sheetId": existing["sheetId"],
-                                "gridProperties": {
-                                    "columnCount": required_columns,
-                                },
-                            },
-                            "fields": "gridProperties.columnCount",
-                        }
-                    }
-                )
-
-        if compact_requests:
-            compact_request = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body={"requests": compact_requests},
-            )
-            execute_with_retry(compact_request)
-            print(
-                f"Compacted {len(compact_requests):,} dated sheets to "
-                f"{required_columns:,} columns"
-            )
-
-        add_request = service.spreadsheets().batchUpdate(
-            spreadsheetId=spreadsheet_id,
-            body={
-                "requests": [
-                    {
-                        "addSheet": {
-                            "properties": {
-                                "title": sheet_name,
-                                "gridProperties": {
-                                    "rowCount": required_rows,
-                                    "columnCount": required_columns,
-                                },
-                            }
-                        }
-                    }
-                ]
-            },
-        )
-        execute_with_retry(add_request)
-        print(f"Created sheet {sheet_name!r}")
-        return
-
-    grid = properties.get("gridProperties", {})
+    grid = (properties or {}).get("gridProperties", {})
     current_rows = int(grid.get("rowCount", 0))
     current_columns = int(grid.get("columnCount", 0))
     target_rows = max(current_rows, required_rows)
     target_columns = max(current_columns, required_columns)
+    allocated_cells = sum(
+        int(sheet.get("properties", {}).get("gridProperties", {}).get("rowCount", 0))
+        * int(sheet.get("properties", {}).get("gridProperties", {}).get("columnCount", 0))
+        for sheet in sheets
+    )
+    projected_cells = (
+        allocated_cells - current_rows * current_columns
+        + target_rows * target_columns
+    )
+    if projected_cells > 10_000_000:
+        raise RuntimeError(
+            f"Cannot publish {sheet_name!r}: workbook would need "
+            f"{projected_cells:,} cells (limit 10,000,000). "
+            "Keep this workbook as an archive and configure a fresh spreadsheet "
+            "shared with the service account. This capacity check did not modify any tabs."
+        )
 
-    if target_rows == current_rows and target_columns == current_columns:
-        return
-
-    resize_request = service.spreadsheets().batchUpdate(
-        spreadsheetId=spreadsheet_id,
-        body={
-            "requests": [
-                {
-                    "updateSheetProperties": {
-                        "properties": {
-                            "sheetId": properties["sheetId"],
-                            "gridProperties": {
-                                "rowCount": target_rows,
-                                "columnCount": target_columns,
-                            },
-                        },
-                        "fields": (
-                            "gridProperties(rowCount,columnCount)"
-                        ),
-                    }
+    if properties is None:
+        operation = {
+            "addSheet": {
+                "properties": {
+                    "title": sheet_name,
+                    "gridProperties": {
+                        "rowCount": target_rows,
+                        "columnCount": target_columns,
+                    },
                 }
-            ]
-        },
-    )
-    execute_with_retry(resize_request)
-    print(
-        f"Expanded {sheet_name!r} grid to "
-        f"{target_rows:,} rows and {target_columns:,} columns"
-    )
+            }
+        }
+    elif target_rows == current_rows and target_columns == current_columns:
+        return
+    else:
+        operation = {
+            "updateSheetProperties": {
+                "properties": {
+                    "sheetId": properties["sheetId"],
+                    "gridProperties": {
+                        "rowCount": target_rows,
+                        "columnCount": target_columns,
+                    },
+                },
+                "fields": "gridProperties(rowCount,columnCount)",
+            }
+        }
+    execute_with_retry(service.spreadsheets().batchUpdate(
+        spreadsheetId=spreadsheet_id, body={"requests": [operation]},
+    ))
 
 
 def upload_csv_to_latest(
@@ -295,8 +254,11 @@ def upload_csv_to_latest(
     target_sheet = (
         sheet_name
         or os.environ.get("GOOGLE_SHEET_NAME")
-        or sheet_name_from_timestamp(scrape_timestamp)
+        or "Latest"
     )
+    if target_sheet == "Daily History":
+        raise ValueError("Daily History is reserved for summary rows")
+    sheet_name_from_timestamp(scrape_timestamp)
     rows_per_batch = (
         batch_rows
         if batch_rows is not None
@@ -370,6 +332,94 @@ def upload_csv_to_latest(
     )
 
 
+HISTORY_HEADERS = [
+    "date", "scrape_timestamp", "schema", "market_count", "priced_market_count",
+    "mean_price_keys", "median_price_keys", "source_csv",
+]
+
+
+def daily_summary(csv_path: Path, schema: str) -> list[Any]:
+    headers, rows, timestamp = load_processed_csv(
+        csv_path, SCHEMA_REQUIRED_COLUMNS[schema],
+    )
+    timestamps = {str(row[headers.index("scrape_timestamp")]) for row in rows}
+    if len(timestamps) != 1:
+        raise ValueError("Daily summary requires exactly one scrape timestamp")
+    price_column = (
+        "bp_price_keys_equivalent" if schema == "unusual"
+        else "price_keys_equivalent"
+    )
+    index = headers.index(price_column)
+    prices = []
+    for row in rows:
+        try:
+            price = float(row[index])
+        except (TypeError, ValueError):
+            continue
+        if math.isfinite(price) and price > 0:
+            prices.append(price)
+    return [
+        sheet_name_from_timestamp(timestamp), timestamp, schema, len(rows),
+        len(prices), statistics.mean(prices) if prices else "",
+        statistics.median(prices) if prices else "", csv_path.name,
+    ]
+
+
+def upload_daily_summary(service, spreadsheet_id: str, summary: list[Any]) -> None:
+    """Upsert by date/schema; deterministic ranges make retries idempotent.
+
+    Callers must serialize writers to each workbook (the daily workflows do).
+    """
+    name = "Daily History"
+    ensure_sheet_capacity(service, spreadsheet_id, name, 2, len(HISTORY_HEADERS))
+    quoted = quote_sheet_name(name)
+    end_column = column_name(len(HISTORY_HEADERS))
+    existing = execute_with_retry(service.spreadsheets().values().get(
+        spreadsheetId=spreadsheet_id, range=f"{quoted}!A:{end_column}",
+    )).get("values", [])
+    if existing and existing[0] != HISTORY_HEADERS:
+        raise ValueError("Daily History has unexpected headers; existing data was preserved")
+    matching = [
+        (index, row) for index, row in enumerate(existing[1:], start=2)
+        if len(row) >= 3 and row[0] == summary[0] and row[2] == summary[2]
+    ]
+    if len(matching) > 1:
+        raise ValueError("Daily History has duplicate date/schema rows; reconcile them first")
+    target_row = matching[0][0] if matching else max(2, len(existing) + 1)
+    if matching:
+        def utc_timestamp(value):
+            parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+            return parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None else parsed
+
+        previous_timestamp = utc_timestamp(matching[0][1][1])
+        incoming_timestamp = utc_timestamp(summary[1])
+        if incoming_timestamp < previous_timestamp:
+            raise ValueError("Refusing to replace a newer daily summary with an older snapshot")
+    ensure_sheet_capacity(service, spreadsheet_id, name, target_row, len(HISTORY_HEADERS))
+    target_range = f"{quoted}!A{target_row}:{end_column}{target_row}"
+    execute_with_retry(service.spreadsheets().values().batchUpdate(
+        spreadsheetId=spreadsheet_id,
+        body={"valueInputOption": "RAW", "data": [
+            {"range": f"{quoted}!A1:{end_column}1", "values": [HISTORY_HEADERS]},
+            {"range": target_range, "values": [summary]},
+        ]},
+    ))
+    actual = execute_with_retry(service.spreadsheets().values().get(
+        spreadsheetId=spreadsheet_id, range=target_range,
+        valueRenderOption="UNFORMATTED_VALUE",
+    )).get("values", [])
+    def equal_value(expected, received):
+        if isinstance(expected, float) and isinstance(received, (int, float)):
+            # Sheets stores fewer significant digits than a Python float.
+            return math.isclose(expected, received, rel_tol=1e-12, abs_tol=1e-12)
+        return expected == received
+
+    if (not actual or len(actual[0]) != len(summary)
+            or not all(equal_value(a, b) for a, b in zip(summary, actual[0]))):
+        raise RuntimeError("Daily History read-back verification failed")
+    print(f"Verified daily summary for {summary[0]} ({summary[2]})")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("csv_path", type=Path)
@@ -387,13 +437,27 @@ def main() -> None:
     )
     parser.add_argument("--batch-rows", type=int)
     parser.add_argument("--max-rows", type=int)
+    parser.add_argument(
+        "--daily-history", action="store_true",
+        help="Also upsert a compact daily summary in the Daily History tab.",
+    )
     args = parser.parse_args()
+    if args.daily_history and (args.max_rows is not None or args.sheet_name):
+        parser.error("--daily-history cannot be combined with sample or custom-tab uploads")
+    service = build_service_from_environment()
+    summary = daily_summary(args.csv_path, args.schema) if args.daily_history else None
+    if summary is not None:
+        # Write history first so a retry can recover either stage safely.
+        upload_daily_summary(
+            service, required_environment(args.spreadsheet_id_env), summary,
+        )
 
     result = upload_csv_to_latest(
         args.csv_path,
+        service=service,
         spreadsheet_id_env=args.spreadsheet_id_env,
         schema=args.schema,
-        sheet_name=args.sheet_name,
+        sheet_name="Latest" if args.daily_history else args.sheet_name,
         batch_rows=args.batch_rows,
         max_rows=args.max_rows,
     )

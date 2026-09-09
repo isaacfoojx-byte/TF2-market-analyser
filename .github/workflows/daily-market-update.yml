@@ -63,6 +63,9 @@ jobs:
           mkdir -p data/raw data/processed
           cp "$OUTPUT_DIR"/raw/*.csv data/raw/
           cp "$OUTPUT_DIR"/processed/*.csv data/processed/
+          mkdir -p data/processed/quality
+          cp "$OUTPUT_DIR"/processed/quality/*.quality.json data/processed/quality/
+          git add -- data/processed/quality/*.quality.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -- data/raw/*.csv data/processed/*.csv generated/metadata.json
@@ -81,7 +84,7 @@ jobs:
         run: |
           processed_csv="$(find "$OUTPUT_DIR/processed" -maxdepth 1 -type f -name 'cleaned_*.csv' | sort | tail -n 1)"
           test -n "$processed_csv"
-          python -m integrations.google_sheets "$processed_csv"
+          python -m integrations.google_sheets "$processed_csv" --daily-history
 
       - name: Archive snapshots and logs
         if: always()
@@ -91,6 +94,7 @@ jobs:
           path: |
             ${{ runner.temp }}/tf2-market-output/raw/*.csv
             ${{ runner.temp }}/tf2-market-output/processed/*.csv
+            ${{ runner.temp }}/tf2-market-output/processed/quality/*
             ${{ runner.temp }}/tf2-market-output/diagnostics/*
             ${{ runner.temp }}/scraper.log
             chromedriver.log

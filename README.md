@@ -52,7 +52,7 @@ flowchart LR
     A --> V[Clean and validate]
     V --> C[Versioned CSV snapshots]
     C --> W[Streamlit website]
-    C --> G[Google Sheets archive]
+    C --> G[Google Sheets Latest and Daily History]
     W --> P[Plotly dashboards and insights]
     W --> D[CSV downloads]
 ```
@@ -63,10 +63,14 @@ flowchart LR
    values.
 3. Validators check schemas, prices, duplicates, timestamp consistency, and
    unexpected row-count drops before accepting a snapshot.
-4. Valid CSV snapshots are committed to GitHub and copied to Google Sheets as a
-   secondary analysis archive.
+4. Valid CSV snapshots are committed to GitHub. Google Sheets receives the latest
+   full snapshot and a compact daily market summary.
 5. The Streamlit app discovers the newest snapshots and builds current metrics,
    historical comparisons, interactive Plotly charts, and downloadable datasets.
+
+Cleaning now preserves raw inputs, records conversion/source provenance, and emits
+per-snapshot quality reports with a row-level audit. See
+[Snapshot cleaning](docs/snapshot-cleaning.md) for rejection rules and reprocessing.
 
 ## Technology stack
 
@@ -79,7 +83,7 @@ flowchart LR
 | Supporting collection | Selenium, Beautiful Soup | Browser-assisted and HTML parsing utilities |
 | Item images | Steam Web API | Official TF2 item-image catalogue |
 | Automation | GitHub Actions | Scheduling, validation, archival, and CI |
-| Secondary archive | Google Sheets API | Date-stamped copies of processed snapshots |
+| Secondary archive | Google Sheets API | Latest snapshot and compact daily summaries |
 | Storage | Versioned CSV files, Git | Reproducible historical market data |
 
 Matplotlib and ReportLab are not part of the current application. The live charts
@@ -122,11 +126,22 @@ Repository secrets used by the workflows are:
 | --- | --- |
 | `BACKPACK_TF_API_KEY` | backpack.tf price requests |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | Google Sheets authentication |
-| `GOOGLE_SPREADSHEET_ID` | Unusual snapshot archive |
-| `COMMUNITY_GOOGLE_SPREADSHEET_ID` | Community price-guide archive |
+| `GOOGLE_SPREADSHEET_ID` | Unusual Latest and Daily History workbook |
+| `COMMUNITY_GOOGLE_SPREADSHEET_ID` | Community Latest and Daily History workbook |
 | `STEAM_WEB_API_KEY` | TF2 item-image catalogue updates |
 
 Never commit secret values to the repository.
+
+### Google Sheets publishing
+
+Each daily workflow updates a **Latest** tab with the full current snapshot and a
+**Daily History** tab with one summary row per date and dataset. Rerunning the same
+date updates that summary instead of duplicating it. Full item-level history stays
+in the versioned CSV files; daily summaries are not a replacement for item trends.
+
+See [Google Sheets setup and migration](docs/google-sheets-publishing.md) before
+activating this change on a full workbook. Existing dated tabs are preserved;
+the uploader does not delete or trim them.
 
 ## Project structure
 

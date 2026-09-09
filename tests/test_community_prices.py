@@ -30,9 +30,9 @@ class CommunityPriceCleaningTests(unittest.TestCase):
                     "item_type": " Cosmetic ",
                     "quality": " Unique ",
                     "craftable": "1",
-                    "price_ref": "50.5",
+                    "price_ref": "51",
                     "key_price_ref": "50",
-                    "price_text": "50-51 ref",
+                    "price_text": "51 ref",
                     "usd_price": "1.54",
                     "stats_url": "https://backpack.tf/stats/Unique/Team%20Captain",
                 },
@@ -107,7 +107,8 @@ class CommunityPriceCleaningTests(unittest.TestCase):
             self.assertTrue(output_path.exists())
             self.assertEqual(cleaned.iloc[0]["price_keys_equivalent"], 1)
             raw_data = pd.read_csv(raw_path)
-            self.assertEqual(raw_data.iloc[0]["key_price_ref"], 50)
+            self.assertNotIn("key_price_ref", raw_data.columns)
+            self.assertEqual(cleaned.iloc[0]["key_rate_source"], "supplied_approximation")
 
     def test_uses_range_midpoints_and_backpack_style_display_units(self):
         rows = pd.DataFrame([

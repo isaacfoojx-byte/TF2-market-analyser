@@ -4,6 +4,12 @@ from __future__ import annotations
 
 import argparse
 import csv
+import math
+
+if __package__:
+    from scripts.snapshot_quality_report import verify_quality_report
+else:
+    from snapshot_quality_report import verify_quality_report
 from datetime import datetime
 from pathlib import Path
 
@@ -107,7 +113,7 @@ def validate_markets_and_prices(
         except (KeyError, TypeError, ValueError):
             invalid_prices += 1
             continue
-        if any(price <= 0 for price in prices):
+        if any(not math.isfinite(price) or price <= 0 for price in prices):
             invalid_prices += 1
 
     if duplicates:
@@ -140,7 +146,7 @@ def validate_row_count(
     candidates = [
         path
         for path in sorted(previous_processed_dir.glob("community_prices_*.csv"))
-        if path.name != processed_csv.name
+        if path.name < processed_csv.name
     ]
     if not candidates:
         return
@@ -172,6 +178,7 @@ def validate_output(
 
     raw_rows = read_csv(raw_csv, REQUIRED_RAW_COLUMNS)
     processed_rows = read_csv(processed_csv, REQUIRED_PROCESSED_COLUMNS)
+    audited = verify_quality_report(raw_csv, processed_csv, len(raw_rows), len(processed_rows))
     if len(processed_rows) > len(raw_rows):
         raise ValueError(
             "Processed community data has more rows than its raw snapshot: "
@@ -179,7 +186,8 @@ def validate_output(
         )
 
     filename_timestamp = raw_csv.stem.removeprefix("community_prices_")
-    validate_timestamp(raw_csv, raw_rows, filename_timestamp)
+    if not audited:
+        validate_timestamp(raw_csv, raw_rows, filename_timestamp)
     validate_timestamp(processed_csv, processed_rows, filename_timestamp)
     validate_markets_and_prices(processed_csv, processed_rows)
     validate_row_count(
