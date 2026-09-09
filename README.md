@@ -78,13 +78,15 @@ with source-age and currency-attribution details where supported. See
 
 Cleaned snapshots can also be imported idempotently into a normalized SQLite
 database for faster historical queries. See
-[Historical database](docs/historical-database.md) for the schema and commands.
+[Historical database](docs/historical-database.md) for the schema and commands,
+and [Storage decision](docs/storage-decision.md) for the SQLite-to-PostgreSQL path.
 
 ## Technology stack
 
 | Area | Technology | Purpose |
 | --- | --- | --- |
 | Application | Python, Streamlit | Multi-page interactive website |
+| New web app | Next.js, TypeScript | Vercel-ready market search and item history |
 | Analysis | pandas, NumPy | Cleaning, comparison, aggregation, and scoring |
 | Visualisation | Plotly | Interactive charts and historical trends |
 | Data collection | Requests, backpack.tf API | Daily Unusual and community price-guide data |
@@ -163,6 +165,7 @@ scraper/         backpack.tf data collection
 scripts/         Validation and maintenance commands
 tests/           Automated unit tests
 website/         Streamlit pages, components, and assets
+web/             Next.js application and JSON API routes
 ```
 
 ## Data limitations and disclaimer

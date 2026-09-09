@@ -1,0 +1,5 @@
+allowBuilds:
+  better-sqlite3: true
+  unrs-resolver: true
+onlyBuiltDependencies:
+  - better-sqlite3

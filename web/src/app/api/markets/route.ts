@@ -1,0 +1,3 @@
+import {NextRequest} from "next/server"; import {searchMarkets} from "@/lib/market-repository";
+export const runtime="nodejs";
+export async function GET(request:NextRequest){try{const dataset=request.nextUrl.searchParams.get("dataset")??"unusual",q=request.nextUrl.searchParams.get("q")??"",n=Number(request.nextUrl.searchParams.get("limit")??30),data=await searchMarkets(dataset,q,Number.isFinite(n)?n:30);return Response.json({data,meta:{dataset,query:q,count:data.length}})}catch(e){if(e instanceof RangeError)return Response.json({error:e.message},{status:400});return Response.json({error:"Market data is unavailable."},{status:503})}}

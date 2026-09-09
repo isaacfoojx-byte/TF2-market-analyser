@@ -1,0 +1,2 @@
+import {marketDetail} from "@/lib/market-repository"; export const runtime="nodejs";
+export async function GET(_request:Request,{params}:{params:Promise<{stableId:string}>}){try{const data=await marketDetail(decodeURIComponent((await params).stableId));return data?Response.json({data}):Response.json({error:"Market not found."},{status:404})}catch{return Response.json({error:"Market history is unavailable."},{status:503})}}

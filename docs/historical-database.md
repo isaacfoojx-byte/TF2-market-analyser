@@ -79,8 +79,10 @@ ORDER BY SUM(affected_rows) DESC;
 ```
 
 `database.queries` contains parameterized helpers for latest-market and history
-lookups. Those functions can later sit behind API endpoints without exposing SQL
-or accepting arbitrary query text from a browser.
+lookups, catalog search, snapshot overview, and period comparison. Those functions
+can later sit behind API endpoints without exposing SQL or accepting arbitrary
+query text from a browser. The rationale and migration triggers are recorded in
+[Storage decision](storage-decision.md).
 
 ## Moving to Vercel
 

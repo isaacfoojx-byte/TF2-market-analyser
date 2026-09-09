@@ -8,7 +8,13 @@ from unittest.mock import patch
 
 from database.create_database import connect_database
 from database.import_data import import_directory, import_snapshot
-from database.queries import latest_markets, market_history
+from database.queries import (
+    latest_comparison_summary,
+    latest_markets,
+    market_history,
+    search_markets,
+    snapshot_overview,
+)
 from processing.quality import market_id
 
 
@@ -186,6 +192,31 @@ class DatabaseImportTests(unittest.TestCase):
 
         self.assertEqual({result.dataset for result in results}, {"unusual", "community"})
         self.assertEqual(len(latest_markets(self.connection, "community")), 1)
+
+    def test_site_queries_cover_overview_search_and_period_comparison(self):
+        old = self.root / "old.csv"
+        new = self.root / "new.csv"
+        write_csv(old, [unusual_row(timestamp="2026-09-08T01:00:00", price=2)])
+        write_csv(new, [unusual_row(timestamp="2026-09-09T01:00:00", price=3)])
+        import_snapshot(self.connection, old, "unusual")
+        import_snapshot(self.connection, new, "unusual")
+
+        overview = snapshot_overview(self.connection)[0]
+        self.assertEqual(overview["snapshot_count"], 2)
+        matches = search_markets(self.connection, "unusual", "hat")
+        self.assertEqual(matches[0]["item_name"], "Hat 10")
+        comparison = latest_comparison_summary(self.connection, "unusual")
+        self.assertIsNotNone(comparison)
+        self.assertEqual(comparison["shared_market_count"], 1)
+        self.assertEqual(comparison["increased_count"], 1)
+        self.assertAlmostEqual(comparison["average_change_pct"], 50)
+
+    def test_site_queries_validate_public_inputs(self):
+        self.assertEqual(search_markets(self.connection, "unusual", ""), [])
+        with self.assertRaisesRegex(ValueError, "Unsupported dataset"):
+            search_markets(self.connection, "invalid", "hat")
+        with self.assertRaisesRegex(ValueError, "limit"):
+            search_markets(self.connection, "unusual", "hat", 101)
 
     def test_quality_report_is_verified_and_issues_are_imported(self):
         path = self.root / "cleaned_2026-09-09_01-00-00.csv"

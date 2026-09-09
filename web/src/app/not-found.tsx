@@ -1,0 +1,1 @@
+import Link from "next/link"; export default function NotFound(){return <main className="not-found"><p className="eyebrow">404</p><h1>Market not found</h1><p>The market may have been renamed, or its address may be incomplete.</p><Link href="/" className="button">Return to search</Link></main>}
