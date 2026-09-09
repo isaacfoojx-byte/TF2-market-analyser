@@ -27,3 +27,14 @@ The default local database is `../database/market_v2.db`. Override it with
 
 When `DATABASE_URL` is set, the server uses pooled PostgreSQL instead of local
 SQLite. Keep that variable server-side; do not prefix it with `NEXT_PUBLIC_`.
+
+After provisioning an empty managed PostgreSQL database, migrate the archive from
+the repository root:
+
+```bash
+python -m database.migrate_to_postgres
+```
+
+The migration refuses a non-empty target, copies all normalized tables in one
+transaction, updates identity sequences, and verifies every row count before it
+commits.
