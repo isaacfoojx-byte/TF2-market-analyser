@@ -11,8 +11,8 @@ SCHEMA_PATH = Path(__file__).with_name("postgres_schema.sql")
 TABLES = {
     "snapshots": ("snapshot_id", "dataset", "collected_at", "source_file", "source_sha256", "cleaning_version", "validation_status", "imported_at", "market_count", "priced_observation_count", "quality_report_json"),
     "markets": ("market_id", "stable_id", "dataset", "defindex", "effect_id", "item_name", "effect_name", "quality", "craftable", "tradable", "item_type", "slot", "summary", "first_seen_at", "last_seen_at"),
-    "market_presence": ("snapshot_id", "market_id", "price_status", "quality_flags", "raw_row_number"),
     "price_observations": ("snapshot_id", "market_id", "price_ref", "price_keys", "price_usd", "key_price_ref", "source_price_low", "source_price_high", "source_price_unit", "source_updated_at", "source_price_provenance", "key_rate_source", "price_is_range", "quality_flags", "raw_row_number"),
+    "unpriced_market_presence": ("snapshot_id", "market_id", "quality_flags", "raw_row_number"),
     "snapshot_quality_issues": ("snapshot_id", "issue_code", "issue_kind", "affected_rows"),
 }
 BOOLEAN_COLUMNS = {"markets": {"craftable", "tradable"}, "price_observations": {"price_is_range"}}
@@ -35,7 +35,15 @@ def migrate(sqlite_path: Path, database_url: str) -> dict[str, int]:
         raise FileNotFoundError(sqlite_path)
     source = sqlite3.connect(sqlite_path)
     source.row_factory = sqlite3.Row
-    expected = {table: source.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0] for table in TABLES}
+    expected = {
+        table: source.execute(
+            "SELECT COUNT(*) FROM market_presence WHERE price_status='unpriced'"
+            if table == "unpriced_market_presence"
+            else f"SELECT COUNT(*) FROM {table}"
+        ).fetchone()[0]
+        for table in TABLES
+    }
+    expected_presence = source.execute("SELECT COUNT(*) FROM market_presence").fetchone()[0]
     with psycopg.connect(database_url) as target:
         with target.cursor() as cursor:
             cursor.execute(SCHEMA_PATH.read_text(encoding="utf-8"))
@@ -44,7 +52,12 @@ def migrate(sqlite_path: Path, database_url: str) -> dict[str, int]:
                 raise RuntimeError(f"Target PostgreSQL database is not empty: {occupied}")
             for table, columns in TABLES.items():
                 names = ",".join(columns)
-                rows = source.execute(f"SELECT {names} FROM {table}")
+                rows = source.execute(
+                    "SELECT snapshot_id,market_id,quality_flags,raw_row_number "
+                    "FROM market_presence WHERE price_status='unpriced'"
+                    if table == "unpriced_market_presence"
+                    else f"SELECT {names} FROM {table}"
+                )
                 with cursor.copy(f"COPY {table} ({names}) FROM STDIN") as copy:
                     for row in rows:
                         copy.write_row(transformed(row, table, columns))
@@ -54,6 +67,14 @@ def migrate(sqlite_path: Path, database_url: str) -> dict[str, int]:
                 actual = cursor.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
                 if actual != count:
                     raise RuntimeError(f"Verification failed for {table}: expected {count}, got {actual}")
+            actual_presence = cursor.execute("SELECT COUNT(*) FROM market_presence").fetchone()[0]
+            if actual_presence != expected_presence:
+                raise RuntimeError(
+                    "Verification failed for market_presence: "
+                    f"expected {expected_presence}, got {actual_presence}"
+                )
+            cursor.execute("CREATE INDEX idx_snapshots_dataset_time ON snapshots(dataset,collected_at)")
+            cursor.execute("CREATE INDEX idx_observations_market_snapshot ON price_observations(market_id,snapshot_id)")
             cursor.execute("ANALYZE")
     source.close()
     return expected

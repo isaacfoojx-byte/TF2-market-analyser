@@ -39,10 +39,13 @@ CREATE TABLE IF NOT EXISTS price_observations (
   raw_row_number INTEGER CHECK (raw_row_number >= 2 OR raw_row_number IS NULL),
   PRIMARY KEY (snapshot_id,market_id)
 );
-CREATE TABLE IF NOT EXISTS market_presence (
+-- A priced observation already proves that a market was present.  Store only
+-- the uncommon unpriced rows here and expose the full SQLite-compatible shape
+-- through the market_presence view below.  This avoids duplicating millions of
+-- keys in the hosted database.
+CREATE TABLE IF NOT EXISTS unpriced_market_presence (
   snapshot_id BIGINT NOT NULL REFERENCES snapshots(snapshot_id) ON DELETE CASCADE,
   market_id BIGINT NOT NULL REFERENCES markets(market_id),
-  price_status TEXT NOT NULL CHECK (price_status IN ('priced','unpriced')),
   quality_flags TEXT, raw_row_number INTEGER CHECK (raw_row_number >= 2 OR raw_row_number IS NULL),
   PRIMARY KEY (snapshot_id,market_id)
 );
@@ -52,8 +55,11 @@ CREATE TABLE IF NOT EXISTS snapshot_quality_issues (
   affected_rows INTEGER NOT NULL CHECK (affected_rows >= 0),
   PRIMARY KEY (snapshot_id,issue_kind,issue_code)
 );
-CREATE INDEX IF NOT EXISTS idx_snapshots_dataset_time ON snapshots(dataset,collected_at);
-CREATE INDEX IF NOT EXISTS idx_markets_dataset_item ON markets(dataset,item_name);
-CREATE INDEX IF NOT EXISTS idx_markets_unusual_identity ON markets(defindex,effect_id) WHERE dataset='unusual';
-CREATE INDEX IF NOT EXISTS idx_observations_market_snapshot ON price_observations(market_id,snapshot_id);
-CREATE INDEX IF NOT EXISTS idx_presence_market_snapshot ON market_presence(market_id,snapshot_id);
+CREATE OR REPLACE VIEW market_presence AS
+SELECT snapshot_id, market_id, 'priced'::TEXT AS price_status,
+       quality_flags, raw_row_number
+FROM price_observations
+UNION ALL
+SELECT snapshot_id, market_id, 'unpriced'::TEXT AS price_status,
+       quality_flags, raw_row_number
+FROM unpriced_market_presence;

@@ -7,9 +7,9 @@ from database.migrate_to_postgres import SCHEMA_PATH, transformed
 class PostgresMigrationTests(unittest.TestCase):
     def test_schema_contains_web_query_tables_and_indexes(self):
         schema = SCHEMA_PATH.read_text(encoding="utf-8")
-        for name in ("snapshots", "markets", "price_observations", "market_presence"):
+        for name in ("snapshots", "markets", "price_observations", "unpriced_market_presence"):
             self.assertIn(f"CREATE TABLE IF NOT EXISTS {name}", schema)
-        self.assertIn("idx_observations_market_snapshot", schema)
+        self.assertIn("CREATE OR REPLACE VIEW market_presence", schema)
 
     def test_sqlite_integer_flags_become_postgres_booleans(self):
         connection = sqlite3.connect(":memory:")
