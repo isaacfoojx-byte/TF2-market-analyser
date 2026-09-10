@@ -1,0 +1,16 @@
+.venv/
+.pnpm-store/
+data/
+database/*.db
+database/*.db-shm
+database/*.db-wal
+generated/
+output/
+website/
+**/__pycache__/
+**/*.pyc
+**/*.log
+web/.env*
+web/.next/
+web/.vercel/
+web/node_modules/
