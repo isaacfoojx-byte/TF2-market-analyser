@@ -7,7 +7,7 @@ from database.migrate_to_postgres import SCHEMA_PATH, transformed
 class PostgresMigrationTests(unittest.TestCase):
     def test_schema_contains_web_query_tables_and_indexes(self):
         schema = SCHEMA_PATH.read_text(encoding="utf-8")
-        for name in ("snapshots", "markets", "price_observations", "unpriced_market_presence"):
+        for name in ("snapshots", "markets", "price_observations", "current_prices", "unpriced_market_presence"):
             self.assertIn(f"CREATE TABLE IF NOT EXISTS {name}", schema)
         self.assertIn("CREATE OR REPLACE VIEW market_presence", schema)
 

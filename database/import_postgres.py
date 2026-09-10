@@ -172,11 +172,40 @@ def import_snapshot(database_url: str, path: str | Path, dataset: str) -> Import
                 else:
                     observations.append((snapshot_id, market_id, *_boolean_observation(observation)))
 
+            observation_names = ",".join(OBSERVATION_COLUMNS)
+            cursor.execute(
+                f"CREATE TEMP TABLE staged_observations ON COMMIT DROP AS "
+                f"SELECT {observation_names} FROM price_observations WITH NO DATA"
+            )
             with cursor.copy(
-                f"COPY price_observations ({','.join(OBSERVATION_COLUMNS)}) FROM STDIN"
+                f"COPY staged_observations ({observation_names}) FROM STDIN"
             ) as copy:
                 for row in observations:
                     copy.write_row(row)
+            cursor.execute(f"""
+                INSERT INTO price_observations ({observation_names})
+                SELECT {','.join(f's.{name}' for name in OBSERVATION_COLUMNS)}
+                FROM staged_observations s
+                LEFT JOIN current_prices c USING(market_id)
+                WHERE c.market_id IS NULL
+                   OR s.price_ref IS DISTINCT FROM c.price_ref
+                   OR s.price_keys IS DISTINCT FROM c.price_keys
+            """)
+            cursor.execute("""
+                DELETE FROM current_prices c
+                USING markets m, staged_markets s
+                WHERE c.market_id=m.market_id AND m.stable_id=s.stable_id
+                  AND NOT EXISTS (
+                      SELECT 1 FROM staged_observations o WHERE o.market_id=c.market_id
+                  )
+            """)
+            update_columns = [name for name in OBSERVATION_COLUMNS if name != "market_id"]
+            cursor.execute(f"""
+                INSERT INTO current_prices ({observation_names})
+                SELECT {observation_names} FROM staged_observations
+                ON CONFLICT(market_id) DO UPDATE SET
+                {','.join(f'{name}=EXCLUDED.{name}' for name in update_columns)}
+            """)
             with cursor.copy(
                 "COPY unpriced_market_presence "
                 "(snapshot_id,market_id,quality_flags,raw_row_number) FROM STDIN"
@@ -199,7 +228,7 @@ def import_snapshot(database_url: str, path: str | Path, dataset: str) -> Import
                             copy.write_row(issue)
 
             actual_priced = cursor.execute(
-                "SELECT COUNT(*) FROM price_observations WHERE snapshot_id=%s",
+                "SELECT COUNT(*) FROM current_prices WHERE snapshot_id=%s",
                 (snapshot_id,),
             ).fetchone()[0]
             actual_unpriced = cursor.execute(

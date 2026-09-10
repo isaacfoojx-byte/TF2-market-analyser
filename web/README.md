@@ -49,6 +49,10 @@ reports database usage. It emits a GitHub Actions warning at 85% of 512 MiB;
 override those assumptions with `DATABASE_SIZE_WARNING_PERCENT` and
 `DATABASE_SIZE_LIMIT_MIB` if the database plan changes.
 
+Hosted PostgreSQL keeps one row per market in `current_prices` and appends to
+`price_observations` only when `price_ref` or `price_keys` changes. This keeps
+the latest catalog fast while preserving the meaningful price-history points.
+
 The migration refuses a non-empty target, copies all normalized tables in one
 transaction, updates identity sequences, and verifies every row count before it
 commits.

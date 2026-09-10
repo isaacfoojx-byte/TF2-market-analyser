@@ -39,6 +39,20 @@ CREATE TABLE IF NOT EXISTS price_observations (
   raw_row_number INTEGER CHECK (raw_row_number >= 2 OR raw_row_number IS NULL),
   PRIMARY KEY (snapshot_id,market_id)
 );
+CREATE TABLE IF NOT EXISTS current_prices (
+  market_id BIGINT PRIMARY KEY REFERENCES markets(market_id),
+  snapshot_id BIGINT NOT NULL REFERENCES snapshots(snapshot_id) ON DELETE CASCADE,
+  price_ref DOUBLE PRECISION NOT NULL CHECK (price_ref > 0),
+  price_keys DOUBLE PRECISION NOT NULL CHECK (price_keys > 0),
+  price_usd DOUBLE PRECISION CHECK (price_usd >= 0),
+  key_price_ref DOUBLE PRECISION CHECK (key_price_ref > 0),
+  source_price_low DOUBLE PRECISION CHECK (source_price_low > 0),
+  source_price_high DOUBLE PRECISION CHECK (source_price_high >= source_price_low),
+  source_price_unit TEXT CHECK (source_price_unit IN ('ref','keys') OR source_price_unit IS NULL),
+  source_updated_at TEXT, source_price_provenance TEXT, key_rate_source TEXT,
+  price_is_range BOOLEAN, quality_flags TEXT,
+  raw_row_number INTEGER CHECK (raw_row_number >= 2 OR raw_row_number IS NULL)
+);
 -- A priced observation already proves that a market was present.  Store only
 -- the uncommon unpriced rows here and expose the full SQLite-compatible shape
 -- through the market_presence view below.  This avoids duplicating millions of

@@ -15,7 +15,7 @@ let remote: Sql | undefined;
 function sqlite() { const file = process.env.TFANALYTICS_SQLITE_PATH ?? path.resolve(process.cwd(), "..", "database", "market_v2.db"); local ??= new Database(file, { readonly: true, fileMustExist: true }); local.pragma("query_only = ON"); return local; }
 function pg() { if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is not configured"); remote ??= postgres(process.env.DATABASE_URL, { max: 5, idle_timeout: 20, connect_timeout: 10, ssl: "require" }); return remote; }
 
-const latestSql = `SELECT m.stable_id,m.dataset,m.item_name,m.effect_name,m.quality,m.craftable,s.collected_at,o.price_keys,o.price_ref FROM snapshots s JOIN price_observations o USING(snapshot_id) JOIN markets m USING(market_id) WHERE s.snapshot_id=(SELECT snapshot_id FROM snapshots WHERE dataset=$dataset ORDER BY collected_at DESC LIMIT 1) ORDER BY m.item_name,m.effect_name,m.quality LIMIT $limit`;
+const latestSql = `SELECT m.stable_id,m.dataset,m.item_name,m.effect_name,m.quality,m.craftable,s.collected_at,o.price_keys,o.price_ref FROM current_prices o JOIN snapshots s USING(snapshot_id) JOIN markets m USING(market_id) WHERE m.dataset=$dataset ORDER BY m.item_name,m.effect_name,m.quality LIMIT $limit`;
 export async function latestMarkets(dataset: string, limit=30): Promise<MarketSummary[]> {
   validateDataset(dataset); const safe=Math.min(Math.max(limit,1),100); let rows: Row[];
   if (process.env.DATABASE_URL) rows=await pg().unsafe(latestSql.replace("$dataset","$1").replace("$limit","$2"),[dataset,safe]) as Row[];
@@ -24,7 +24,7 @@ export async function latestMarkets(dataset: string, limit=30): Promise<MarketSu
 }
 export async function searchMarkets(dataset: string, query: string, limit=30): Promise<MarketSummary[]> {
   validateDataset(dataset); const term=query.trim(); if (!term) return latestMarkets(dataset,limit); const safe=Math.min(Math.max(limit,1),100); const pattern=`%${term}%`;
-  const sql=`SELECT m.stable_id,m.dataset,m.item_name,m.effect_name,m.quality,m.craftable,s.collected_at,o.price_keys,o.price_ref FROM markets m JOIN price_observations o USING(market_id) JOIN snapshots s USING(snapshot_id) WHERE m.dataset=$dataset AND (LOWER(m.item_name) LIKE LOWER($pattern) OR LOWER(COALESCE(m.effect_name,'')) LIKE LOWER($pattern)) AND o.snapshot_id=(SELECT rs.snapshot_id FROM price_observations ro JOIN snapshots rs USING(snapshot_id) WHERE ro.market_id=m.market_id ORDER BY rs.collected_at DESC LIMIT 1) ORDER BY m.item_name,m.effect_name,m.quality LIMIT $limit`;
+  const sql=`SELECT m.stable_id,m.dataset,m.item_name,m.effect_name,m.quality,m.craftable,s.collected_at,o.price_keys,o.price_ref FROM markets m JOIN current_prices o USING(market_id) JOIN snapshots s USING(snapshot_id) WHERE m.dataset=$dataset AND (LOWER(m.item_name) LIKE LOWER($pattern) OR LOWER(COALESCE(m.effect_name,'')) LIKE LOWER($pattern)) ORDER BY m.item_name,m.effect_name,m.quality LIMIT $limit`;
   let rows: Row[];
   if (process.env.DATABASE_URL) rows=await pg().unsafe(sql.replaceAll("$dataset","$1").replaceAll("$pattern","$2").replace("$limit","$3"),[dataset,pattern,safe]) as Row[];
   else rows=sqlite().prepare(sql.replace("$dataset","?").replaceAll("$pattern","?").replace("$limit","?")).all(dataset,pattern,pattern,safe) as Row[];

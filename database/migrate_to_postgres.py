@@ -61,6 +61,15 @@ def migrate(sqlite_path: Path, database_url: str) -> dict[str, int]:
                 with cursor.copy(f"COPY {table} ({names}) FROM STDIN") as copy:
                     for row in rows:
                         copy.write_row(transformed(row, table, columns))
+            observation_columns = TABLES["price_observations"]
+            names = ",".join(observation_columns)
+            cursor.execute(f"""
+                INSERT INTO current_prices ({names})
+                SELECT DISTINCT ON (o.market_id)
+                       {','.join(f'o.{name}' for name in observation_columns)}
+                FROM price_observations o JOIN snapshots s USING(snapshot_id)
+                ORDER BY o.market_id,s.collected_at DESC,s.snapshot_id DESC
+            """)
             for table, identity in (("snapshots", "snapshot_id"), ("markets", "market_id")):
                 cursor.execute("SELECT setval(pg_get_serial_sequence(%s,%s), COALESCE(MAX(" + identity + "),1), MAX(" + identity + ") IS NOT NULL) FROM " + table, (table, identity))
             for table, count in expected.items():
