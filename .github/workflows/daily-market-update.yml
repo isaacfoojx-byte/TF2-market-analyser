@@ -40,11 +40,13 @@ jobs:
           BACKPACK_TF_API_KEY: ${{ secrets.BACKPACK_TF_API_KEY }}
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         shell: bash
         run: |
           test -n "$BACKPACK_TF_API_KEY"
           test -n "$GOOGLE_SERVICE_ACCOUNT_JSON"
           test -n "$GOOGLE_SPREADSHEET_ID"
+          test -n "$DATABASE_URL"
 
       - name: Fetch and clean market data
         env:
@@ -85,6 +87,15 @@ jobs:
           processed_csv="$(find "$OUTPUT_DIR/processed" -maxdepth 1 -type f -name 'cleaned_*.csv' | sort | tail -n 1)"
           test -n "$processed_csv"
           python -m integrations.google_sheets "$processed_csv" --daily-history
+
+      - name: Publish daily snapshot to PostgreSQL
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        shell: bash
+        run: |
+          processed_csv="$(find "$OUTPUT_DIR/processed" -maxdepth 1 -type f -name 'cleaned_*.csv' | sort | tail -n 1)"
+          test -n "$processed_csv"
+          python -m database.import_postgres "$processed_csv" --dataset unusual
 
       - name: Archive snapshots and logs
         if: always()

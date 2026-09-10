@@ -35,6 +35,20 @@ the repository root:
 python -m database.migrate_to_postgres
 ```
 
+Daily jobs publish one validated snapshot idempotently with:
+
+```bash
+python -m database.import_postgres path/to/cleaned_snapshot.csv --dataset unusual
+python -m database.import_postgres path/to/community_snapshot.csv --dataset community
+```
+
+Set the GitHub Actions `DATABASE_URL` secret to the database's direct,
+unpooled connection string. The importer validates the quality report, performs
+all writes in one transaction, verifies priced and unpriced row counts, and
+reports database usage. It emits a GitHub Actions warning at 85% of 512 MiB;
+override those assumptions with `DATABASE_SIZE_WARNING_PERCENT` and
+`DATABASE_SIZE_LIMIT_MIB` if the database plan changes.
+
 The migration refuses a non-empty target, copies all normalized tables in one
 transaction, updates identity sequences, and verifies every row count before it
 commits.
