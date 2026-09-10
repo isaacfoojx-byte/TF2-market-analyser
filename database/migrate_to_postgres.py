@@ -65,10 +65,15 @@ def migrate(sqlite_path: Path, database_url: str) -> dict[str, int]:
             names = ",".join(observation_columns)
             cursor.execute(f"""
                 INSERT INTO current_prices ({names})
-                SELECT DISTINCT ON (o.market_id)
-                       {','.join(f'o.{name}' for name in observation_columns)}
-                FROM price_observations o JOIN snapshots s USING(snapshot_id)
-                ORDER BY o.market_id,s.collected_at DESC,s.snapshot_id DESC
+                SELECT {','.join(f'o.{name}' for name in observation_columns)}
+                FROM price_observations o
+                JOIN snapshots s USING(snapshot_id)
+                JOIN markets m USING(market_id)
+                WHERE s.snapshot_id=(
+                    SELECT latest.snapshot_id FROM snapshots latest
+                    WHERE latest.dataset=m.dataset
+                    ORDER BY latest.collected_at DESC LIMIT 1
+                )
             """)
             for table, identity in (("snapshots", "snapshot_id"), ("markets", "market_id")):
                 cursor.execute("SELECT setval(pg_get_serial_sequence(%s,%s), COALESCE(MAX(" + identity + "),1), MAX(" + identity + ") IS NOT NULL) FROM " + table, (table, identity))

@@ -26,13 +26,38 @@ def compact(database_url: str, *, prepare_only: bool = False) -> tuple[int, int,
     with psycopg.connect(database_url) as connection, connection.cursor() as cursor:
         cursor.execute(SCHEMA_PATH.read_text(encoding="utf-8"))
         before = cursor.execute("SELECT COUNT(*) FROM price_observations").fetchone()[0]
-        cursor.execute(f"""
-            INSERT INTO current_prices ({names})
-            SELECT DISTINCT ON (o.market_id) {','.join(f'o.{name}' for name in OBSERVATION_COLUMNS)}
-            FROM price_observations o JOIN snapshots s USING(snapshot_id)
-            ORDER BY o.market_id,s.collected_at DESC,s.snapshot_id DESC
-            ON CONFLICT(market_id) DO UPDATE SET
-            {','.join(f'{name}=EXCLUDED.{name}' for name in OBSERVATION_COLUMNS if name != 'market_id')}
+        current = cursor.execute("SELECT COUNT(*) FROM current_prices").fetchone()[0]
+        if not current:
+            cursor.execute(f"""
+                INSERT INTO current_prices ({names})
+                SELECT {','.join(f'o.{name}' for name in OBSERVATION_COLUMNS)}
+                FROM price_observations o
+                JOIN snapshots s USING(snapshot_id)
+                JOIN markets m USING(market_id)
+                WHERE s.snapshot_id=(
+                    SELECT latest.snapshot_id FROM snapshots latest
+                    WHERE latest.dataset=m.dataset
+                    ORDER BY latest.collected_at DESC LIMIT 1
+                )
+            """)
+            current = cursor.execute("SELECT COUNT(*) FROM current_prices").fetchone()[0]
+        cursor.execute("""
+            DELETE FROM current_prices c USING markets m
+            WHERE c.market_id=m.market_id AND (
+                m.last_seen_at IS DISTINCT FROM (
+                    SELECT s.collected_at FROM snapshots s
+                    WHERE s.dataset=m.dataset
+                    ORDER BY s.collected_at DESC LIMIT 1
+                ) OR EXISTS (
+                    SELECT 1 FROM unpriced_market_presence u
+                    JOIN snapshots s USING(snapshot_id)
+                    WHERE u.market_id=c.market_id AND s.snapshot_id=(
+                        SELECT latest.snapshot_id FROM snapshots latest
+                        WHERE latest.dataset=m.dataset
+                        ORDER BY latest.collected_at DESC LIMIT 1
+                    )
+                )
+            )
         """)
         current = cursor.execute("SELECT COUNT(*) FROM current_prices").fetchone()[0]
         if prepare_only:

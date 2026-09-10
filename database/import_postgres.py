@@ -191,14 +191,11 @@ def import_snapshot(database_url: str, path: str | Path, dataset: str) -> Import
                    OR s.price_ref IS DISTINCT FROM c.price_ref
                    OR s.price_keys IS DISTINCT FROM c.price_keys
             """)
-            cursor.execute("""
-                DELETE FROM current_prices c
-                USING markets m, staged_markets s
-                WHERE c.market_id=m.market_id AND m.stable_id=s.stable_id
-                  AND NOT EXISTS (
-                      SELECT 1 FROM staged_observations o WHERE o.market_id=c.market_id
-                  )
-            """)
+            cursor.execute(
+                "DELETE FROM current_prices c USING markets m "
+                "WHERE c.market_id=m.market_id AND m.dataset=%s",
+                (dataset,),
+            )
             update_columns = [name for name in OBSERVATION_COLUMNS if name != "market_id"]
             cursor.execute(f"""
                 INSERT INTO current_prices ({observation_names})
