@@ -1,0 +1,56 @@
+{
+  "cleaning_version": "2.0",
+  "schema": "community",
+  "raw_file": "community_prices_2026-09-13_05-23-54.csv",
+  "raw_sha256": "4c5f969bb974f0a1810c52b9d5e9a8834ab2b02824b26f2c66dfd3835a34768c",
+  "processed_file": "community_prices_2026-09-13_05-23-54.csv",
+  "processed_sha256": "7eab5b69643a897a15f9d2acdf0252ff5c43f349b35c0e29d054b7dc34f763c7",
+  "collection_timestamps": [
+    "2026-09-13T05:23:54+00:00"
+  ],
+  "key_rates_ref": [
+    64.555
+  ],
+  "input_rows": 5630,
+  "accepted_rows": 5630,
+  "rejected_rows": 0,
+  "rejection_counts": {},
+  "warning_counts": {
+    "name_based_identity": 5630,
+    "large_price_change": 1
+  },
+  "missing_fields": {
+    "item_type": 5630,
+    "usd_price": 5630
+  },
+  "raw_price_status_counts": {
+    "priced": 5630
+  },
+  "comparison": {
+    "status": "compared",
+    "threshold_fraction": 0.5,
+    "previous_file": "community_prices_2026-09-12_05-05-31.csv",
+    "previous_sha256": "52a637bc7d4eb3b4e55374918743a685cf5c38673376d4332f1751c28e1472c9",
+    "appeared_market_ids": [
+      "tf2:community:6d199f9962b54f60354f31a2baf2b340",
+      "tf2:community:9901211f9c3d4ccc6e0e7b51de1c0d4e",
+      "tf2:community:a128adc03e4bb9c6441e29e1a730f435",
+      "tf2:community:c11ee907698b748ec182e2cc80b09ec5"
+    ],
+    "absent_market_ids": [
+      "tf2:community:0b3c0ddc6a4b373302ef62b34e86cbd5",
+      "tf2:community:23dad7ab72077a32b297865acee347ec",
+      "tf2:community:343b96fe42ccbe7291c15042cc6f1cd9",
+      "tf2:community:3b03b39981f3fd95a711e050fc38fc08",
+      "tf2:community:7670d8dbb152fdeff1de94e5c470ed6a",
+      "tf2:community:78e17a34df4b18c5e7aa2c5a3651105f",
+      "tf2:community:84984aaae5afe0f44044c1b9a6850e47",
+      "tf2:community:99ef2e5fdf6415c8f6e2ba08b5b70f77",
+      "tf2:community:beb001ebb20edc6c947ad8bcab981533",
+      "tf2:community:ca42fef6fe3701a62497f109e98f249a",
+      "tf2:community:d1cfbfc59a83b8d95aaf2baef17c2741"
+    ],
+    "observed_but_rejected_market_ids": [],
+    "comparable_markets": 5626
+  }
+}
