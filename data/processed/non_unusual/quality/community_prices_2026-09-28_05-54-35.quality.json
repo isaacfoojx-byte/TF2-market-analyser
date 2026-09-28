@@ -1,0 +1,59 @@
+{
+  "cleaning_version": "2.0",
+  "schema": "community",
+  "raw_file": "community_prices_2026-09-28_05-54-35.csv",
+  "raw_sha256": "793239f03b25a03556c9244694db0e7ea6a314124ee0375f56d0defe01c882e0",
+  "processed_file": "community_prices_2026-09-28_05-54-35.csv",
+  "processed_sha256": "040352fe9c144f4502033708200795be2c126f80c4bfd9bf22a902f575f7585a",
+  "collection_timestamps": [
+    "2026-09-28T05:54:35+00:00"
+  ],
+  "key_rates_ref": [
+    64.555
+  ],
+  "input_rows": 5640,
+  "accepted_rows": 5640,
+  "rejected_rows": 0,
+  "rejection_counts": {},
+  "warning_counts": {
+    "name_based_identity": 5640,
+    "large_price_change": 1
+  },
+  "missing_fields": {
+    "item_type": 5640,
+    "usd_price": 5640
+  },
+  "raw_price_status_counts": {
+    "priced": 5640
+  },
+  "comparison": {
+    "status": "compared",
+    "threshold_fraction": 0.5,
+    "previous_file": "community_prices_2026-09-27_05-47-59.csv",
+    "previous_sha256": "bebc9486e5a8519d3950d9231dc478284e6eda985e923041c63e686498170087",
+    "appeared_market_ids": [
+      "tf2:community:0cd6ec28de4eaf4d6308695a0c23748f",
+      "tf2:community:4bf9469ed4b22660749b7a53b92e794d",
+      "tf2:community:5d5cce1a2397fc0044a1bbe19aed53b5",
+      "tf2:community:6af7ee1cb37bd4fdeea6a6ea62219725",
+      "tf2:community:876a73c5cb17d48ea7206102725a0db7",
+      "tf2:community:8e2a1651d9fcbf57a7a85df011fff70b",
+      "tf2:community:ab1ead7094f0d4e1c52ca5c5edd2dfcc",
+      "tf2:community:b5f1681fc05af7f28c89e0b00266b88e",
+      "tf2:community:c1098af8e5b305e4c02d8fdf47336711",
+      "tf2:community:d1e16457fa28220cde3157f7cd07f8f2",
+      "tf2:community:e07126f96ca2a0c052ed19e1c774bc15",
+      "tf2:community:eb635521d1afb887c3a862728de4a4ac",
+      "tf2:community:f550d80bb50c94b0541da93ddc8782b8"
+    ],
+    "absent_market_ids": [
+      "tf2:community:394ba1b428be5af36d62f87f62bc4d63",
+      "tf2:community:8b985bfdd89a7d14b789525afa2147e1",
+      "tf2:community:a7a098abd1b04782f7fddd3decc8d8a3",
+      "tf2:community:c2eaa0745d1567172c367b81081317fd",
+      "tf2:community:f7f45f7260ea06f77f420838b1575bdf"
+    ],
+    "observed_but_rejected_market_ids": [],
+    "comparable_markets": 5627
+  }
+}
