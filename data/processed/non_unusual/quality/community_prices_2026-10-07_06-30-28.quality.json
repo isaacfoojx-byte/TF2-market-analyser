@@ -1,0 +1,38 @@
+{
+  "cleaning_version": "2.0",
+  "schema": "community",
+  "raw_file": "community_prices_2026-10-07_06-30-28.csv",
+  "raw_sha256": "56406a87ab061a10ba013147bbf9f2cec7434b6bf39cb571faba0e0cd3cdaa5d",
+  "processed_file": "community_prices_2026-10-07_06-30-28.csv",
+  "processed_sha256": "4408f8a2433a7e19caf24880d8776175cb82d3c3ab739da0700b2b87ff883022",
+  "collection_timestamps": [
+    "2026-10-07T06:30:28+00:00"
+  ],
+  "key_rates_ref": [
+    64.555
+  ],
+  "input_rows": 5646,
+  "accepted_rows": 5646,
+  "rejected_rows": 0,
+  "rejection_counts": {},
+  "warning_counts": {
+    "name_based_identity": 5646
+  },
+  "missing_fields": {
+    "item_type": 5646,
+    "usd_price": 5646
+  },
+  "raw_price_status_counts": {
+    "priced": 5646
+  },
+  "comparison": {
+    "status": "compared",
+    "threshold_fraction": 0.5,
+    "previous_file": "community_prices_2026-10-06_06-52-50.csv",
+    "previous_sha256": "a3c975142c6eeea2a99c02e53936c9338ce47c07b527c4bc6f614707fa0e09a4",
+    "appeared_market_ids": [],
+    "absent_market_ids": [],
+    "observed_but_rejected_market_ids": [],
+    "comparable_markets": 5646
+  }
+}
