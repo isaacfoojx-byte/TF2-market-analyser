@@ -1,0 +1,2 @@
+# Optional dependency for durable S3-compatible snapshot backups.
+boto3==1.43.117

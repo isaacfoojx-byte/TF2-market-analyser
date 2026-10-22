@@ -10,3 +10,4 @@ database/market_v2.db-wal
 
 .vercel
 .env*
+restored-data/

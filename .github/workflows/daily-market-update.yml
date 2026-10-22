@@ -59,6 +59,20 @@ jobs:
       - name: Validate generated snapshots
         run: python scripts/validate_scrape_output.py "$OUTPUT_DIR"
 
+      - name: Upload and verify durable snapshot archive
+        if: vars.SNAPSHOT_ARCHIVE_ENABLED == 'true'
+        env:
+          SNAPSHOT_ARCHIVE_BUCKET: ${{ vars.SNAPSHOT_ARCHIVE_BUCKET }}
+          SNAPSHOT_ARCHIVE_ENDPOINT_URL: ${{ vars.SNAPSHOT_ARCHIVE_ENDPOINT_URL }}
+          SNAPSHOT_ARCHIVE_PREFIX: ${{ vars.SNAPSHOT_ARCHIVE_PREFIX }}
+          AWS_DEFAULT_REGION: ${{ vars.SNAPSHOT_ARCHIVE_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.SNAPSHOT_ARCHIVE_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SNAPSHOT_ARCHIVE_SECRET_ACCESS_KEY }}
+        shell: bash
+        run: |
+          python -m pip install -r requirements-archive.txt
+          python -m integrations.snapshot_archive upload --source "$OUTPUT_DIR"
+
       - name: Commit snapshots to repository
         shell: bash
         run: |

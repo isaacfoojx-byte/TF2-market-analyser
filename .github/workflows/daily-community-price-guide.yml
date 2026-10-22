@@ -59,6 +59,24 @@ jobs:
       - name: Validate generated community snapshots
         run: python scripts/validate_community_scrape_output.py "$OUTPUT_DIR"
 
+      - name: Upload and verify durable snapshot archive
+        if: vars.SNAPSHOT_ARCHIVE_ENABLED == 'true'
+        env:
+          SNAPSHOT_ARCHIVE_BUCKET: ${{ vars.SNAPSHOT_ARCHIVE_BUCKET }}
+          SNAPSHOT_ARCHIVE_ENDPOINT_URL: ${{ vars.SNAPSHOT_ARCHIVE_ENDPOINT_URL }}
+          SNAPSHOT_ARCHIVE_PREFIX: ${{ vars.SNAPSHOT_ARCHIVE_PREFIX }}
+          AWS_DEFAULT_REGION: ${{ vars.SNAPSHOT_ARCHIVE_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.SNAPSHOT_ARCHIVE_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SNAPSHOT_ARCHIVE_SECRET_ACCESS_KEY }}
+        shell: bash
+        run: |
+          python -m pip install -r requirements-archive.txt
+          archive_source="$RUNNER_TEMP/community-archive"
+          mkdir -p "$archive_source/raw/non_unusual" "$archive_source/processed/non_unusual"
+          cp -R "$OUTPUT_DIR/raw/." "$archive_source/raw/non_unusual/"
+          cp -R "$OUTPUT_DIR/processed/." "$archive_source/processed/non_unusual/"
+          python -m integrations.snapshot_archive upload --source "$archive_source"
+
       - name: Commit community snapshots to repository
         shell: bash
         run: |

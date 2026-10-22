@@ -81,6 +81,11 @@ database for faster historical queries. See
 [Historical database](docs/historical-database.md) for the schema and commands,
 and [Storage decision](docs/storage-decision.md) for the SQLite-to-PostgreSQL path.
 
+Optional S3-compatible backups now compress snapshots and quality reports, verify
+uploaded bytes, and support checksum-verified restoration. See
+[Snapshot archive setup](docs/snapshot-archive.md) to backfill existing data and
+enable daily backups. Existing Git snapshots remain in place during migration.
+
 ## Technology stack
 
 | Area | Technology | Purpose |
