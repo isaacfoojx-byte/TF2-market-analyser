@@ -1,0 +1,37 @@
+{
+  "cleaning_version": "2.0",
+  "schema": "community",
+  "raw_file": "community_prices_test.csv",
+  "raw_sha256": "f9058bc22ad16dfa6e84e27b041cdfa368fd3d6b24e8eb620b8e2d65420d0cb3",
+  "processed_file": "community_prices_test.csv",
+  "processed_sha256": "46d3c593473bfefc179a5920de227eaa4624f931d71085797b2dc941d9413495",
+  "collection_timestamps": [
+    "2026-08-07T12:00:00"
+  ],
+  "key_rates_ref": [
+    64.495
+  ],
+  "input_rows": 3,
+  "accepted_rows": 2,
+  "rejected_rows": 1,
+  "rejection_counts": {
+    "missing_or_invalid_source_price": 1
+  },
+  "warning_counts": {
+    "collection_timezone_unknown": 2,
+    "source_update_unknown": 2,
+    "name_based_identity": 2
+  },
+  "missing_fields": {
+    "usd_price": 3,
+    "stats_url": 3
+  },
+  "raw_price_status_counts": {
+    "zero": 2,
+    "priced": 1
+  },
+  "comparison": {
+    "status": "no_previous_snapshot",
+    "threshold_fraction": 0.5
+  }
+}

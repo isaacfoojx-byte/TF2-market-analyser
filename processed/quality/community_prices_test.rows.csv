@@ -1,0 +1,4 @@
+scrape_timestamp,source_url,item_name,item_type,quality,craftable,price_ref,key_price_ref,price_text,usd_price,stats_url,raw_row_number,market_id,disposition,rejection_reason,raw_price_status,quality_flags
+2026-08-07T12:00:00,https://backpack.tf/spreadsheet,Key Range,Cosmetic,Unique,True,0.0,64.495,16-19 keys,,,2,tf2:community:948aabe1bbb197fff217a508aa9a00e4,accepted,,zero,collection_timezone_unknown|source_update_unknown|name_based_identity
+2026-08-07T12:00:00,https://backpack.tf/spreadsheet,Ref Range,Cosmetic,Unique,True,0.0,64.495,5-8.55 ref,,,3,tf2:community:63e4c00fb9c40b157a4a99e9717ec88d,accepted,,zero,collection_timezone_unknown|source_update_unknown|name_based_identity
+2026-08-07T12:00:00,https://backpack.tf/spreadsheet,Barter Item,Cosmetic,Unique,True,1.39,64.495,1 hat,,,4,tf2:community:002f4f7931ebc555ca68236178ad22ac,rejected,missing_or_invalid_source_price,priced,
