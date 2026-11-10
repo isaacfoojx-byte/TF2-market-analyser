@@ -1,7 +1,7 @@
 {
-    "snapshot_timestamp": "2026-11-09T06:22:20+00:00",
+    "snapshot_timestamp": "2026-11-10T07:15:07+00:00",
     "key_price": 64.555,
     "total_listings": 42240,
-    "scrape_duration": 19.83,
+    "scrape_duration": 19.62,
     "source": "backpack_tf_api"
 }
