@@ -1,0 +1,62 @@
+{
+  "cleaning_version": "2.0",
+  "schema": "community",
+  "raw_file": "community_prices_2026-11-24_10-27-12.csv",
+  "raw_sha256": "dfcdc5d6d6a2e6880db5bfff7e14817cdbfac17593a00e2ea50dbe963af69e86",
+  "processed_file": "community_prices_2026-11-24_10-27-12.csv",
+  "processed_sha256": "f2c29ad29def268b7178a1f96b71493144232bf519ff96da18729527faac72bc",
+  "collection_timestamps": [
+    "2026-11-24T10:27:12+00:00"
+  ],
+  "key_rates_ref": [
+    65.38499999999999
+  ],
+  "input_rows": 5735,
+  "accepted_rows": 5735,
+  "rejected_rows": 0,
+  "rejection_counts": {},
+  "warning_counts": {
+    "name_based_identity": 5735
+  },
+  "missing_fields": {
+    "item_type": 5735,
+    "usd_price": 5735
+  },
+  "raw_price_status_counts": {
+    "priced": 5735
+  },
+  "comparison": {
+    "status": "compared",
+    "threshold_fraction": 0.5,
+    "previous_file": "community_prices_2026-11-23_08-16-48.csv",
+    "previous_sha256": "d91d08dfb691c11bfd4a5773b9207a11f1bcb3729e0e515a58d19aae04ce10fd",
+    "appeared_market_ids": [
+      "tf2:community:0057fca9c9338711b40683ee183f652b",
+      "tf2:community:026b901a30fb4cf1b8df78bae6d28d84",
+      "tf2:community:0df7c539735887525fd7b75d1eef0a84",
+      "tf2:community:0ea3ad915283621eac34d0fb68a00372",
+      "tf2:community:0fa3761e5f5fdf48d03cec016225e46e",
+      "tf2:community:150881639d26d145866d3fcd16df1e8c",
+      "tf2:community:18577426e4f711aa9376141452b00033",
+      "tf2:community:23dff84bd36e62895fe3938fbbe744b3",
+      "tf2:community:343b96fe42ccbe7291c15042cc6f1cd9",
+      "tf2:community:3b0e082604a48c26e8dba78ad33f3b0c",
+      "tf2:community:5144468dfd6701197ec27e7567f959ea",
+      "tf2:community:550563f7f7d7405d8e8c2385cd0a30ff",
+      "tf2:community:750b22d0ed00533f61a6789d40d0dad4",
+      "tf2:community:76c9686a7953623d310d77a988c3f2dc",
+      "tf2:community:8a62984a76322f554b248ed4fba6b8c3",
+      "tf2:community:904cd75608d68317266057c35b9660f7",
+      "tf2:community:a7a098abd1b04782f7fddd3decc8d8a3",
+      "tf2:community:a9252af51daa91f24cc127d74dd0cce3",
+      "tf2:community:bdb9bede4b0c533976e37c14059f5618",
+      "tf2:community:bdc275b03d62deb315e54e8c40137e21",
+      "tf2:community:c6fcb4d552f7c5cd54b14be76b26c330",
+      "tf2:community:ca734288f7d964501770fa886b6ecb9d",
+      "tf2:community:f25aa9305b14b3c407cca5fec81917d8"
+    ],
+    "absent_market_ids": [],
+    "observed_but_rejected_market_ids": [],
+    "comparable_markets": 5712
+  }
+}
