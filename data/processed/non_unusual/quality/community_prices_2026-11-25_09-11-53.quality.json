@@ -1,0 +1,93 @@
+{
+  "cleaning_version": "2.0",
+  "schema": "community",
+  "raw_file": "community_prices_2026-11-25_09-11-53.csv",
+  "raw_sha256": "c59e070e69a33ab7b171150742d4bac3a6188693781d9df2b96ab392790c4ce8",
+  "processed_file": "community_prices_2026-11-25_09-11-53.csv",
+  "processed_sha256": "6fc4b140c2e0f13a3a87ff8ea160ae21a0144d46b6cf80995d6ac6a46a5e8979",
+  "collection_timestamps": [
+    "2026-11-25T09:11:53+00:00"
+  ],
+  "key_rates_ref": [
+    65.38499999999999
+  ],
+  "input_rows": 5788,
+  "accepted_rows": 5788,
+  "rejected_rows": 0,
+  "rejection_counts": {},
+  "warning_counts": {
+    "name_based_identity": 5788,
+    "large_price_change": 2
+  },
+  "missing_fields": {
+    "item_type": 5788,
+    "usd_price": 5788
+  },
+  "raw_price_status_counts": {
+    "priced": 5788
+  },
+  "comparison": {
+    "status": "compared",
+    "threshold_fraction": 0.5,
+    "previous_file": "community_prices_2026-11-24_10-27-12.csv",
+    "previous_sha256": "f2c29ad29def268b7178a1f96b71493144232bf519ff96da18729527faac72bc",
+    "appeared_market_ids": [
+      "tf2:community:00036279bfe68a94fb8e0a6188f5b967",
+      "tf2:community:05cc3dbed799a1bceb5f6e3ade900a6b",
+      "tf2:community:066aa641726644996d86dabe9ed554c4",
+      "tf2:community:172f9f709b51fa35f942e2abf3bbc4b9",
+      "tf2:community:1c76f7a1597f336a36ed3f7f4b63dac6",
+      "tf2:community:1cab96ec50a72dcd7588f4a16db0ad39",
+      "tf2:community:1d1655f7c56f2af14d8b1c9c14a92b97",
+      "tf2:community:2634dbd435ff36b2e4f09e09c960f80f",
+      "tf2:community:2d5b9479322c267788f48d473c1be405",
+      "tf2:community:30f196559af4f4aa99fe41895a9dd98e",
+      "tf2:community:386bcbdb937f1f5761caed4d7ee8fa82",
+      "tf2:community:3b03b39981f3fd95a711e050fc38fc08",
+      "tf2:community:44644b20a274941ac82d9e463a3db330",
+      "tf2:community:470a92ec796aca3cae3a4b96266345f4",
+      "tf2:community:491194e9064f274a9a7a8d58305852e7",
+      "tf2:community:4d7469dd91ce1737bdd3fd05a51e5f9c",
+      "tf2:community:4dd95e78a409ead23be7bb3475859929",
+      "tf2:community:50267789f8aece85870f07cddc7c5477",
+      "tf2:community:52f8781a0e6ad60316b798066d50ba8f",
+      "tf2:community:53630c6389b477dfc6e7c96567e60d06",
+      "tf2:community:55c56b31126e37a1024d85171507547a",
+      "tf2:community:567b19f45aea6dd16f8dd5b4c971a362",
+      "tf2:community:5fadfa43b674c2d7232b89abdf39bae1",
+      "tf2:community:646b6eb1bdea2aa6deffe6a6789b0068",
+      "tf2:community:6a7a733efd96102d2f56b34b09f01275",
+      "tf2:community:6f76294df2658842a8396ceabdf85c07",
+      "tf2:community:719092ac223571c4652da182bf389224",
+      "tf2:community:7670d8dbb152fdeff1de94e5c470ed6a",
+      "tf2:community:78e17a34df4b18c5e7aa2c5a3651105f",
+      "tf2:community:791453304f73b1d848fe3dbb88fc87e5",
+      "tf2:community:864ddb7c468c388cc62031181625dd83",
+      "tf2:community:87e8a318478372993dd5aa4b51fb7611",
+      "tf2:community:8b985bfdd89a7d14b789525afa2147e1",
+      "tf2:community:905f2eab25680a7e5bdabf9f67cda37f",
+      "tf2:community:99ef2e5fdf6415c8f6e2ba08b5b70f77",
+      "tf2:community:9b7c3534b33f965bbe7d42511a1bbce3",
+      "tf2:community:a813db5eef1700321035d0eb8c956d6b",
+      "tf2:community:b57f90e9ecc0afd6c41a2093ebf6addd",
+      "tf2:community:b9ebb884f28f6d90a11ca0e268cd8974",
+      "tf2:community:bea1a74f6adc7b885053dd6c99713006",
+      "tf2:community:bf0e0fbc097b94803e7713b065422354",
+      "tf2:community:bf6a4f97d22fa8257acd4b425b32b586",
+      "tf2:community:bfc1f22e03516ca5236c3b5e4b5fd6f6",
+      "tf2:community:c1a5e3de56559b2631f9c8b7ec49eb9f",
+      "tf2:community:c2eaa0745d1567172c367b81081317fd",
+      "tf2:community:d245e706b71cb0c14c4014df8c81eb68",
+      "tf2:community:dd11fe0cb93bf5250362410cd5a695b4",
+      "tf2:community:f38e5e5b495a19ac29bb5e2a7278c384",
+      "tf2:community:f7f45f7260ea06f77f420838b1575bdf",
+      "tf2:community:f9fa576e084ca9bbc6cf931c01c34a82",
+      "tf2:community:fd32c89f9386b8dd14390595db0c9de2",
+      "tf2:community:fdcefb12755499aafa9568ecec13dbf2",
+      "tf2:community:ff0c3e6c3be29ed65fef45bccf0ad653"
+    ],
+    "absent_market_ids": [],
+    "observed_but_rejected_market_ids": [],
+    "comparable_markets": 5735
+  }
+}
